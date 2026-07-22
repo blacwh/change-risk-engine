@@ -72,6 +72,7 @@ type ChangedFile = {
   status: 'added' | 'modified' | 'deleted' | 'renamed';
   additions: number;
   deletions: number;
+  binary: boolean;
   categories: string[];
 };
 
@@ -84,6 +85,7 @@ type Evidence = {
 };
 
 type Finding = {
+  id: string;
   ruleId: string;
   title: string;
   severity: 'info' | 'low' | 'medium' | 'high' | 'critical';
@@ -152,6 +154,12 @@ Initial rules:
 ## Configuration
 
 Version all config. Validate patterns, rules, weights, thresholds, and policy conditions.
+
+Version 1 runtime schemas use Zod at trust boundaries and export inferred
+TypeScript types plus JSON Schema representations. Result validation enforces
+unique IDs, evidence/finding references, rule ownership of contributions, and a
+score equal to the visible contribution total. Canonical results omit volatile
+timestamps so deterministic inputs can remain byte-stable.
 
 ## Reporters
 

@@ -1,2 +1,7 @@
-/** Versioned configuration contracts and validation. */
-export {};
+export {
+  CONFIG_SCHEMA_VERSION,
+  changeRiskConfigJsonSchema,
+  changeRiskConfigSchema,
+  parseChangeRiskConfig,
+  type ChangeRiskConfig,
+} from './schema.js';
