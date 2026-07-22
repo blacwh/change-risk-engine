@@ -1,8 +1,13 @@
 # Fixture Strategy
 
-Repository integration fixtures belong under `packages/fixtures` and must be
-small, deterministic, and safe to inspect without installing dependencies or
-executing their code.
+`@change-risk/fixtures` creates isolated repositories beneath the operating
+system temporary directory. Fixtures use argument-array Git subprocesses,
+fixed local author identity, an explicit `main` branch, bounded commands, and an
+explicit cleanup function. Failure during construction removes partial state.
+
+Fixture file paths must be relative and remain inside the repository root. The
+helper writes plain UTF-8 files only; it does not install dependencies or execute
+fixture source code.
 
 Each fixture should document:
 
@@ -12,6 +17,7 @@ Each fixture should document:
 - intentionally malformed or incomplete inputs;
 - known false-positive and false-negative coverage.
 
-Fixture repositories will be introduced with Git evidence. Later fixtures will
-cover shared modules, public API changes, authentication, migrations, related
-tests, cycles, parse failures, and monorepos.
+Current integration coverage includes multi-commit revision resolution,
+option-like revision input, invalid repositories, path traversal, and cleanup.
+Later fixtures will cover shared modules, public API changes, authentication,
+migrations, related tests, cycles, parse failures, and monorepos.

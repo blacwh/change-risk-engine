@@ -115,6 +115,11 @@ Support TypeScript/JavaScript first.
 
 Use Git for revision resolution, name-status diff, numstat, content at revisions, and rename detection. Do not assume a clean working tree. Always state analyzed revisions.
 
+Git subprocesses use argument arrays, a resolved repository working directory,
+bounded output, and timeouts. Revision resolution places untrusted revision text
+after `--end-of-options`, verifies that it names a commit, and returns only a
+full object ID. Raw Git stderr is not exposed to callers.
+
 ## Dependency graph
 
 Required operations:
