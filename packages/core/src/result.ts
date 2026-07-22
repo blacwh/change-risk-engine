@@ -66,6 +66,9 @@ export const analysisResultSchema = z
   .superRefine((result, context) => {
     const evidenceIds = new Set(result.evidence.map(({ id }) => id));
     const findingIds = new Set(result.findings.map(({ id }) => id));
+    const contributionRuleIds = new Set(
+      result.scoreContributions.map(({ ruleId }) => ruleId),
+    );
 
     if (evidenceIds.size !== result.evidence.length) {
       context.addIssue({
@@ -81,6 +84,13 @@ export const analysisResultSchema = z
         path: ['findings'],
       });
     }
+    if (contributionRuleIds.size !== result.scoreContributions.length) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Score contribution rule ids must be unique',
+        path: ['scoreContributions'],
+      });
+    }
 
     for (const [index, finding] of result.findings.entries()) {
       for (const evidenceId of finding.evidenceIds) {
@@ -94,8 +104,17 @@ export const analysisResultSchema = z
       }
     }
 
+    const contributedFindingIds = new Set<string>();
     for (const [index, contribution] of result.scoreContributions.entries()) {
       for (const findingId of contribution.findingIds) {
+        if (contributedFindingIds.has(findingId)) {
+          context.addIssue({
+            code: 'custom',
+            message: `Finding ${findingId} is counted more than once`,
+            path: ['scoreContributions', index, 'findingIds'],
+          });
+        }
+        contributedFindingIds.add(findingId);
         if (!findingIds.has(findingId)) {
           context.addIssue({
             code: 'custom',
@@ -112,6 +131,15 @@ export const analysisResultSchema = z
             path: ['scoreContributions', index, 'findingIds'],
           });
         }
+      }
+    }
+    for (const findingId of findingIds) {
+      if (!contributedFindingIds.has(findingId)) {
+        context.addIssue({
+          code: 'custom',
+          message: `Finding ${findingId} is missing a score contribution`,
+          path: ['scoreContributions'],
+        });
       }
     }
 

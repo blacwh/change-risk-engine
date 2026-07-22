@@ -14,9 +14,19 @@ disabled or assigned a finite weight through configuration.
 | [`high-fan-in`](high-fan-in.md) | 25 | A changed module has many direct dependents |
 | [`migration`](migration.md) | 25 | Migration-classified paths changed |
 | [`infrastructure`](infrastructure.md) | 25 | Infrastructure or CI paths changed |
+| [`missing-related-tests`](missing-related-tests.md) | 20 | A changed source has no changed explicitly related test |
 | [`public-export`](public-export.md) | 25 | A supplied public-surface comparison reports export changes |
+| [`tests-added`](tests-added.md) | -10 | New tests are explicitly related to changed source files |
 
 Every rule document identifies its stable ID, evidence, default weight,
 configuration, remediation guidance, and known false-positive and false-negative
 cases. A rule may not contribute to a score without exposing the contribution
 and supporting evidence.
+
+## Scoring
+
+`scoreRuleEvaluation` groups findings by rule ID, sums their configured weights,
+and classifies the visible total with the configured moderate, high, and critical
+thresholds. Positive contributions are applied before mitigations. A negative
+contribution is capped when necessary so the aggregate cannot fall below zero;
+the effective (possibly capped) value remains visible in `scoreContributions`.

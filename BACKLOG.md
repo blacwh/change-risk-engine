@@ -28,9 +28,9 @@
 - [x] Dependency-manifest rule
 - [x] Migration rule
 - [x] Infrastructure rule
-- [ ] Missing-related-tests rule
-- [ ] Tests-added mitigation
-- [ ] Transparent score breakdown
+- [x] Missing-related-tests rule
+- [x] Tests-added mitigation
+- [x] Transparent score breakdown
 - [ ] Terminal and JSON reporters
 - [ ] CLI commands and exit policy
 

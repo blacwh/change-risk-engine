@@ -41,7 +41,11 @@ large-change, multi-area, sensitive-path, dependency-manifest, migration, and
 infrastructure policies. High-fan-in analysis consumes the bounded dependency
 graph to expose direct and transitive blast radius, and public-export policy
 consumes explicit public-surface comparison evidence. Public-surface comparison,
-test-aware rules, and transparent score aggregation remain in Phase 3.
+and test-relationship evidence feed two test-aware policies. Transparent scoring
+groups every finding by rule, applies visible positive and mitigating weights,
+caps the total at zero, and classifies it with configured thresholds. The Phase
+3 rule/scoring layer is complete; evidence orchestration remains before the CLI
+release phase.
 
 ## Development
 

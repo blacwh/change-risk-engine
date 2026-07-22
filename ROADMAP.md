@@ -37,8 +37,10 @@ Status: in progress. The deterministic rule engine and its stable evidence
 linking are complete. Large-change, multi-area, sensitive-path,
 dependency-manifest, migration, and infrastructure policies are implemented and
 documented. High-fan-in blast-radius and public-export evidence policies are
-also implemented. Public-surface comparison, test-aware policies, mitigations,
-and transparent score aggregation remain.
+also implemented. Explicit test-relationship policy, related-tests mitigation,
+and nonnegative transparent score aggregation are complete. The Phase 3 rule
+and scoring layer is complete; public-surface and test-relationship evidence
+producers remain orchestration work before CLI composition.
 
 ## Phase 4 — CLI release
 

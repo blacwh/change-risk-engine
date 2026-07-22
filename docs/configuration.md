@@ -51,3 +51,9 @@ The `high-fan-in` rule accepts `minFanIn` (default 5) and
 `maxTraversalDepth` (default 20). Public-export policy has no rule-specific
 options because its public-entry-point selection and surface comparison are
 explicit upstream evidence.
+
+Rule weights may be positive, zero, or negative. Negative values are intended
+for evidence-backed mitigations such as `tests-added`; aggregation caps their
+effective contribution so the total score remains nonnegative. Classification
+is `low` below `thresholds.moderate`, `moderate` below `thresholds.high`, `high`
+below `thresholds.critical`, and `critical` at or above the critical threshold.

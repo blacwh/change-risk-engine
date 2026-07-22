@@ -12,12 +12,18 @@ export type RuleContext = {
   dependencyGraph?: DirectedDependencyGraph;
   publicExportChanges?: readonly PublicExportChange[];
   sensitiveAreas: readonly { id: string; patterns: readonly string[] }[];
+  testRelationships?: readonly TestRelationship[];
 };
 
 export type PublicExportChange = {
   path: string;
   exportName: string;
   change: 'added' | 'modified' | 'removed';
+};
+
+export type TestRelationship = {
+  sourcePath: string;
+  testPaths: readonly string[];
 };
 
 export type RuleMatch = {
@@ -68,6 +74,32 @@ export function evaluateRules(
       throw new Error('Public export changes must be unique');
     }
     publicExportKeys.add(key);
+  }
+  const testRelationships = context.testRelationships ?? [];
+  if (testRelationships.length > 100_000) {
+    throw new Error('Test relationship limit exceeded');
+  }
+  const relationshipSources = new Set<string>();
+  for (const relationship of testRelationships) {
+    if (
+      relationship.sourcePath.length === 0 ||
+      relationship.sourcePath.length > 1_000 ||
+      relationship.testPaths.length > 1_000 ||
+      relationship.testPaths.some(
+        (path) => path.length === 0 || path.length > 1_000,
+      )
+    ) {
+      throw new Error('Test relationships contain invalid fields');
+    }
+    if (relationshipSources.has(relationship.sourcePath)) {
+      throw new Error('Test relationship source paths must be unique');
+    }
+    if (
+      new Set(relationship.testPaths).size !== relationship.testPaths.length
+    ) {
+      throw new Error('Related test paths must be unique');
+    }
+    relationshipSources.add(relationship.sourcePath);
   }
   const sensitiveIds = context.sensitiveAreas.map(({ id }) => id);
   if (new Set(sensitiveIds).size !== sensitiveIds.length) {
