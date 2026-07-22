@@ -126,6 +126,13 @@ path, retains the previous path for renames, maps type changes to modifications,
 and represents binary line counts as zero with an explicit `binary` flag.
 Unexpected statuses or mismatched Git outputs fail closed.
 
+## File classification
+
+Classification is a pure path-based core operation with a closed, stable-order
+category set. Categories may intentionally overlap: tests can also be source,
+lockfiles are dependencies, and generated JavaScript remains source. Unmatched
+paths receive `other`, so every changed file has at least one category.
+
 ## Dependency graph
 
 Required operations:
@@ -179,6 +186,11 @@ timestamps so deterministic inputs can remain byte-stable.
 - GitHub Markdown;
 - exit status;
 - later HTML and visualization.
+
+Terminal and JSON reporters validate the shared versioned result at their trust
+boundary. JSON preserves the complete result. The terminal skeleton summarizes
+classification, revisions, line totals, binary count, findings, visible weights,
+and limitations without color-dependent semantics.
 
 ## Security
 

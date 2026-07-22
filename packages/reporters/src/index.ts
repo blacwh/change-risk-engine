@@ -1,2 +1,1 @@
-/** Terminal, JSON, and integration reporting adapters. */
-export {};
+export { renderJsonReport, renderTerminalReport } from './reporters.js';

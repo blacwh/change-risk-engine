@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { FILE_CATEGORIES } from './classification.js';
+
 export const ANALYSIS_RESULT_SCHEMA_VERSION = 1 as const;
 
 const changedFileSchema = z
@@ -10,7 +12,7 @@ const changedFileSchema = z
     additions: z.number().int().nonnegative(),
     deletions: z.number().int().nonnegative(),
     binary: z.boolean(),
-    categories: z.array(z.string().min(1)),
+    categories: z.array(z.enum(FILE_CATEGORIES)).min(1),
   })
   .strict();
 
