@@ -33,6 +33,12 @@ cycle detection, and caller-supplied package-boundary crossings.
 
 Pluggable rules, sensitive paths, public API, migrations, infrastructure, tests, transparent score breakdown.
 
+Status: in progress. The deterministic rule engine and its stable evidence
+linking are complete. Large-change, multi-area, sensitive-path,
+dependency-manifest, migration, and infrastructure policies are implemented and
+documented. Graph-aware rules, public-export detection, test-aware policies,
+mitigations, and transparent score aggregation remain.
+
 ## Phase 4 — CLI release
 
 Installable CLI, terminal/JSON output, exit policy, examples, release workflow, self-analysis.

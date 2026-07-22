@@ -53,8 +53,8 @@ export const changeRiskConfigSchema = z
       .array(
         z
           .object({
-            id: z.string().min(1),
-            patterns: z.array(z.string().min(1)).min(1),
+            id: z.string().min(1).max(200),
+            patterns: z.array(z.string().min(1).max(1_000)).min(1).max(100),
           })
           .strict(),
       )
@@ -65,13 +65,24 @@ export const changeRiskConfigSchema = z
         z
           .object({
             enabled: z.boolean().default(true),
-            weight: z.number().finite(),
+            options: z.record(z.string(), z.unknown()).default({}),
+            weight: z.number().finite().optional(),
           })
           .strict(),
       )
       .default({}),
   })
-  .strict();
+  .strict()
+  .superRefine((config, context) => {
+    const ids = config.sensitiveAreas.map(({ id }) => id);
+    if (new Set(ids).size !== ids.length) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Sensitive area ids must be unique',
+        path: ['sensitiveAreas'],
+      });
+    }
+  });
 
 export type ChangeRiskConfig = z.infer<typeof changeRiskConfigSchema>;
 
