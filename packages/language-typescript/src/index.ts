@@ -13,3 +13,13 @@ export {
   type ModuleIndex,
   type ModuleRecord,
 } from './indexer.js';
+export {
+  loadTypeScriptResolutionConfig,
+  resolveModuleIndex,
+  resolveTypeScriptProject,
+  type ResolvedImportReference,
+  type ResolvedModuleIndex,
+  type ResolvedModuleRecord,
+  type ResolutionConfig,
+  type ResolutionIssue,
+} from './resolver.js';

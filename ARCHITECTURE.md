@@ -118,6 +118,13 @@ compiler API, and extracts static ESM, CommonJS, dynamic-literal, re-export, and
 import-equals references. Syntax and access failures remain explicit index issues;
 source text and parser messages are not included in those issues.
 
+Resolution is a pure pass over indexed module paths. Relative references support
+directory indexes and TypeScript extension substitution. A bounded, no-follow
+read of the root `tsconfig.json` supplies optional `baseUrl` and `paths`; inherited
+configuration is not followed and produces an explicit issue. Matched aliases
+and relative references that miss the index are unresolved evidence. Unmatched
+bare specifiers are external and do not trigger package probing or installation.
+
 ## Git
 
 Use Git for revision resolution, name-status diff, numstat, content at revisions, and rename detection. Do not assume a clean working tree. Always state analyzed revisions.

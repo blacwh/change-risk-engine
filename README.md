@@ -28,7 +28,10 @@ terminal and JSON report skeletons complete the initial Git-evidence phase.
 The TypeScript adapter now performs bounded source discovery and static import
 indexing without loading target configuration or dependencies. Incomplete reads,
 syntax errors, skipped symlinks, and reached limits are returned as explicit
-issues. Module resolution and graph analysis remain in progress.
+issues. Repository module resolution covers relative paths, directory indexes,
+TypeScript substitution for JavaScript extensions, and bounded root
+`tsconfig.json` aliases. Missing internal references are explicit issues;
+unmatched bare package imports remain external. Graph analysis is next.
 
 ## Development
 

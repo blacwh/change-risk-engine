@@ -24,7 +24,9 @@ Import indexing, resolution, dependency graph, direct/transitive dependents, fan
 
 Status: in progress. Bounded TypeScript/JavaScript discovery and static import
 indexing are complete with explicit syntax, symlink, read, size, and traversal
-issues. Module resolution and graph analysis remain.
+issues. Repository-only relative, index, extension-substitution, `baseUrl`, and
+`paths` resolution are complete with unresolved-import evidence. Directed graph
+analysis remains.
 
 ## Phase 3 — Rules and scoring
 
