@@ -1,2 +1,5 @@
-/** Shared fixture helpers. Repository fixtures are introduced with Git evidence. */
-export {};
+export {
+  createFixtureRepository,
+  type FixtureCommit,
+  type FixtureRepository,
+} from './repository.js';

@@ -8,7 +8,9 @@ Project structure, strict TypeScript, quality tooling, CI, schemas, ADRs, fixtur
 
 Status: in progress. Project structure, strict TypeScript, quality tooling, CI,
 versioned configuration and result schemas, and the initial fixture strategy are
-complete. The fixture repository framework and Git evidence are next.
+complete. The deterministic fixture repository framework and revision resolution
+are also complete. Changed-file evidence, line statistics, renames, and binary
+handling are next.
 
 ## Phase 1 — Git evidence
 

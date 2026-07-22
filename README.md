@@ -20,7 +20,9 @@ The result is a transparent report. The tool must not present its risk classific
 
 The repository foundation is complete. Package boundaries, strict TypeScript,
 formatting, linting, tests, builds, and CI are configured. Versioned configuration
-and result schemas are available; analysis behavior has not been implemented yet.
+and result schemas are available. The Git adapter can safely resolve commit
+revisions, and controlled temporary repository fixtures support integration
+testing. End-to-end analysis and diff collection are not yet implemented.
 
 ## Development
 

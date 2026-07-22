@@ -16,6 +16,10 @@ Requirements:
 - use minimal GitHub permissions;
 - document fork behavior.
 
+The Git adapter never invokes a shell. It passes fixed command arguments to Git,
+uses `--end-of-options` before untrusted revision text, bounds command duration
+and output, and exposes stable errors rather than raw subprocess stderr.
+
 Any future build/test execution must be opt-in, isolated, and clearly unsafe for untrusted code.
 
 Report vulnerabilities through private security advisories.

@@ -1,2 +1,2 @@
-/** Safe Git evidence collection without target-code execution. */
-export {};
+export { GitCommandError } from './command.js';
+export { resolveRevision, type ResolveRevisionOptions } from './revision.js';

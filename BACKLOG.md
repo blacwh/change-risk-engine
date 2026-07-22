@@ -6,8 +6,8 @@
 - [x] Strict TypeScript and quality commands
 - [x] Versioned result schema
 - [x] Versioned configuration schema
-- [ ] Fixture repository framework
-- [ ] Git revision resolution
+- [x] Fixture repository framework
+- [x] Git revision resolution
 - [ ] Name-status and numstat
 - [ ] Rename and binary handling
 - [ ] File classification
