@@ -29,10 +29,33 @@ describe('change-risk configuration schema v1', () => {
     ).toThrow(/Thresholds must increase/);
   });
 
+  it('normalizes rule settings while allowing rule-specific options', () => {
+    expect(
+      parseChangeRiskConfig({
+        schemaVersion: 1,
+        rules: { 'large-change': { options: { maxFiles: 12 } } },
+      }).rules,
+    ).toEqual({
+      'large-change': { enabled: true, options: { maxFiles: 12 } },
+    });
+  });
+
   it('rejects unknown keys and unsupported versions', () => {
     expect(() => parseChangeRiskConfig({ schemaVersion: 2 })).toThrow();
     expect(() =>
       parseChangeRiskConfig({ schemaVersion: 1, surprise: true }),
     ).toThrow();
+  });
+
+  it('rejects duplicate sensitive-area ids', () => {
+    expect(() =>
+      parseChangeRiskConfig({
+        schemaVersion: 1,
+        sensitiveAreas: [
+          { id: 'auth', patterns: ['src/auth/**'] },
+          { id: 'auth', patterns: ['packages/auth/**'] },
+        ],
+      }),
+    ).toThrow(/Sensitive area ids must be unique/);
   });
 });

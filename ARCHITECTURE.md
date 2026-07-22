@@ -170,12 +170,21 @@ edges, and package crossings use the longest caller-supplied package-root match.
 ```ts
 interface RiskRule {
   id: string;
-  description: string;
-  evaluate(context: RuleContext): Finding[];
+  defaultWeight: number;
+  evaluate(
+    context: RuleContext,
+    options: Readonly<Record<string, unknown>>,
+  ): RuleMatch[];
 }
 ```
 
 Rules are deterministic, evidence-backed, configurable, individually testable, and documented for false positives.
+
+The rule engine evaluates rules in stable ID order. It validates unique rule and
+sensitive-area IDs, applies per-rule enablement, options, and optional weight
+overrides, and assigns stable IDs to every emitted finding and its evidence.
+Affected and source paths are deduplicated and sorted. A rule returns evidence
+and finding content together, so the engine cannot create an unlinked finding.
 
 Initial rules:
 
@@ -189,6 +198,10 @@ Initial rules:
 - dependency change;
 - missing related tests;
 - mitigating tests added.
+
+The first policy slice implements large-change, multi-area, sensitive-path,
+dependency-manifest, migration, and infrastructure rules. Graph-aware and
+test-aware rules follow in the next Phase 3 slices.
 
 ## Configuration
 

@@ -20,14 +20,14 @@
 
 ## P1
 
-- [ ] Large-change rule
-- [ ] Multi-area rule
+- [x] Large-change rule
+- [x] Multi-area rule
 - [ ] High-fan-in rule
-- [ ] Sensitive-path rule
+- [x] Sensitive-path rule
 - [ ] Public-export rule
-- [ ] Dependency-manifest rule
-- [ ] Migration rule
-- [ ] Infrastructure rule
+- [x] Dependency-manifest rule
+- [x] Migration rule
+- [x] Infrastructure rule
 - [ ] Missing-related-tests rule
 - [ ] Tests-added mitigation
 - [ ] Transparent score breakdown
