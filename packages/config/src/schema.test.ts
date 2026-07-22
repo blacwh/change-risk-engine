@@ -7,7 +7,12 @@ describe('change-risk configuration schema v1', () => {
     expect(parseChangeRiskConfig({ schemaVersion: 1 })).toEqual({
       schemaVersion: 1,
       ignorePatterns: [],
-      analysis: { maxFileBytes: 1_000_000, maxTraversalDepth: 20 },
+      analysis: {
+        maxEntries: 100_000,
+        maxFileBytes: 1_000_000,
+        maxFiles: 10_000,
+        maxTraversalDepth: 20,
+      },
       thresholds: { moderate: 20, high: 50, critical: 80 },
       sensitiveAreas: [],
       rules: {},

@@ -111,6 +111,13 @@ interface LanguageAdapter {
 
 Support TypeScript/JavaScript first.
 
+The initial adapter discovers TypeScript/JavaScript files with deterministic
+ordering and bounded entries, file count, and file size. It skips symlinks,
+canonicalizes every file beneath the repository root, parses with the TypeScript
+compiler API, and extracts static ESM, CommonJS, dynamic-literal, re-export, and
+import-equals references. Syntax and access failures remain explicit index issues;
+source text and parser messages are not included in those issues.
+
 ## Git
 
 Use Git for revision resolution, name-status diff, numstat, content at revisions, and rename detection. Do not assume a clean working tree. Always state analyzed revisions.

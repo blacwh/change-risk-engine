@@ -20,16 +20,23 @@ export const changeRiskConfigSchema = z
     ignorePatterns: z.array(z.string().min(1)).default([]),
     analysis: z
       .object({
+        maxEntries: z.number().int().positive().max(1_000_000).default(100_000),
         maxFileBytes: z
           .number()
           .int()
           .positive()
           .max(100_000_000)
           .default(1_000_000),
+        maxFiles: z.number().int().positive().max(100_000).default(10_000),
         maxTraversalDepth: z.number().int().positive().max(100).default(20),
       })
       .strict()
-      .default({ maxFileBytes: 1_000_000, maxTraversalDepth: 20 }),
+      .default({
+        maxEntries: 100_000,
+        maxFileBytes: 1_000_000,
+        maxFiles: 10_000,
+        maxTraversalDepth: 20,
+      }),
     thresholds: thresholdsSchema.default({
       moderate: 20,
       high: 50,

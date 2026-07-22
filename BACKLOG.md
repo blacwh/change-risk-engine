@@ -11,8 +11,8 @@
 - [x] Name-status and numstat
 - [x] Rename and binary handling
 - [x] File classification
-- [ ] TypeScript/JavaScript discovery
-- [ ] Static import parsing
+- [x] TypeScript/JavaScript discovery
+- [x] Static import parsing
 - [ ] Relative and tsconfig alias resolution
 - [ ] Unresolved import reporting
 - [ ] Directed dependency graph

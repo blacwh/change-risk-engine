@@ -22,6 +22,10 @@ initial validated terminal/JSON report skeleton are complete.
 
 Import indexing, resolution, dependency graph, direct/transitive dependents, fan-in/fan-out, package boundaries, incomplete parsing.
 
+Status: in progress. Bounded TypeScript/JavaScript discovery and static import
+indexing are complete with explicit syntax, symlink, read, size, and traversal
+issues. Module resolution and graph analysis remain.
+
 ## Phase 3 — Rules and scoring
 
 Pluggable rules, sensitive paths, public API, migrations, infrastructure, tests, transparent score breakdown.
