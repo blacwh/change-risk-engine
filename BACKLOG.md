@@ -22,9 +22,9 @@
 
 - [x] Large-change rule
 - [x] Multi-area rule
-- [ ] High-fan-in rule
+- [x] High-fan-in rule
 - [x] Sensitive-path rule
-- [ ] Public-export rule
+- [x] Public-export rule
 - [x] Dependency-manifest rule
 - [x] Migration rule
 - [x] Infrastructure rule

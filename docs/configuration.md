@@ -46,3 +46,8 @@ Each entry in `rules` may set `enabled` (default `true`), an optional finite
 keys in a rule setting are rejected. The available options and defaults are
 documented under [rules](rules/README.md); invalid options fail analysis instead
 of silently falling back.
+
+The `high-fan-in` rule accepts `minFanIn` (default 5) and
+`maxTraversalDepth` (default 20). Public-export policy has no rule-specific
+options because its public-entry-point selection and surface comparison are
+explicit upstream evidence.

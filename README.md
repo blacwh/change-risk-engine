@@ -38,8 +38,10 @@ crossings. Phase 2 is complete; deterministic rules and transparent scoring are
 the current phase. The rule engine now emits stable evidence and finding IDs,
 supports per-rule enablement, options, and weight overrides, and includes the
 large-change, multi-area, sensitive-path, dependency-manifest, migration, and
-infrastructure policies. Graph-aware rules and transparent score aggregation
-remain in Phase 3.
+infrastructure policies. High-fan-in analysis consumes the bounded dependency
+graph to expose direct and transitive blast radius, and public-export policy
+consumes explicit public-surface comparison evidence. Public-surface comparison,
+test-aware rules, and transparent score aggregation remain in Phase 3.
 
 ## Development
 

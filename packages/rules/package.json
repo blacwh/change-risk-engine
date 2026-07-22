@@ -6,7 +6,8 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@change-risk/core": "0.0.0"
+    "@change-risk/core": "0.0.0",
+    "@change-risk/dependency-graph": "0.0.0"
   },
   "scripts": {
     "build": "tsc --build tsconfig.json"

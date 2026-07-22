@@ -3,7 +3,10 @@
   "compilerOptions": {
     "noEmit": true,
     "paths": {
-      "@change-risk/core": ["./packages/core/src/index.ts"]
+      "@change-risk/core": ["./packages/core/src/index.ts"],
+      "@change-risk/dependency-graph": [
+        "./packages/dependency-graph/src/index.ts"
+      ]
     },
     "types": ["node"]
   },

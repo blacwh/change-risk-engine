@@ -165,6 +165,103 @@ export const sensitivePathRule: RiskRule = {
   },
 };
 
+export const highFanInRule: RiskRule = {
+  id: 'high-fan-in',
+  defaultWeight: 25,
+  evaluate(context, options) {
+    const minFanIn = integerOption(options, 'minFanIn', 5, 1, 100_000);
+    const maxTraversalDepth = integerOption(
+      options,
+      'maxTraversalDepth',
+      20,
+      1,
+      100,
+    );
+    const graph = context.dependencyGraph;
+    if (graph === undefined) return [];
+    const changedPaths = new Set(context.changedFiles.map(({ path }) => path));
+    return graph.metrics().flatMap((metric): RuleMatch[] => {
+      if (!changedPaths.has(metric.path) || metric.fanIn < minFanIn) return [];
+      const directDependents = graph.directDependents(metric.path);
+      const transitive = graph.transitiveDependents(
+        metric.path,
+        maxTraversalDepth,
+      );
+      const affectedPaths = [
+        metric.path,
+        ...transitive.dependents.map(({ path }) => path),
+      ];
+      return [
+        {
+          evidence: {
+            kind: 'dependency-impact',
+            summary: `${metric.path} has ${metric.fanIn} direct dependent(s)`,
+            data: {
+              path: metric.path,
+              fanIn: metric.fanIn,
+              fanOut: metric.fanOut,
+              minFanIn,
+              directDependents,
+              transitiveDependents: transitive.dependents,
+              maxTraversalDepth,
+              truncated: transitive.truncated,
+            },
+            sourcePaths: [metric.path],
+          },
+          finding: {
+            title: `High-fan-in module changed: ${metric.path}`,
+            severity:
+              transitive.dependents.length >= minFanIn * 2 ? 'high' : 'medium',
+            explanation:
+              'A changed module has at least the configured number of direct dependents.',
+            affectedPaths,
+            remediation:
+              'Review compatibility for direct and transitive dependents and target tests at the reported blast radius.',
+          },
+        },
+      ];
+    });
+  },
+};
+
+export const publicExportRule: RiskRule = {
+  id: 'public-export',
+  defaultWeight: 25,
+  evaluate(context) {
+    const changes = [...(context.publicExportChanges ?? [])].sort(
+      (left, right) =>
+        compareText(left.path, right.path) ||
+        compareText(left.exportName, right.exportName) ||
+        compareText(left.change, right.change),
+    );
+    if (changes.length === 0) return [];
+    const affectedPaths = [...new Set(changes.map(({ path }) => path))].sort(
+      compareText,
+    );
+    return [
+      {
+        evidence: {
+          kind: 'public-api',
+          summary: `${changes.length} public export change(s) detected`,
+          data: { changes },
+          sourcePaths: affectedPaths,
+        },
+        finding: {
+          title: 'Public exports changed',
+          severity: changes.some(({ change }) => change !== 'added')
+            ? 'high'
+            : 'medium',
+          explanation:
+            'The supplied TypeScript public-surface comparison reports added, modified, or removed exports.',
+          affectedPaths,
+          remediation:
+            'Review consumer compatibility and update release notes, migration guidance, or versioning as required.',
+        },
+      },
+    ];
+  },
+};
+
 export const dependencyManifestRule = categoryRule({
   id: 'dependency-manifest',
   title: 'Dependency files changed',
@@ -201,9 +298,11 @@ export const infrastructureRule = categoryRule({
 
 export const DEFAULT_RULES = [
   dependencyManifestRule,
+  highFanInRule,
   infrastructureRule,
   largeChangeRule,
   migrationRule,
   multiAreaRule,
+  publicExportRule,
   sensitivePathRule,
 ] as const;

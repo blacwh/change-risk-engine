@@ -36,8 +36,9 @@ Pluggable rules, sensitive paths, public API, migrations, infrastructure, tests,
 Status: in progress. The deterministic rule engine and its stable evidence
 linking are complete. Large-change, multi-area, sensitive-path,
 dependency-manifest, migration, and infrastructure policies are implemented and
-documented. Graph-aware rules, public-export detection, test-aware policies,
-mitigations, and transparent score aggregation remain.
+documented. High-fan-in blast-radius and public-export evidence policies are
+also implemented. Public-surface comparison, test-aware policies, mitigations,
+and transparent score aggregation remain.
 
 ## Phase 4 — CLI release
 
