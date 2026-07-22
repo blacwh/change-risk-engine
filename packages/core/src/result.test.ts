@@ -57,4 +57,24 @@ describe('analysis result schema v1', () => {
       /Score must equal/,
     );
   });
+
+  it('rejects findings omitted from or duplicated across contributions', () => {
+    expect(() =>
+      parseAnalysisResult({
+        ...validResult,
+        score: 0,
+        scoreContributions: [],
+      }),
+    ).toThrow(/missing a score contribution/);
+    expect(() =>
+      parseAnalysisResult({
+        ...validResult,
+        score: 40,
+        scoreContributions: [
+          { ruleId: 'large-change', findingIds: ['f1'], weight: 20 },
+          { ruleId: 'large-change', findingIds: ['f1'], weight: 20 },
+        ],
+      }),
+    ).toThrow(/rule ids must be unique|counted more than once/);
+  });
 });

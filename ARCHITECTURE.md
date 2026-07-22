@@ -204,7 +204,16 @@ dependency-manifest, migration, and infrastructure rules. Graph-aware and
 public-export rules consume explicit dependency-graph and public-surface
 evidence through the same context. Public entry-point selection and comparison
 remain an adapter/orchestration responsibility; rules never load or execute
-target configuration. Test-aware rules follow in the next Phase 3 slice.
+target configuration.
+
+Test-aware policy consumes explicit source-to-test relationships. Missing-test
+findings distinguish an explicit empty relationship from absent evidence, and
+the tests-added mitigation only recognizes new tests related to source changed
+in the same analysis. Scoring groups findings by stable rule ID. Positive
+weights establish the available score before negative mitigations are applied;
+mitigation is capped at zero and its effective contribution remains visible.
+The result schema requires every finding to appear in exactly one uniquely
+identified rule contribution.
 
 ## Configuration
 

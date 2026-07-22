@@ -7,9 +7,11 @@ import {
   DEFAULT_RULES,
   highFanInRule,
   largeChangeRule,
+  missingRelatedTestsRule,
   multiAreaRule,
   publicExportRule,
   sensitivePathRule,
+  testsAddedRule,
 } from './rules.js';
 
 function file(
@@ -271,5 +273,100 @@ describe('dependency and public-surface rules', () => {
         [publicExportRule],
       ),
     ).toThrow(/invalid fields/);
+  });
+});
+
+describe('test-evidence rules', () => {
+  const testContext: RuleContext = {
+    changedFiles: [
+      file('src/auth.ts', ['source']),
+      { ...file('test/auth.test.ts', ['source', 'test']), status: 'added' },
+      file('src/billing.ts', ['source']),
+    ],
+    sensitiveAreas: [],
+    testRelationships: [
+      { sourcePath: 'src/billing.ts', testPaths: ['test/billing.test.ts'] },
+      { sourcePath: 'src/auth.ts', testPaths: ['test/auth.test.ts'] },
+    ],
+  };
+
+  it('finds changed sources whose explicitly related tests did not change', () => {
+    const result = evaluateRules(testContext, [missingRelatedTestsRule]);
+    expect(result.findings).toHaveLength(1);
+    expect(result.findings[0]).toMatchObject({
+      title: 'No related test changed: src/billing.ts',
+      affectedPaths: ['src/billing.ts', 'test/billing.test.ts'],
+      weight: 20,
+    });
+  });
+
+  it('mitigates only tests added for changed related source files', () => {
+    const result = evaluateRules(testContext, [testsAddedRule]);
+    expect(result.findings[0]).toMatchObject({
+      title: 'Related tests added',
+      severity: 'info',
+      weight: -10,
+    });
+    expect(result.evidence[0]?.data).toEqual({
+      sourcePaths: ['src/auth.ts'],
+      testPaths: ['test/auth.test.ts'],
+    });
+  });
+
+  it('does not treat deleted or unrelated tests as coverage evidence', () => {
+    const result = evaluateRules(
+      {
+        changedFiles: [
+          file('src/auth.ts', ['source']),
+          {
+            ...file('test/auth.test.ts', ['source', 'test']),
+            status: 'deleted',
+          },
+          {
+            ...file('test/unrelated.test.ts', ['source', 'test']),
+            status: 'added',
+          },
+        ],
+        sensitiveAreas: [],
+        testRelationships: [
+          { sourcePath: 'src/auth.ts', testPaths: ['test/auth.test.ts'] },
+        ],
+      },
+      [missingRelatedTestsRule, testsAddedRule],
+    );
+    expect(result.findings.map(({ ruleId }) => ruleId)).toEqual([
+      'missing-related-tests',
+    ]);
+  });
+
+  it('rejects duplicate or unbounded test relationships', () => {
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [],
+          sensitiveAreas: [],
+          testRelationships: [
+            { sourcePath: 'src/a.ts', testPaths: [] },
+            { sourcePath: 'src/a.ts', testPaths: ['test/a.test.ts'] },
+          ],
+        },
+        [missingRelatedTestsRule],
+      ),
+    ).toThrow(/source paths must be unique/);
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [],
+          sensitiveAreas: [],
+          testRelationships: [
+            {
+              sourcePath: 'src/a.ts',
+              testPaths: ['test/a.test.ts', 'test/a.test.ts'],
+            },
+          ],
+        },
+        [missingRelatedTestsRule],
+      ),
+    ).toThrow(/test paths must be unique/);
   });
 });

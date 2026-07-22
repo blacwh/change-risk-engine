@@ -262,6 +262,118 @@ export const publicExportRule: RiskRule = {
   },
 };
 
+export const missingRelatedTestsRule: RiskRule = {
+  id: 'missing-related-tests',
+  defaultWeight: 20,
+  evaluate(context) {
+    const changedSources = new Set(
+      context.changedFiles
+        .filter(
+          ({ categories }) =>
+            categories.includes('source') && !categories.includes('test'),
+        )
+        .map(({ path }) => path),
+    );
+    const changedTests = new Set(
+      context.changedFiles
+        .filter(
+          ({ categories, status }) =>
+            categories.includes('test') && status !== 'deleted',
+        )
+        .map(({ path }) => path),
+    );
+    return [...(context.testRelationships ?? [])]
+      .sort((left, right) => compareText(left.sourcePath, right.sourcePath))
+      .flatMap((relationship): readonly RuleMatch[] => {
+        if (!changedSources.has(relationship.sourcePath)) return [];
+        const testPaths = [...relationship.testPaths].sort(compareText);
+        const changedRelatedTests = testPaths.filter((path) =>
+          changedTests.has(path),
+        );
+        if (changedRelatedTests.length > 0) return [];
+        return [
+          {
+            evidence: {
+              kind: 'test-relationship',
+              summary: `No related test changed for ${relationship.sourcePath}`,
+              data: {
+                sourcePath: relationship.sourcePath,
+                relatedTests: testPaths,
+                changedRelatedTests,
+              },
+              sourcePaths: [relationship.sourcePath, ...testPaths],
+            },
+            finding: {
+              title: `No related test changed: ${relationship.sourcePath}`,
+              severity: 'medium',
+              explanation:
+                'A changed source file has explicit test-relationship evidence but none of those tests changed.',
+              affectedPaths: [relationship.sourcePath, ...testPaths],
+              remediation:
+                'Add or update a related test, or document why existing coverage is sufficient for this change.',
+            },
+          },
+        ];
+      });
+  },
+};
+
+export const testsAddedRule: RiskRule = {
+  id: 'tests-added',
+  defaultWeight: -10,
+  evaluate(context) {
+    const changedSources = new Set(
+      context.changedFiles
+        .filter(
+          ({ categories }) =>
+            categories.includes('source') && !categories.includes('test'),
+        )
+        .map(({ path }) => path),
+    );
+    const addedTests = new Set(
+      context.changedFiles
+        .filter(
+          ({ categories, status }) =>
+            categories.includes('test') && status === 'added',
+        )
+        .map(({ path }) => path),
+    );
+    const relatedSources = new Set<string>();
+    const relatedAddedTests = new Set<string>();
+    for (const relationship of context.testRelationships ?? []) {
+      if (!changedSources.has(relationship.sourcePath)) continue;
+      for (const testPath of relationship.testPaths) {
+        if (addedTests.has(testPath)) {
+          relatedSources.add(relationship.sourcePath);
+          relatedAddedTests.add(testPath);
+        }
+      }
+    }
+    if (relatedAddedTests.size === 0) return [];
+    const sourcePaths = [...relatedSources].sort(compareText);
+    const testPaths = [...relatedAddedTests].sort(compareText);
+    return [
+      {
+        evidence: {
+          kind: 'test-relationship',
+          summary: `${testPaths.length} related test file(s) added`,
+          data: { sourcePaths, testPaths },
+          sourcePaths: [...sourcePaths, ...testPaths],
+        },
+        finding: {
+          title: 'Related tests added',
+          severity: 'info',
+          explanation:
+            'New test files are explicitly related to source files changed in the same analysis.',
+          affectedPaths: [...sourcePaths, ...testPaths],
+          remediation:
+            'Review that the new tests exercise the behavior and failure modes introduced by the source changes.',
+        },
+      },
+    ];
+  },
+};
+
 export const dependencyManifestRule = categoryRule({
   id: 'dependency-manifest',
   title: 'Dependency files changed',
@@ -302,7 +414,9 @@ export const DEFAULT_RULES = [
   infrastructureRule,
   largeChangeRule,
   migrationRule,
+  missingRelatedTestsRule,
   multiAreaRule,
   publicExportRule,
   sensitivePathRule,
+  testsAddedRule,
 ] as const;

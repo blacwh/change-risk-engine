@@ -5,9 +5,11 @@ export {
   infrastructureRule,
   largeChangeRule,
   migrationRule,
+  missingRelatedTestsRule,
   multiAreaRule,
   publicExportRule,
   sensitivePathRule,
+  testsAddedRule,
 } from './rules.js';
 export {
   evaluateRules,
@@ -17,4 +19,10 @@ export {
   type RuleEvaluation,
   type RuleMatch,
   type RuleSetting,
+  type TestRelationship,
 } from './engine.js';
+export {
+  scoreRuleEvaluation,
+  type RiskThresholds,
+  type ScoredRuleEvaluation,
+} from './scoring.js';

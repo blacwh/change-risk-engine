@@ -15,8 +15,12 @@ Every result records:
 
 Evidence and finding IDs must be unique. Unknown fields, broken references,
 unsupported versions, non-finite weights, and hidden score contributions are
-rejected. Volatile timestamps and durations are intentionally excluded from the
-canonical result so identical inputs can produce identical output.
+rejected. Contribution rule IDs are unique, and every finding must be counted
+exactly once by the contribution for its own rule. Mitigating contributions can
+be capped at zero-score and therefore need not equal their finding's configured
+weight; the effective contribution is the reported value. Volatile timestamps
+and durations are intentionally excluded from the canonical result so identical
+inputs can produce identical output.
 
 The current category vocabulary is `source`, `test`, `documentation`,
 `dependency`, `lockfile`, `generated`, `infrastructure`, `ci`, `migration`,
