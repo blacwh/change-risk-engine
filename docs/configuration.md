@@ -8,7 +8,9 @@ keys and unsupported schema versions.
   "schemaVersion": 1,
   "ignorePatterns": ["dist/**"],
   "analysis": {
+    "maxEntries": 100000,
     "maxFileBytes": 1000000,
+    "maxFiles": 10000,
     "maxTraversalDepth": 20
   },
   "thresholds": {
@@ -26,6 +28,6 @@ keys and unsupported schema versions.
 ```
 
 Omitted sections receive deterministic defaults. Thresholds must increase from
-moderate to high to critical. File-size and graph-depth limits are positive and
-bounded. Pattern syntax is stored as data in v1 and will be interpreted by the
-later classification and policy capabilities.
+moderate to high to critical. Directory-entry, file-count, file-size, and
+graph-depth limits are positive and bounded. Pattern syntax is stored as data in
+v1 and will be interpreted by later policy capabilities.

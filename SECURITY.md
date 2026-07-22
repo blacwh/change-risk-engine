@@ -23,6 +23,12 @@ Diff commands place resolved object IDs before a terminating `--` and use
 NUL-delimited output so spaces, tabs, and newlines in paths are data rather than
 command or record delimiters.
 
+The TypeScript adapter skips discovered symlinks and canonicalizes each file
+inside the repository root before opening it with no-follow semantics. Directory
+entries, source-file count, and source bytes are bounded. Parsing uses the
+compiler API only and never loads target configuration, plugins, dependencies,
+or executable modules. Issues omit source text and raw parser messages.
+
 Any future build/test execution must be opt-in, isolated, and clearly unsafe for untrusted code.
 
 Report vulnerabilities through private security advisories.

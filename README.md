@@ -25,7 +25,10 @@ revisions, and controlled temporary repository fixtures support integration
 testing. Changed-file collection includes line statistics, renames, binary files,
 and exact analyzed commit IDs. Deterministic file classification plus validated
 terminal and JSON report skeletons complete the initial Git-evidence phase.
-TypeScript discovery and dependency analysis are next.
+The TypeScript adapter now performs bounded source discovery and static import
+indexing without loading target configuration or dependencies. Incomplete reads,
+syntax errors, skipped symlinks, and reached limits are returned as explicit
+issues. Module resolution and graph analysis remain in progress.
 
 ## Development
 
