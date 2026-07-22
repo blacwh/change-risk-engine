@@ -28,6 +28,12 @@ export const changeRiskConfigSchema = z
           .max(100_000_000)
           .default(1_000_000),
         maxFiles: z.number().int().positive().max(100_000).default(10_000),
+        maxGraphEdges: z
+          .number()
+          .int()
+          .positive()
+          .max(1_000_000)
+          .default(1_000_000),
         maxTraversalDepth: z.number().int().positive().max(100).default(20),
       })
       .strict()
@@ -35,6 +41,7 @@ export const changeRiskConfigSchema = z
         maxEntries: 100_000,
         maxFileBytes: 1_000_000,
         maxFiles: 10_000,
+        maxGraphEdges: 1_000_000,
         maxTraversalDepth: 20,
       }),
     thresholds: thresholdsSchema.default({

@@ -35,6 +35,11 @@ rejects configuration paths outside the repository, and does not follow
 `extends`, inspect `node_modules`, evaluate package exports, or invoke TypeScript
 plugins. Unresolved issues include paths and specifiers but no source excerpts.
 
+Graph construction validates normalized nodes and known edge endpoints, caps
+nodes and edges, deduplicates input, and performs cycle analysis iteratively.
+Transitive dependent traversal requires a depth from 1 through 100 and explicitly
+reports truncation rather than implying a complete blast radius.
+
 Any future build/test execution must be opt-in, isolated, and clearly unsafe for untrusted code.
 
 Report vulnerabilities through private security advisories.

@@ -11,6 +11,7 @@ keys and unsupported schema versions.
     "maxEntries": 100000,
     "maxFileBytes": 1000000,
     "maxFiles": 10000,
+    "maxGraphEdges": 1000000,
     "maxTraversalDepth": 20
   },
   "thresholds": {
@@ -28,6 +29,6 @@ keys and unsupported schema versions.
 ```
 
 Omitted sections receive deterministic defaults. Thresholds must increase from
-moderate to high to critical. Directory-entry, file-count, file-size, and
-graph-depth limits are positive and bounded. Pattern syntax is stored as data in
-v1 and will be interpreted by later policy capabilities.
+moderate to high to critical. Directory-entry, file-count, file-size, graph-edge,
+and graph-depth limits are positive and bounded. Pattern syntax is stored as data
+in v1 and will be interpreted by later policy capabilities.

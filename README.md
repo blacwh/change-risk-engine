@@ -31,7 +31,11 @@ syntax errors, skipped symlinks, and reached limits are returned as explicit
 issues. Repository module resolution covers relative paths, directory indexes,
 TypeScript substitution for JavaScript extensions, and bounded root
 `tsconfig.json` aliases. Missing internal references are explicit issues;
-unmatched bare package imports remain external. Graph analysis is next.
+unmatched bare package imports remain external. The directed graph exposes
+fan-in, fan-out, direct and bounded transitive
+dependents, strongly connected components, cycles, and package-boundary
+crossings. Phase 2 is complete; deterministic rules and transparent scoring are
+the next phase.
 
 ## Development
 
