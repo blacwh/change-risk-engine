@@ -13,8 +13,8 @@
 - [x] File classification
 - [x] TypeScript/JavaScript discovery
 - [x] Static import parsing
-- [ ] Relative and tsconfig alias resolution
-- [ ] Unresolved import reporting
+- [x] Relative and tsconfig alias resolution
+- [x] Unresolved import reporting
 - [ ] Directed dependency graph
 - [ ] Fan-in, fan-out, direct and transitive dependents
 

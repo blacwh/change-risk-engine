@@ -24,5 +24,20 @@ determine whether the specifier maps to a repository module.
 
 Syntax diagnostics record only file, diagnostic code, line, and column. The
 adapter can still return imports recovered from a syntactically incomplete file,
-but consumers must reduce confidence whenever issues are present. It never loads
-`tsconfig.json`, installs packages, resolves plugins, or executes target code.
+but consumers must reduce confidence whenever issues are present. Indexing alone
+does not load configuration, install packages, resolve plugins, or execute target code.
+
+## Module resolution
+
+Resolution operates only on discovered module paths. Relative imports support
+extensionless files, directory `index` files, and TypeScript substitution for
+`.js`, `.jsx`, `.mjs`, and `.cjs` specifiers. A root `tsconfig.json` may provide
+JSONC `baseUrl` and single-wildcard `paths` mappings. Mapping targets must remain
+inside the repository.
+
+For safety and explicitness, `extends` is reported but not followed. Package
+exports, package `imports`, project references, and target dependencies are not
+read. A relative or matched-alias miss becomes an `unresolved-import` issue.
+An unmatched bare specifier such as `react` is classified as external because
+the analyzer neither needs nor installs that package to build the repository
+graph.

@@ -29,6 +29,12 @@ entries, source-file count, and source bytes are bounded. Parsing uses the
 compiler API only and never loads target configuration, plugins, dependencies,
 or executable modules. Issues omit source text and raw parser messages.
 
+Module resolution compares specifiers only with the bounded in-memory module
+set. The adapter reads at most the root `tsconfig.json` with no-follow semantics,
+rejects configuration paths outside the repository, and does not follow
+`extends`, inspect `node_modules`, evaluate package exports, or invoke TypeScript
+plugins. Unresolved issues include paths and specifiers but no source excerpts.
+
 Any future build/test execution must be opt-in, isolated, and clearly unsafe for untrusted code.
 
 Report vulnerabilities through private security advisories.
