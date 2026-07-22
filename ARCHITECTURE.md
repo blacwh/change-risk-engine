@@ -120,6 +120,12 @@ bounded output, and timeouts. Revision resolution places untrusted revision text
 after `--end-of-options`, verifies that it names a commit, and returns only a
 full object ID. Raw Git stderr is not exposed to callers.
 
+Changed-file collection runs NUL-delimited `--name-status` and `--numstat`
+queries between the resolved object IDs. It correlates both outputs by exact
+path, retains the previous path for renames, maps type changes to modifications,
+and represents binary line counts as zero with an explicit `binary` flag.
+Unexpected statuses or mismatched Git outputs fail closed.
+
 ## Dependency graph
 
 Required operations:

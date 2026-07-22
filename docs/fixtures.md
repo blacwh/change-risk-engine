@@ -18,6 +18,7 @@ Each fixture should document:
 - known false-positive and false-negative coverage.
 
 Current integration coverage includes multi-commit revision resolution,
-option-like revision input, invalid repositories, path traversal, and cleanup.
+option-like revision input, invalid repositories, path traversal, cleanup,
+added/modified/deleted files, exact renames, binary files, and unusual paths.
 Later fixtures will cover shared modules, public API changes, authentication,
 migrations, related tests, cycles, parse failures, and monorepos.

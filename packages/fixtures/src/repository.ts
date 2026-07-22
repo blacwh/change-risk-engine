@@ -16,7 +16,7 @@ const execFileAsync = promisify(execFile);
 
 export type FixtureCommit = {
   message: string;
-  files: Readonly<Record<string, string | null>>;
+  files: Readonly<Record<string, string | Uint8Array | null>>;
 };
 
 export type FixtureRepository = {

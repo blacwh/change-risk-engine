@@ -8,8 +8,8 @@
 - [x] Versioned configuration schema
 - [x] Fixture repository framework
 - [x] Git revision resolution
-- [ ] Name-status and numstat
-- [ ] Rename and binary handling
+- [x] Name-status and numstat
+- [x] Rename and binary handling
 - [ ] File classification
 - [ ] TypeScript/JavaScript discovery
 - [ ] Static import parsing

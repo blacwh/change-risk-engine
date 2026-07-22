@@ -16,6 +16,10 @@ handling are next.
 
 Revision resolution, file changes, line statistics, renames, categories, terminal and JSON skeleton.
 
+Status: in progress. Revision resolution, changed-file status, line statistics,
+rename detection, and binary handling are complete. File classification and the
+initial report skeleton remain.
+
 ## Phase 2 — TypeScript graph
 
 Import indexing, resolution, dependency graph, direct/transitive dependents, fan-in/fan-out, package boundaries, incomplete parsing.

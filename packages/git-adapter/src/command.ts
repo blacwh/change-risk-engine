@@ -33,7 +33,7 @@ export async function runGit(
     return stdout;
   } catch {
     throw new GitCommandError(
-      'Git could not resolve the requested repository evidence',
+      'Git could not collect the requested repository evidence',
     );
   }
 }
