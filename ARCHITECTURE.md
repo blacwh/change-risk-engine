@@ -158,6 +158,13 @@ Required operations:
 - package boundaries;
 - incomplete parse areas.
 
+The graph uses importer-to-dependency edges, deduplicated and sorted at
+construction. Fan-in counts direct dependents; fan-out counts direct dependencies.
+Reverse breadth-first traversal reports dependent distance and whether the
+configured depth truncated the result. Strongly connected components use an
+iterative algorithm to avoid call-stack growth. Construction bounds nodes and
+edges, and package crossings use the longest caller-supplied package-root match.
+
 ## Rule engine
 
 ```ts

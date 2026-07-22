@@ -15,8 +15,8 @@
 - [x] Static import parsing
 - [x] Relative and tsconfig alias resolution
 - [x] Unresolved import reporting
-- [ ] Directed dependency graph
-- [ ] Fan-in, fan-out, direct and transitive dependents
+- [x] Directed dependency graph
+- [x] Fan-in, fan-out, direct and transitive dependents
 
 ## P1
 

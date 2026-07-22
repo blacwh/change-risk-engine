@@ -11,6 +11,7 @@ describe('change-risk configuration schema v1', () => {
         maxEntries: 100_000,
         maxFileBytes: 1_000_000,
         maxFiles: 10_000,
+        maxGraphEdges: 1_000_000,
         maxTraversalDepth: 20,
       },
       thresholds: { moderate: 20, high: 50, critical: 80 },

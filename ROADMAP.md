@@ -22,11 +22,12 @@ initial validated terminal/JSON report skeleton are complete.
 
 Import indexing, resolution, dependency graph, direct/transitive dependents, fan-in/fan-out, package boundaries, incomplete parsing.
 
-Status: in progress. Bounded TypeScript/JavaScript discovery and static import
+Status: complete. Bounded TypeScript/JavaScript discovery and static import
 indexing are complete with explicit syntax, symlink, read, size, and traversal
 issues. Repository-only relative, index, extension-substitution, `baseUrl`, and
 `paths` resolution are complete with unresolved-import evidence. Directed graph
-analysis remains.
+analysis is complete, including fan-in/fan-out, bounded dependents, iterative
+cycle detection, and caller-supplied package-boundary crossings.
 
 ## Phase 3 — Rules and scoring
 
