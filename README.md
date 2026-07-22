@@ -44,8 +44,10 @@ consumes explicit public-surface comparison evidence. Public-surface comparison,
 and test-relationship evidence feed two test-aware policies. Transparent scoring
 groups every finding by rule, applies visible positive and mitigating weights,
 caps the total at zero, and classifies it with configured thresholds. The Phase
-3 rule/scoring layer is complete; evidence orchestration remains before the CLI
-release phase.
+3 rule/scoring layer is complete. Resolved-revision file reads now support
+bounded public-surface comparison without checking out or executing target code,
+and conventional source-to-test mapping supplies explicit relationship evidence.
+Phase 3 is complete; end-to-end CLI composition is next.
 
 ## Development
 

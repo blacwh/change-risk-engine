@@ -134,6 +134,11 @@ bounded output, and timeouts. Revision resolution places untrusted revision text
 after `--end-of-options`, verifies that it names a commit, and returns only a
 full object ID. Raw Git stderr is not exposed to callers.
 
+Revision content reads accept only full resolved object IDs and normalized
+repository paths. They query the blob size before reading it with `git cat-file`
+and enforce caller-bounded bytes and timeouts. This avoids checkout mutation,
+shell parsing, text conversion, and target filters.
+
 Changed-file collection runs NUL-delimited `--name-status` and `--numstat`
 queries between the resolved object IDs. It correlates both outputs by exact
 path, retains the previous path for renames, maps type changes to modifications,
@@ -214,6 +219,16 @@ weights establish the available score before negative mitigations are applied;
 mitigation is capped at zero and its effective contribution remains visible.
 The result schema requires every finding to appear in exactly one uniquely
 identified rule contribution.
+
+Public-surface comparison operates on caller-selected TypeScript source
+snapshots from resolved revisions. It compares exported declaration signatures,
+re-exports, and export assignments without type checking or target execution.
+Parse and source-size failures suppress inference for the affected path and are
+returned as explicit issues. Function and public method bodies plus private
+class members are excluded from signatures. Conventional test mapping compares
+normalized module identities across colocated, `src`, `test`, `tests`, `spec`,
+and `__tests__` layouts; every non-test module receives an explicit relationship,
+including an empty one.
 
 ## Configuration
 
