@@ -19,6 +19,9 @@ Requirements:
 The Git adapter never invokes a shell. It passes fixed command arguments to Git,
 uses `--end-of-options` before untrusted revision text, bounds command duration
 and output, and exposes stable errors rather than raw subprocess stderr.
+Diff commands place resolved object IDs before a terminating `--` and use
+NUL-delimited output so spaces, tabs, and newlines in paths are data rather than
+command or record delimiters.
 
 Any future build/test execution must be opt-in, isolated, and clearly unsafe for untrusted code.
 

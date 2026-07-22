@@ -22,7 +22,8 @@ The repository foundation is complete. Package boundaries, strict TypeScript,
 formatting, linting, tests, builds, and CI are configured. Versioned configuration
 and result schemas are available. The Git adapter can safely resolve commit
 revisions, and controlled temporary repository fixtures support integration
-testing. End-to-end analysis and diff collection are not yet implemented.
+testing. Changed-file collection includes line statistics, renames, binary files,
+and exact analyzed commit IDs. Classification and end-to-end analysis are next.
 
 ## Development
 
