@@ -201,7 +201,10 @@ Initial rules:
 
 The first policy slice implements large-change, multi-area, sensitive-path,
 dependency-manifest, migration, and infrastructure rules. Graph-aware and
-test-aware rules follow in the next Phase 3 slices.
+public-export rules consume explicit dependency-graph and public-surface
+evidence through the same context. Public entry-point selection and comparison
+remain an adapter/orchestration responsibility; rules never load or execute
+target configuration. Test-aware rules follow in the next Phase 3 slice.
 
 ## Configuration
 

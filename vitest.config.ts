@@ -8,6 +8,9 @@ export default defineConfig({
       '@change-risk/core': fileURLToPath(
         new URL('./packages/core/src/index.ts', import.meta.url),
       ),
+      '@change-risk/dependency-graph': fileURLToPath(
+        new URL('./packages/dependency-graph/src/index.ts', import.meta.url),
+      ),
     },
   },
   test: {

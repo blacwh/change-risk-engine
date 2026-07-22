@@ -11,8 +11,10 @@ disabled or assigned a finite weight through configuration.
 | [`multi-area-change`](multi-area-change.md) | 15 | Change crosses several top-level repository areas |
 | [`sensitive-path`](sensitive-path.md) | 25 | Changed paths match a configured sensitive area |
 | [`dependency-manifest`](dependency-manifest.md) | 15 | Dependency manifests or lockfiles changed |
+| [`high-fan-in`](high-fan-in.md) | 25 | A changed module has many direct dependents |
 | [`migration`](migration.md) | 25 | Migration-classified paths changed |
 | [`infrastructure`](infrastructure.md) | 25 | Infrastructure or CI paths changed |
+| [`public-export`](public-export.md) | 25 | A supplied public-surface comparison reports export changes |
 
 Every rule document identifies its stable ID, evidence, default weight,
 configuration, remediation guidance, and known false-positive and false-negative

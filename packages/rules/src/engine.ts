@@ -1,4 +1,5 @@
 import type { ChangedFile, Evidence, Finding } from '@change-risk/core';
+import type { DirectedDependencyGraph } from '@change-risk/dependency-graph';
 
 export type RuleSetting = {
   enabled?: boolean;
@@ -8,7 +9,15 @@ export type RuleSetting = {
 
 export type RuleContext = {
   changedFiles: readonly ChangedFile[];
+  dependencyGraph?: DirectedDependencyGraph;
+  publicExportChanges?: readonly PublicExportChange[];
   sensitiveAreas: readonly { id: string; patterns: readonly string[] }[];
+};
+
+export type PublicExportChange = {
+  path: string;
+  exportName: string;
+  change: 'added' | 'modified' | 'removed';
 };
 
 export type RuleMatch = {
@@ -39,6 +48,27 @@ export function evaluateRules(
   rules: readonly RiskRule[],
   settings: Readonly<Record<string, RuleSetting>> = {},
 ): RuleEvaluation {
+  const publicExportChanges = context.publicExportChanges ?? [];
+  if (publicExportChanges.length > 100_000) {
+    throw new Error('Public export change limit exceeded');
+  }
+  const publicExportKeys = new Set<string>();
+  for (const change of publicExportChanges) {
+    if (
+      change.path.length === 0 ||
+      change.path.length > 1_000 ||
+      change.exportName.length === 0 ||
+      change.exportName.length > 1_000 ||
+      !['added', 'modified', 'removed'].includes(change.change)
+    ) {
+      throw new Error('Public export changes contain invalid fields');
+    }
+    const key = `${change.path}\0${change.exportName}\0${change.change}`;
+    if (publicExportKeys.has(key)) {
+      throw new Error('Public export changes must be unique');
+    }
+    publicExportKeys.add(key);
+  }
   const sensitiveIds = context.sensitiveAreas.map(({ id }) => id);
   if (new Set(sensitiveIds).size !== sensitiveIds.length) {
     throw new Error('Sensitive area ids must be unique');
