@@ -10,7 +10,7 @@
 - [x] Git revision resolution
 - [x] Name-status and numstat
 - [x] Rename and binary handling
-- [ ] File classification
+- [x] File classification
 - [ ] TypeScript/JavaScript discovery
 - [ ] Static import parsing
 - [ ] Relative and tsconfig alias resolution

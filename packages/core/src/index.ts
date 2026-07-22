@@ -8,3 +8,11 @@ export {
   type Evidence,
   type Finding,
 } from './result.js';
+export {
+  FILE_CATEGORIES,
+  classifyChangedFiles,
+  classifyFile,
+  type ClassifiableFile,
+  type ClassifiedFile,
+  type FileCategory,
+} from './classification.js';

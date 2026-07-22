@@ -5,7 +5,10 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@change-risk/core": "0.0.0"
+  },
   "scripts": {
-    "build": "tsc --project tsconfig.json"
+    "build": "tsc --build tsconfig.json"
   }
 }

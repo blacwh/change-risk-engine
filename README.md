@@ -23,7 +23,9 @@ formatting, linting, tests, builds, and CI are configured. Versioned configurati
 and result schemas are available. The Git adapter can safely resolve commit
 revisions, and controlled temporary repository fixtures support integration
 testing. Changed-file collection includes line statistics, renames, binary files,
-and exact analyzed commit IDs. Classification and end-to-end analysis are next.
+and exact analyzed commit IDs. Deterministic file classification plus validated
+terminal and JSON report skeletons complete the initial Git-evidence phase.
+TypeScript discovery and dependency analysis are next.
 
 ## Development
 

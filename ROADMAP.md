@@ -6,19 +6,17 @@ Capability-based; no calendar or usage-limit assumptions.
 
 Project structure, strict TypeScript, quality tooling, CI, schemas, ADRs, fixture strategy.
 
-Status: in progress. Project structure, strict TypeScript, quality tooling, CI,
+Status: complete. Project structure, strict TypeScript, quality tooling, CI,
 versioned configuration and result schemas, and the initial fixture strategy are
-complete. The deterministic fixture repository framework and revision resolution
-are also complete. Changed-file evidence, line statistics, renames, and binary
-handling are next.
+complete, including the deterministic fixture repository framework.
 
 ## Phase 1 — Git evidence
 
 Revision resolution, file changes, line statistics, renames, categories, terminal and JSON skeleton.
 
-Status: in progress. Revision resolution, changed-file status, line statistics,
-rename detection, and binary handling are complete. File classification and the
-initial report skeleton remain.
+Status: complete. Revision resolution, changed-file status, line statistics,
+rename detection, binary handling, deterministic file classification, and the
+initial validated terminal/JSON report skeleton are complete.
 
 ## Phase 2 — TypeScript graph
 
