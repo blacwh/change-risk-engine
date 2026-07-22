@@ -4,8 +4,8 @@
 
 - [x] Package structure and CI
 - [x] Strict TypeScript and quality commands
-- [ ] Versioned result schema
-- [ ] Versioned configuration schema
+- [x] Versioned result schema
+- [x] Versioned configuration schema
 - [ ] Fixture repository framework
 - [ ] Git revision resolution
 - [ ] Name-status and numstat

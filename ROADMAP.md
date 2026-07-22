@@ -7,8 +7,8 @@ Capability-based; no calendar or usage-limit assumptions.
 Project structure, strict TypeScript, quality tooling, CI, schemas, ADRs, fixture strategy.
 
 Status: in progress. Project structure, strict TypeScript, quality tooling, CI,
-and the initial fixture strategy are complete. Configuration and result schemas
-are the next milestone.
+versioned configuration and result schemas, and the initial fixture strategy are
+complete. The fixture repository framework and Git evidence are next.
 
 ## Phase 1 — Git evidence
 

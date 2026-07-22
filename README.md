@@ -19,8 +19,8 @@ The result is a transparent report. The tool must not present its risk classific
 ## Project status
 
 The repository foundation is complete. Package boundaries, strict TypeScript,
-formatting, linting, tests, builds, and CI are configured. Analysis behavior and
-public schemas have not been implemented yet.
+formatting, linting, tests, builds, and CI are configured. Versioned configuration
+and result schemas are available; analysis behavior has not been implemented yet.
 
 ## Development
 
