@@ -41,3 +41,26 @@ read. A relative or matched-alias miss becomes an `unresolved-import` issue.
 An unmatched bare specifier such as `react` is classified as external because
 the analyzer neither needs nor installs that package to build the repository
 graph.
+
+## Public surfaces
+
+`comparePublicExportSurfaces` compares caller-selected source snapshots from two
+resolved revisions. It recognizes exported declarations, variables, named and
+star re-exports, and export assignments. Function and public method bodies plus
+private class members are excluded so implementation-only edits do not appear as
+surface changes. Added, modified, and removed export names are deterministically
+ordered.
+
+This is a conservative syntactic comparison, not TypeScript type checking.
+Inferred variable/property types, declaration merging, package export maps, and
+runtime mutation can be incomplete. Parse errors and sources over the configured
+byte bound produce explicit issues and suppress comparisons for that path.
+
+## Test relationships
+
+`inferConventionalTestRelationships` maps TypeScript/JavaScript modules using
+colocated `.test`/`.spec` files and normalized `src`, `test`, `tests`, `spec`, and
+`__tests__` directory identities. Results and paths are stable and bounded. Each
+non-test module receives a record; an empty test list means the convention found
+no related test. The mapping is evidence for policy, not proof of coverage or
+test quality.

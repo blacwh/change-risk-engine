@@ -1,4 +1,5 @@
 export { GitCommandError } from './command.js';
+export { readFileAtRevision, type ReadRevisionFileOptions } from './content.js';
 export {
   collectChangedFiles,
   type CollectChangedFilesOptions,

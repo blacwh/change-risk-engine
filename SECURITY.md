@@ -23,6 +23,11 @@ Diff commands place resolved object IDs before a terminating `--` and use
 NUL-delimited output so spaces, tabs, and newlines in paths are data rather than
 command or record delimiters.
 
+Revision file reads accept only full hexadecimal object IDs and normalized
+repository-relative paths. They use `git cat-file`, query blob size before
+content, and enforce byte and timeout bounds. They do not check out revisions,
+invoke a shell, apply text conversion, or expose raw Git errors.
+
 The TypeScript adapter skips discovered symlinks and canonicalizes each file
 inside the repository root before opening it with no-follow semantics. Directory
 entries, source-file count, and source bytes are bounded. Parsing uses the
@@ -39,6 +44,12 @@ Graph construction validates normalized nodes and known edge endpoints, caps
 nodes and edges, deduplicates input, and performs cycle analysis iteratively.
 Transitive dependent traversal requires a depth from 1 through 100 and explicitly
 reports truncation rather than implying a complete blast radius.
+
+Public-surface comparison parses caller-selected source snapshots with the
+TypeScript compiler API. It bounds snapshot count and bytes, reports parse and
+size issues without source excerpts, and does not resolve imports, load package
+metadata, or execute target code. Conventional test mapping is path-only and
+does not run tests or inspect coverage.
 
 Any future build/test execution must be opt-in, isolated, and clearly unsafe for untrusted code.
 

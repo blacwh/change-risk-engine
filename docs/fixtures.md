@@ -19,6 +19,8 @@ Each fixture should document:
 
 Current integration coverage includes multi-commit revision resolution,
 option-like revision input, invalid repositories, path traversal, cleanup,
-added/modified/deleted files, exact renames, binary files, and unusual paths.
-Later fixtures will cover shared modules, public API changes, authentication,
-migrations, related tests, cycles, parse failures, and monorepos.
+added/modified/deleted files, exact renames, binary files, unusual paths, and
+bounded file content at exact revisions. Unit fixtures cover shared modules,
+public API changes, related-test conventions, cycles, and parse failures.
+Broader authentication, migration, and monorepo scenarios remain for end-to-end
+CLI goldens.

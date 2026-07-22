@@ -23,3 +23,15 @@ export {
   type ResolutionConfig,
   type ResolutionIssue,
 } from './resolver.js';
+export {
+  comparePublicExportSurfaces,
+  type PublicApiComparison,
+  type PublicApiIssue,
+  type PublicExportChange,
+  type PublicExportRecord,
+  type SourceSnapshot,
+} from './public-api.js';
+export {
+  inferConventionalTestRelationships,
+  type TestRelationship,
+} from './test-relationships.js';
