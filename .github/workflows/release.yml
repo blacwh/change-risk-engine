@@ -1,0 +1,40 @@
+name: Release CLI
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Package and release
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_VERSION: ${{ github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Check out tag
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22.13'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Run quality gates
+        run: npm run quality
+      - name: Build standalone package
+        run: npm run package:cli
+      - name: Verify fresh installation
+        run: npm run verify:package
+      - name: Write checksums
+        working-directory: dist
+        run: sha256sum *.tgz > SHA256SUMS
+      - name: Create GitHub release
+        run: gh release create "$GITHUB_REF_NAME" dist/*.tgz dist/SHA256SUMS --verify-tag --generate-notes

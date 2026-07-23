@@ -1,0 +1,42 @@
+name: Self analysis
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze repository change
+    runs-on: ubuntu-latest
+    env:
+      BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+      HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Check out analyzed head
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ env.HEAD_SHA }}
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22.13'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build CLI
+        run: npm run build
+      - name: Analyze change
+        run: node apps/cli/dist/run.js analyze --base "$BASE_SHA" --head "$HEAD_SHA" --format json > change-risk-report.json
+      - name: Upload JSON report
+        uses: actions/upload-artifact@v7
+        with:
+          name: change-risk-report
+          path: change-risk-report.json
+          if-no-files-found: error
+          retention-days: 14

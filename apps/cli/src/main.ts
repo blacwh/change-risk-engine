@@ -17,7 +17,11 @@ Options:
   --version
 `;
 
-const VERSION = '0.0.0';
+declare const __CHANGE_RISK_VERSION__: string;
+const VERSION =
+  typeof __CHANGE_RISK_VERSION__ === 'string'
+    ? __CHANGE_RISK_VERSION__
+    : '0.0.0';
 const levels = ['low', 'moderate', 'high', 'critical'] as const;
 type RiskLevel = (typeof levels)[number];
 type FailOn = RiskLevel | 'none';

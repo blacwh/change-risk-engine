@@ -1,9 +1,24 @@
 import { describe, expect, it } from 'vitest';
+import { fileURLToPath } from 'node:url';
 
 import { createFixtureRepository } from '../../../packages/fixtures/src/index.js';
 import { loadRepositoryConfig } from './config.js';
 
 describe('repository configuration loading', () => {
+  it('keeps the documented TypeScript service example valid', async () => {
+    const exampleRoot = fileURLToPath(
+      new URL('../../../examples/typescript-service', import.meta.url),
+    );
+    await expect(
+      loadRepositoryConfig(exampleRoot, undefined),
+    ).resolves.toMatchObject({
+      sensitiveAreas: [{ id: 'authentication', patterns: ['src/auth/**'] }],
+      rules: {
+        'high-fan-in': { options: { minFanIn: 3 } },
+      },
+    });
+  });
+
   it('loads a bounded root config and defaults when the optional file is absent', async () => {
     const configured = await createFixtureRepository([
       {

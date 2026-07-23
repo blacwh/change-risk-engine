@@ -49,10 +49,11 @@ bounded public-surface comparison without checking out or executing target code,
 and conventional source-to-test mapping supplies explicit relationship evidence.
 Phase 3 is complete; end-to-end CLI composition is next.
 
-The initial Phase 4 CLI now composes those capabilities through `change-risk
-analyze`, with terminal or JSON output and an optional classification exit gate.
-Release packaging, examples, and self-analysis automation remain before Phase 4
-is complete.
+The Phase 4 CLI composes those capabilities through `change-risk analyze`, with
+terminal or JSON output and an optional classification exit gate. A standalone
+npm-compatible tarball bundles runtime dependencies, examples cover a small
+TypeScript service, pull requests and `master` generate self-analysis artifacts,
+and version tags create verified GitHub release assets. Phase 4 is complete.
 
 ## Usage
 
@@ -66,6 +67,16 @@ node apps/cli/dist/run.js analyze --base main --head HEAD
 Use `--format json` for the versioned machine-readable result. `--fail-on high`
 returns exit code 2 for high or critical classifications; operational and input
 errors return 1. Run `node apps/cli/dist/run.js --help` for all options.
+
+Release tarballs install without the monorepo:
+
+```bash
+npm install --global ./change-risk-engine-0.1.0.tgz
+change-risk --version
+```
+
+See [`examples/typescript-service`](examples/typescript-service) for a complete
+configuration and representative terminal output.
 
 ## Development
 

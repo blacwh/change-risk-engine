@@ -9,6 +9,20 @@ node apps/cli/dist/run.js analyze --base main --head HEAD
 The command defaults to the current directory, `HEAD~1..HEAD`, terminal output,
 the optional root `.change-risk.json`, and no exit gate.
 
+## Installation
+
+Each version-tagged GitHub release contains a standalone npm-compatible tarball
+and `SHA256SUMS`. After verifying the checksum:
+
+```bash
+npm install --global ./change-risk-engine-0.1.0.tgz
+change-risk analyze --base main --head HEAD
+```
+
+The artifact bundles runtime dependencies and does not require a clone of this
+monorepo. The release pipeline proves this by installing into an empty temporary
+prefix and capturing both version and JSON analysis output.
+
 ## Options
 
 - `--repo <path>` selects the repository.
