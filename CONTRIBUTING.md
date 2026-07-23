@@ -2,6 +2,12 @@
 
 Open an issue before changing schemas, scoring semantics, security boundaries, language support, execution behavior, or plugin architecture. Use an ADR for significant decisions.
 
+AI-assisted and autonomous contributions follow
+[`docs/agent-workflow.md`](docs/agent-workflow.md). Its work-packet boundaries,
+four-hour continuous-run ceiling, merge checkpoints, stop rules, and
+verification matrix apply in addition to the contribution requirements below.
+The timebox never permits skipping tests, review, or required checks.
+
 Pull requests should include:
 
 - problem and scope;
@@ -37,6 +43,11 @@ npm run verify:package
 npm run package:action
 npm run verify:action
 ```
+
+Documentation-only changes may use the narrower verification defined in the
+agent workflow. Any documentation change that alters executable commands,
+generated artifacts, package metadata, or verified technical claims must run
+the corresponding code or packaging checks.
 
 `action-dist/index.js` is generated and committed. Change Action source first,
 rebuild the bundle, and include both in the same pull request; the quality gate
