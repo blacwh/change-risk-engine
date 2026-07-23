@@ -5,6 +5,9 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   resolve: {
     alias: {
+      '@change-risk/cli': fileURLToPath(
+        new URL('./apps/cli/src/index.ts', import.meta.url),
+      ),
       '@change-risk/config': fileURLToPath(
         new URL('./packages/config/src/index.ts', import.meta.url),
       ),

@@ -3,6 +3,7 @@
   "compilerOptions": {
     "noEmit": true,
     "paths": {
+      "@change-risk/cli": ["./apps/cli/src/index.ts"],
       "@change-risk/config": ["./packages/config/src/index.ts"],
       "@change-risk/core": ["./packages/core/src/index.ts"],
       "@change-risk/dependency-graph": [
