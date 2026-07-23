@@ -71,6 +71,10 @@ checkout credentials and uploads its JSON artifact.
 
 Dependency graph viewer, blast-radius highlighting, report viewer, adapters, plugins, additional CI systems.
 
+Status: in progress. A self-contained, no-script HTML viewer now renders the
+complete versioned analysis result from the CLI. Dependency-graph and
+blast-radius visualization are the next visualization milestone.
+
 ## Later
 
 Coverage, ownership, history-based calibration, policy packs, additional languages, constrained optional summaries.

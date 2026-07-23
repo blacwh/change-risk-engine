@@ -24,7 +24,8 @@ deterministic evidence-backed rules, and exposes every effective score
 contribution. The installable CLI and bundled GitHub Action use the same core.
 Release automation verifies fresh CLI installs, while repository self-analysis
 exercises the Action and retains the complete versioned JSON report. Phase 6,
-visualization and ecosystem integrations, is next.
+visualization and ecosystem integrations, is in progress with a static HTML
+report viewer now available.
 
 ## Usage
 
@@ -38,6 +39,15 @@ node apps/cli/dist/run.js analyze --base main --head HEAD
 Use `--format json` for the versioned machine-readable result. `--fail-on high`
 returns exit code 2 for high or critical classifications; operational and input
 errors return 1. Run `node apps/cli/dist/run.js --help` for all options.
+
+Write a self-contained report that opens directly in a browser:
+
+```bash
+change-risk analyze --base main --head HEAD --format html > change-risk-report.html
+```
+
+The HTML viewer has no JavaScript or external assets and displays the complete
+validated result. See [CLI usage](docs/cli.md) for details.
 
 Release tarballs install without the monorepo:
 
@@ -101,6 +111,7 @@ TypeScript and JavaScript repositories.
 - CLI;
 - GitHub Action;
 - JSON output;
+- static HTML report;
 - optional dependency/blast-radius visualizer.
 
 ## Non-goals

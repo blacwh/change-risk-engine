@@ -245,14 +245,24 @@ timestamps so deterministic inputs can remain byte-stable.
 - terminal;
 - JSON;
 - GitHub Markdown;
+- self-contained HTML;
 - exit status;
-- later HTML and visualization.
+- later dependency-graph visualization.
 
 Terminal and JSON reporters validate the shared versioned result at their trust
 boundary. JSON preserves the complete result. The terminal skeleton summarizes
 classification, revisions, line totals, binary count, findings, visible weights,
 effective score contributions, and limitations without color-dependent
 semantics.
+
+The HTML reporter is a static document renderer over the same validated result.
+It includes no script or external resource, applies a restrictive content
+security policy, escapes every repository-derived string, and uses generated
+numeric anchors rather than untrusted IDs in HTML attributes. It presents the
+complete result as summary metrics, proportional contribution bars, findings,
+changed files, evidence records, and limitations. Graph visualization remains a
+separate contract because the version 1 result does not yet carry graph nodes
+and edges.
 
 ## CLI composition
 
@@ -265,7 +275,7 @@ otherwise that evidence is omitted with an explicit limitation. This prevents a
 dirty or moving worktree from being presented as revision evidence.
 
 The CLI reads only bounded no-follow JSON configuration from inside the
-repository. Terminal and JSON formats share the same validated result. Exit 0
+repository. Terminal, JSON, and HTML formats share the same validated result. Exit 0
 means analysis completed without triggering the configured gate, exit 2 means
 the risk classification met that gate, and exit 1 means input or analysis failed.
 

@@ -41,5 +41,7 @@
 - [x] Comment update behavior
 - [x] JSON artifact
 - [x] Fork security
+- [x] Static HTML report viewer
+- [ ] Dependency graph and blast-radius visualization
 - [ ] Visualization
 - [x] Release automation

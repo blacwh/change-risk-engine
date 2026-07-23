@@ -80,6 +80,7 @@ All positive and mitigating contributions are visible. Weights and thresholds ar
 
 - terminal;
 - JSON;
+- self-contained HTML report;
 - GitHub pull-request comment;
 - configurable exit code;
 - optional SARIF-like output when semantically appropriate.

@@ -1,6 +1,10 @@
 import { resolve } from 'node:path';
 
-import { renderJsonReport, renderTerminalReport } from '@change-risk/reporters';
+import {
+  renderHtmlReport,
+  renderJsonReport,
+  renderTerminalReport,
+} from '@change-risk/reporters';
 
 import { analyzeRepository } from './analyze.js';
 
@@ -11,7 +15,7 @@ Options:
   --head <revision>       Head revision (default: HEAD)
   --repo <path>           Repository root (default: current directory)
   --config <path>         Repository-relative JSON config (default: .change-risk.json if present)
-  --format <terminal|json>
+  --format <terminal|json|html>
   --fail-on <none|low|moderate|high|critical>
   --help
   --version
@@ -37,7 +41,7 @@ type AnalyzeArguments = {
   head: string;
   repositoryRoot: string;
   configPath?: string;
-  format: 'json' | 'terminal';
+  format: 'html' | 'json' | 'terminal';
   failOn: FailOn;
 };
 
@@ -57,7 +61,7 @@ function parseAnalyzeArguments(
   let head = 'HEAD';
   let repositoryRoot = workingDirectory;
   let configPath: string | undefined;
-  let format: 'json' | 'terminal' = 'terminal';
+  let format: 'html' | 'json' | 'terminal' = 'terminal';
   let failOn: FailOn = 'none';
   const seen = new Set<string>();
 
@@ -86,8 +90,8 @@ function parseAnalyzeArguments(
       repositoryRoot = resolve(workingDirectory, value);
     else if (option === '--config') configPath = value;
     else if (option === '--format') {
-      if (value !== 'json' && value !== 'terminal') {
-        throw new Error('--format must be terminal or json');
+      if (value !== 'html' && value !== 'json' && value !== 'terminal') {
+        throw new Error('--format must be terminal, json, or html');
       }
       format = value;
     } else {
@@ -145,7 +149,9 @@ export async function runCli(
     const stdout =
       parsed.format === 'json'
         ? renderJsonReport(result)
-        : renderTerminalReport(result);
+        : parsed.format === 'html'
+          ? renderHtmlReport(result)
+          : renderTerminalReport(result);
     return {
       stdout,
       stderr: '',
