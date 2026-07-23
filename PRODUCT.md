@@ -90,7 +90,8 @@ All positive and mitigating contributions are visible. Weights and thresholds ar
 The first release can analyze a TypeScript repository between revisions, build an import graph, calculate blast radius, apply at least eight deterministic rules, explain every contribution, load configuration, output terminal/JSON reports, run in GitHub Actions, and analyze its own repository.
 
 Status: implemented through the Phase 5 GitHub Action milestone. Visualization
-and additional ecosystem integrations remain post-MVP work.
+and additional ecosystem integrations remain post-MVP work; static HTML, graph
+visualization, and GitLab CI usage are now available.
 
 ## Boundaries
 

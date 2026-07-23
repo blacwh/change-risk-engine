@@ -76,7 +76,9 @@ complete versioned analysis result from the CLI. A separate validated companion
 model now adds a bounded dependency graph, changed-module seeds, transitive
 impact distance, fan-in/fan-out, unindexed paths, and explicit truncation to the
 HTML viewer without changing result schema version 1. Ecosystem adapters and
-integrations remain.
+integrations remain. A GitLab CI template now supplies exact merge-request/push
+revisions, classification gating, and always-retained JSON without an API token.
+Adapter and plugin extension contracts remain.
 
 ## Later
 

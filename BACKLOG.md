@@ -44,4 +44,6 @@
 - [x] Static HTML report viewer
 - [x] Dependency graph and blast-radius visualization
 - [x] Visualization
+- [x] GitLab CI integration example
+- [ ] Adapter and plugin extension contracts
 - [x] Release automation
