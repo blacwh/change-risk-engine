@@ -83,6 +83,12 @@ anchors prevent evidence IDs from becoming attribute injection surfaces. The
 document is a local representation of already-validated report data; it does not
 read files or execute analyzer behavior when opened.
 
+The SVG blast-radius view is generated from a separately validated bounded
+model. Repository paths are escaped in SVG titles, labels, and the accessible
+table; untrusted paths never become element IDs, selectors, coordinates, or URL
+targets. Layout coordinates derive only from validated integer distances and
+deterministic array positions.
+
 Any future build/test execution must be opt-in, isolated, and clearly unsafe for untrusted code.
 
 Report vulnerabilities through private security advisories.

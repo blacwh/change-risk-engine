@@ -68,4 +68,38 @@ describe('HTML report', () => {
   it('rejects invalid analysis results', () => {
     expect(() => renderHtmlReport({ ...result, score: 99 })).toThrow();
   });
+
+  it('renders a validated dependency blast radius without trusting path text', () => {
+    const output = renderHtmlReport(result, {
+      blastRadius: {
+        schemaVersion: 1,
+        nodes: [
+          {
+            path: 'src/<unsafe>.ts',
+            changed: true,
+            distance: 0,
+            fanIn: 1,
+            fanOut: 0,
+          },
+          {
+            path: 'src/app.ts',
+            changed: false,
+            distance: 1,
+            fanIn: 0,
+            fanOut: 1,
+          },
+        ],
+        edges: [{ from: 'src/app.ts', to: 'src/<unsafe>.ts' }],
+        sourceNodeCount: 2,
+        sourceEdgeCount: 1,
+        changedPathCount: 1,
+        unindexedChangedPaths: [],
+        truncated: false,
+      },
+    });
+    expect(output).toContain('Dependency blast radius');
+    expect(output).toContain('<svg');
+    expect(output).toContain('src/&lt;unsafe&gt;.ts');
+    expect(output).toContain('impact distance 1');
+  });
 });

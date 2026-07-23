@@ -24,8 +24,9 @@ deterministic evidence-backed rules, and exposes every effective score
 contribution. The installable CLI and bundled GitHub Action use the same core.
 Release automation verifies fresh CLI installs, while repository self-analysis
 exercises the Action and retains the complete versioned JSON report. Phase 6,
-visualization and ecosystem integrations, is in progress with a static HTML
-report viewer now available.
+visualization and ecosystem integrations, is in progress. The static HTML report
+viewer includes a bounded dependency graph with changed modules and transitive
+blast-radius distance highlighted.
 
 ## Usage
 
@@ -47,7 +48,9 @@ change-risk analyze --base main --head HEAD --format html > change-risk-report.h
 ```
 
 The HTML viewer has no JavaScript or external assets and displays the complete
-validated result. See [CLI usage](docs/cli.md) for details.
+validated result. When the clean worktree matches the analyzed head, it also
+shows a bounded SVG dependency graph and an accessible module-impact table. See
+[CLI usage](docs/cli.md) for details.
 
 Release tarballs install without the monorepo:
 

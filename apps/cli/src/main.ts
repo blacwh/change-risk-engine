@@ -6,7 +6,7 @@ import {
   renderTerminalReport,
 } from '@change-risk/reporters';
 
-import { analyzeRepository } from './analyze.js';
+import { analyzeRepositoryWithArtifacts } from './analyze.js';
 
 const HELP = `Usage: change-risk analyze [options]
 
@@ -138,7 +138,7 @@ export async function runCli(
       return { stdout: HELP, stderr: '', exitCode: 0 };
     }
     const parsed = parseAnalyzeArguments(args.slice(1), workingDirectory);
-    const result = await analyzeRepository({
+    const analysis = await analyzeRepositoryWithArtifacts({
       repositoryRoot: parsed.repositoryRoot,
       base: parsed.base,
       head: parsed.head,
@@ -146,11 +146,17 @@ export async function runCli(
         ? {}
         : { configPath: parsed.configPath }),
     });
+    const { result } = analysis;
     const stdout =
       parsed.format === 'json'
         ? renderJsonReport(result)
         : parsed.format === 'html'
-          ? renderHtmlReport(result)
+          ? renderHtmlReport(
+              result,
+              analysis.blastRadius === undefined
+                ? {}
+                : { blastRadius: analysis.blastRadius },
+            )
           : renderTerminalReport(result);
     return {
       stdout,

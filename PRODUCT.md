@@ -98,4 +98,4 @@ The tool is an aid, not a safety guarantee, security-scanner replacement, AI rev
 
 ## Future
 
-Additional language adapters, coverage mapping, ownership, history-informed calibration, visualization, GitLab integration, plugin SDK, and optional local summaries constrained to deterministic findings.
+Additional language adapters, coverage mapping, ownership, history-informed calibration, interactive hosted visualization, GitLab integration, plugin SDK, and optional local summaries constrained to deterministic findings.

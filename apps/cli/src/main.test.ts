@@ -67,6 +67,7 @@ describe('change-risk CLI', () => {
         base: fixture.revisions[0],
         head: fixture.revisions[1],
       });
+      expect(report).not.toHaveProperty('blastRadius');
       expect(report.classification).toBe('moderate');
       expect(report.score).toBe(35);
       expect(report.findings.map(({ ruleId }) => ruleId)).toEqual([
@@ -92,6 +93,8 @@ describe('change-risk CLI', () => {
       expect(html).toMatchObject({ exitCode: 0, stderr: '' });
       expect(html.stdout.startsWith('<!doctype html>')).toBe(true);
       expect(html.stdout).toContain('Repository change report');
+      expect(html.stdout).toContain('Dependency blast radius');
+      expect(html.stdout).toContain('<svg');
 
       await writeFile(`${fixture.path}/untracked.ts`, 'export {};\n', 'utf8');
       const degraded = await runCli(

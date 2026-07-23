@@ -42,6 +42,6 @@
 - [x] JSON artifact
 - [x] Fork security
 - [x] Static HTML report viewer
-- [ ] Dependency graph and blast-radius visualization
-- [ ] Visualization
+- [x] Dependency graph and blast-radius visualization
+- [x] Visualization
 - [x] Release automation

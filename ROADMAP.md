@@ -71,9 +71,12 @@ checkout credentials and uploads its JSON artifact.
 
 Dependency graph viewer, blast-radius highlighting, report viewer, adapters, plugins, additional CI systems.
 
-Status: in progress. A self-contained, no-script HTML viewer now renders the
-complete versioned analysis result from the CLI. Dependency-graph and
-blast-radius visualization are the next visualization milestone.
+Status: in progress. A self-contained, no-script HTML viewer renders the
+complete versioned analysis result from the CLI. A separate validated companion
+model now adds a bounded dependency graph, changed-module seeds, transitive
+impact distance, fan-in/fan-out, unindexed paths, and explicit truncation to the
+HTML viewer without changing result schema version 1. Ecosystem adapters and
+integrations remain.
 
 ## Later
 

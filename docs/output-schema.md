@@ -41,3 +41,11 @@ the complete result without adding derived claims or volatile fields, so it can
 be regenerated deterministically from the canonical JSON value. It contains no
 script or external assets; repository-derived values are escaped at the output
 boundary.
+
+Graph visualization is deliberately not added to analysis result version 1.
+`@change-risk/core` instead exports a separately versioned and validated
+`BlastRadiusVisualization` companion schema. It bounds nodes and edges, verifies
+unique known endpoints, requires changed nodes to have distance zero, preserves
+source graph/change counts, and makes omitted paths and truncation explicit. The
+CLI supplies this companion only to HTML rendering; canonical JSON remains
+backward compatible.
