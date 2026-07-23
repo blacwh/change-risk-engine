@@ -21,7 +21,13 @@ distributable CLI boundary, also run:
 ```bash
 npm run package:cli
 npm run verify:package
+npm run package:action
+npm run verify:action
 ```
+
+`action-dist/index.js` is generated and committed. Change Action source first,
+rebuild the bundle, and include both in the same pull request; the quality gate
+rejects stale generated output.
 
 Maintainer releases use a semantic version tag such as `v0.1.0`. The tag
 workflow reruns quality, injects the tag version, freshly installs and exercises

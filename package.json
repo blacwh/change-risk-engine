@@ -18,11 +18,13 @@
     "format": "prettier --write \"**/*.{json,js,mjs,ts,yaml,yml}\"",
     "format:check": "prettier --check \"**/*.{json,js,mjs,ts,yaml,yml}\"",
     "lint": "eslint . --max-warnings 0",
+    "package:action": "node scripts/package-action.mjs",
     "package:cli": "node scripts/package-cli.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit --project tsconfig.json",
     "verify:package": "node scripts/verify-package.mjs",
-    "quality": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build"
+    "quality": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build && npm run verify:action",
+    "verify:action": "node scripts/package-action.mjs --check"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

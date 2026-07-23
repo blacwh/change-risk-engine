@@ -36,10 +36,10 @@
 
 ## P2
 
-- [ ] GitHub Action
-- [ ] PR Markdown reporter
-- [ ] Comment update behavior
-- [ ] JSON artifact
-- [ ] Fork security
+- [x] GitHub Action
+- [x] PR Markdown reporter
+- [x] Comment update behavior
+- [x] JSON artifact
+- [x] Fork security
 - [ ] Visualization
 - [x] Release automation

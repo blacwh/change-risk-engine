@@ -59,6 +59,14 @@ checksummed GitHub releases.
 
 PR analysis, maintained comment, severity gate, minimal permissions, JSON artifact, fork security.
 
+Status: complete. The bundled Node 24 Action analyzes pull-request and push event
+revisions through the same core as the CLI, writes the complete validated JSON
+result, publishes outputs and a job summary, maintains one bot-owned comment for
+same-repository pull requests, and applies the configured classification gate
+after reporting. Fork pull requests never invoke the comments API. The
+self-analysis workflow exercises the committed bundle with non-persistent
+checkout credentials and uploads its JSON artifact.
+
 ## Phase 6 — Visualization and ecosystem
 
 Dependency graph viewer, blast-radius highlighting, report viewer, adapters, plugins, additional CI systems.

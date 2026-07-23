@@ -18,42 +18,13 @@ The result is a transparent report. The tool must not present its risk classific
 
 ## Project status
 
-The repository foundation is complete. Package boundaries, strict TypeScript,
-formatting, linting, tests, builds, and CI are configured. Versioned configuration
-and result schemas are available. The Git adapter can safely resolve commit
-revisions, and controlled temporary repository fixtures support integration
-testing. Changed-file collection includes line statistics, renames, binary files,
-and exact analyzed commit IDs. Deterministic file classification plus validated
-terminal and JSON report skeletons complete the initial Git-evidence phase.
-The TypeScript adapter now performs bounded source discovery and static import
-indexing without loading target configuration or dependencies. Incomplete reads,
-syntax errors, skipped symlinks, and reached limits are returned as explicit
-issues. Repository module resolution covers relative paths, directory indexes,
-TypeScript substitution for JavaScript extensions, and bounded root
-`tsconfig.json` aliases. Missing internal references are explicit issues;
-unmatched bare package imports remain external. The directed graph exposes
-fan-in, fan-out, direct and bounded transitive
-dependents, strongly connected components, cycles, and package-boundary
-crossings. Phase 2 is complete; deterministic rules and transparent scoring are
-the current phase. The rule engine now emits stable evidence and finding IDs,
-supports per-rule enablement, options, and weight overrides, and includes the
-large-change, multi-area, sensitive-path, dependency-manifest, migration, and
-infrastructure policies. High-fan-in analysis consumes the bounded dependency
-graph to expose direct and transitive blast radius, and public-export policy
-consumes explicit public-surface comparison evidence. Public-surface comparison,
-and test-relationship evidence feed two test-aware policies. Transparent scoring
-groups every finding by rule, applies visible positive and mitigating weights,
-caps the total at zero, and classifies it with configured thresholds. The Phase
-3 rule/scoring layer is complete. Resolved-revision file reads now support
-bounded public-surface comparison without checking out or executing target code,
-and conventional source-to-test mapping supplies explicit relationship evidence.
-Phase 3 is complete; end-to-end CLI composition is next.
-
-The Phase 4 CLI composes those capabilities through `change-risk analyze`, with
-terminal or JSON output and an optional classification exit gate. A standalone
-npm-compatible tarball bundles runtime dependencies, examples cover a small
-TypeScript service, pull requests and `master` generate self-analysis artifacts,
-and version tags create verified GitHub release assets. Phase 4 is complete.
+Phases 0 through 5 are complete. The engine safely collects exact Git evidence,
+indexes TypeScript/JavaScript imports, builds a bounded dependency graph, applies
+deterministic evidence-backed rules, and exposes every effective score
+contribution. The installable CLI and bundled GitHub Action use the same core.
+Release automation verifies fresh CLI installs, while repository self-analysis
+exercises the Action and retains the complete versioned JSON report. Phase 6,
+visualization and ecosystem integrations, is next.
 
 ## Usage
 
@@ -77,6 +48,19 @@ change-risk --version
 
 See [`examples/typescript-service`](examples/typescript-service) for a complete
 configuration and representative terminal output.
+
+Analyze pull requests with the GitHub Action:
+
+```yaml
+- uses: blacwh/change-risk-engine@v0.1.0
+  env:
+    GITHUB_TOKEN: ${{ github.token }}
+  with:
+    fail-on: high
+```
+
+See [GitHub Action usage](docs/github-action.md) for complete permissions,
+artifact upload, immutable pinning, and fork behavior.
 
 ## Development
 

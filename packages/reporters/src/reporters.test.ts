@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { renderJsonReport, renderTerminalReport } from './reporters.js';
+import {
+  GITHUB_COMMENT_MARKER,
+  renderGitHubMarkdownReport,
+  renderJsonReport,
+  renderTerminalReport,
+} from './reporters.js';
 
 const result = {
   schemaVersion: 1,
@@ -60,5 +65,26 @@ describe('report skeletons', () => {
 
   it('rejects invalid results instead of rendering partial data', () => {
     expect(() => renderJsonReport({ ...result, schemaVersion: 2 })).toThrow();
+  });
+
+  it('renders a bounded maintained-comment body with escaped evidence', () => {
+    const markdown = renderGitHubMarkdownReport({
+      ...result,
+      findings: [
+        {
+          ...result.findings[0],
+          title: 'Large | change <check> [link](bad)',
+          affectedPaths: ['src/a|b.ts'],
+        },
+      ],
+    });
+    expect(markdown.startsWith(GITHUB_COMMENT_MARKER)).toBe(true);
+    expect(markdown).toContain(
+      'Large &#124; change &lt;check&gt; &#91;link&#93;(bad)',
+    );
+    expect(markdown).toContain('score 20');
+    expect(markdown).toContain('Effective score contributions');
+    expect(markdown).toContain('Evidence: `e1`');
+    expect(markdown.length).toBeLessThanOrEqual(60_000);
   });
 });
