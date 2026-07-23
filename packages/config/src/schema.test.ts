@@ -58,4 +58,13 @@ describe('change-risk configuration schema v1', () => {
       }),
     ).toThrow(/Sensitive area ids must be unique/);
   });
+
+  it('bounds ignore pattern count and length', () => {
+    expect(() =>
+      parseChangeRiskConfig({
+        schemaVersion: 1,
+        ignorePatterns: ['x'.repeat(1_001)],
+      }),
+    ).toThrow();
+  });
 });

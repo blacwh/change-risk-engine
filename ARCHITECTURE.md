@@ -251,7 +251,23 @@ timestamps so deterministic inputs can remain byte-stable.
 Terminal and JSON reporters validate the shared versioned result at their trust
 boundary. JSON preserves the complete result. The terminal skeleton summarizes
 classification, revisions, line totals, binary count, findings, visible weights,
-and limitations without color-dependent semantics.
+effective score contributions, and limitations without color-dependent
+semantics.
+
+## CLI composition
+
+`change-risk analyze` resolves and compares the requested Git revisions, applies
+classification and ignore patterns, compares changed conventional public index
+modules at the exact object IDs, and then evaluates rules and scoring. Graph and
+test-relationship evidence may use the filesystem adapter only when the
+worktree is clean and matches the analyzed head both before and after indexing;
+otherwise that evidence is omitted with an explicit limitation. This prevents a
+dirty or moving worktree from being presented as revision evidence.
+
+The CLI reads only bounded no-follow JSON configuration from inside the
+repository. Terminal and JSON formats share the same validated result. Exit 0
+means analysis completed without triggering the configured gate, exit 2 means
+the risk classification met that gate, and exit 1 means input or analysis failed.
 
 ## Security
 

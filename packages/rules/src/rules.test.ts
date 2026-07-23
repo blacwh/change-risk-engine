@@ -88,6 +88,11 @@ describe('rule engine', () => {
         'large-change': { weight: Infinity },
       }),
     ).toThrow(/non-finite/);
+    expect(() =>
+      evaluateRules(context, [largeChangeRule], {
+        typo: { enabled: false },
+      }),
+    ).toThrow(/Unknown rule setting: typo/);
   });
 
   it('rejects ambiguous or unbounded sensitive-area configuration', () => {

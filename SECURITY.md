@@ -51,6 +51,12 @@ size issues without source excerpts, and does not resolve imports, load package
 metadata, or execute target code. Conventional test mapping is path-only and
 does not run tests or inspect coverage.
 
+The CLI loads bounded JSON configuration through a no-follow file descriptor
+inside the canonical repository root. Graph and conventional test evidence use
+filesystem contents only when the worktree is clean and matches the analyzed
+head before and after indexing. If that invariant fails, the CLI omits those
+signals and reports a limitation rather than mixing worktree and revision state.
+
 Any future build/test execution must be opt-in, isolated, and clearly unsafe for untrusted code.
 
 Report vulnerabilities through private security advisories.

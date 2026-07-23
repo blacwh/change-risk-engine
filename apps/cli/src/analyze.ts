@@ -1,0 +1,243 @@
+import type { AnalysisResult, ChangedFile } from '@change-risk/core';
+import {
+  ANALYSIS_RESULT_SCHEMA_VERSION,
+  classifyFile,
+  parseAnalysisResult,
+} from '@change-risk/core';
+import { dependencyGraphFromModules } from '@change-risk/dependency-graph';
+import {
+  collectChangedFiles,
+  readFileAtRevision,
+  worktreeMatchesRevision,
+} from '@change-risk/git-adapter';
+import {
+  comparePublicExportSurfaces,
+  inferConventionalTestRelationships,
+  resolveTypeScriptProject,
+  type SourceSnapshot,
+} from '@change-risk/language-typescript';
+import {
+  DEFAULT_RULES,
+  evaluateRules,
+  globMatches,
+  scoreRuleEvaluation,
+} from '@change-risk/rules';
+
+import { loadRepositoryConfig } from './config.js';
+
+export type AnalyzeRepositoryOptions = {
+  repositoryRoot: string;
+  base: string;
+  head: string;
+  configPath?: string;
+};
+
+function compareText(left: string, right: string): number {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
+function isPublicEntryPoint(path: string): boolean {
+  return /(?:^|\/)index\.(?:(?:d\.)?[cm]?[jt]sx?)$/iu.test(path);
+}
+
+function issueLimitation(issue: { kind: string; path?: string }): string {
+  return `TypeScript analysis issue: ${issue.kind}${issue.path === undefined ? '' : ` (${issue.path})`}.`;
+}
+
+function publicIssueLimitation(issue: { kind: string; path: string }): string {
+  return `Public-surface comparison issue: ${issue.kind} (${issue.path}).`;
+}
+
+function ignored(path: string, patterns: readonly string[]): boolean {
+  return patterns.some((pattern) => globMatches(pattern, path));
+}
+
+async function publicSurfaceEvidence(
+  repositoryRoot: string,
+  baseRevision: string,
+  headRevision: string,
+  files: readonly ChangedFile[],
+  maxFileBytes: number,
+  limitations: string[],
+): Promise<ReturnType<typeof comparePublicExportSurfaces>['changes']> {
+  const base: SourceSnapshot[] = [];
+  const head: SourceSnapshot[] = [];
+  const readLimit = Math.min(maxFileBytes, 4_000_000);
+  if (maxFileBytes > readLimit) {
+    limitations.push(
+      'Revision source reads are capped at 4000000 bytes by the Git adapter.',
+    );
+  }
+  for (const file of files.filter(
+    ({ binary, path }) => !binary && isPublicEntryPoint(path),
+  )) {
+    try {
+      let baseSource: string | undefined;
+      let headSource: string | undefined;
+      if (file.status !== 'added') {
+        baseSource = await readFileAtRevision(
+          repositoryRoot,
+          baseRevision,
+          file.previousPath ?? file.path,
+          { maxBytes: readLimit },
+        );
+      }
+      if (file.status !== 'deleted') {
+        headSource = await readFileAtRevision(
+          repositoryRoot,
+          headRevision,
+          file.path,
+          { maxBytes: readLimit },
+        );
+      }
+      if (baseSource !== undefined)
+        base.push({ path: file.path, source: baseSource });
+      if (headSource !== undefined)
+        head.push({ path: file.path, source: headSource });
+    } catch {
+      limitations.push(
+        `Public-surface source could not be read at an analyzed revision (${file.path}).`,
+      );
+    }
+  }
+  const comparison = comparePublicExportSurfaces(base, head, readLimit);
+  limitations.push(...comparison.issues.map(publicIssueLimitation));
+  limitations.push(
+    'Public-surface comparison is limited to changed conventional index modules.',
+  );
+  return comparison.changes;
+}
+
+export async function analyzeRepository(
+  options: AnalyzeRepositoryOptions,
+): Promise<AnalysisResult> {
+  const config = await loadRepositoryConfig(
+    options.repositoryRoot,
+    options.configPath,
+  );
+  const diff = await collectChangedFiles(
+    options.repositoryRoot,
+    options.base,
+    options.head,
+  );
+  const changedFiles: ChangedFile[] = diff.files
+    .filter(({ path }) => !ignored(path, config.ignorePatterns))
+    .map((file) => ({ ...file, categories: [...classifyFile(file.path)] }));
+  const limitations: string[] = [];
+  const publicExportChanges = await publicSurfaceEvidence(
+    options.repositoryRoot,
+    diff.baseRevision,
+    diff.headRevision,
+    changedFiles,
+    config.analysis.maxFileBytes,
+    limitations,
+  );
+
+  let dependencyGraph:
+    ReturnType<typeof dependencyGraphFromModules> | undefined;
+  let testRelationships:
+    ReturnType<typeof inferConventionalTestRelationships> | undefined;
+  if (
+    await worktreeMatchesRevision(options.repositoryRoot, diff.headRevision)
+  ) {
+    const index = await resolveTypeScriptProject(options.repositoryRoot, {
+      maxEntries: config.analysis.maxEntries,
+      maxFiles: config.analysis.maxFiles,
+      maxFileBytes: config.analysis.maxFileBytes,
+    });
+    limitations.push(
+      ...index.issues
+        .filter(
+          (issue) =>
+            !('path' in issue) ||
+            issue.path === undefined ||
+            !ignored(issue.path, config.ignorePatterns),
+        )
+        .map(issueLimitation),
+    );
+    const modules = index.modules.filter(
+      ({ path }) => !ignored(path, config.ignorePatterns),
+    );
+    const includedPaths = new Set(modules.map(({ path }) => path));
+    const boundedModules = modules.map((module) => ({
+      ...module,
+      imports: module.imports.filter(
+        ({ resolution, targetPath }) =>
+          resolution !== 'internal' ||
+          (targetPath !== undefined && includedPaths.has(targetPath)),
+      ),
+    }));
+    const candidateGraph = dependencyGraphFromModules(boundedModules, [], {
+      maxEdges: config.analysis.maxGraphEdges,
+      maxNodes: config.analysis.maxFiles,
+    });
+    const candidateRelationships = inferConventionalTestRelationships(
+      boundedModules.map(({ path }) => path),
+    );
+    if (
+      await worktreeMatchesRevision(options.repositoryRoot, diff.headRevision)
+    ) {
+      dependencyGraph = candidateGraph;
+      testRelationships = candidateRelationships;
+      limitations.push(
+        'Dependency graph and test relationships represent the head tree; deleted modules may be absent.',
+        'Test relationships are inferred from path conventions; tests and coverage are not executed.',
+      );
+    } else {
+      limitations.push(
+        'Dependency graph and test relationships were discarded because the worktree changed during analysis.',
+      );
+    }
+  } else {
+    limitations.push(
+      'Dependency graph and test relationships were omitted because the clean worktree did not match the analyzed head revision.',
+    );
+  }
+
+  const highFanInSetting = config.rules['high-fan-in'];
+  const configuredRules = {
+    ...config.rules,
+    'high-fan-in': {
+      enabled: highFanInSetting?.enabled ?? true,
+      options: {
+        maxTraversalDepth: config.analysis.maxTraversalDepth,
+        ...(highFanInSetting?.options ?? {}),
+      },
+      ...(highFanInSetting?.weight === undefined
+        ? {}
+        : { weight: highFanInSetting.weight }),
+    },
+  };
+  const evaluation = evaluateRules(
+    {
+      changedFiles,
+      sensitiveAreas: config.sensitiveAreas,
+      publicExportChanges,
+      ...(dependencyGraph === undefined ? {} : { dependencyGraph }),
+      ...(testRelationships === undefined ? {} : { testRelationships }),
+    },
+    DEFAULT_RULES,
+    Object.fromEntries(
+      Object.entries(configuredRules).map(([id, setting]) => [
+        id,
+        {
+          enabled: setting.enabled,
+          options: setting.options,
+          ...(setting.weight === undefined ? {} : { weight: setting.weight }),
+        },
+      ]),
+    ),
+  );
+  const scored = scoreRuleEvaluation(evaluation, config.thresholds);
+  return parseAnalysisResult({
+    schemaVersion: ANALYSIS_RESULT_SCHEMA_VERSION,
+    revisions: { base: diff.baseRevision, head: diff.headRevision },
+    changedFiles,
+    evidence: scored.evidence,
+    findings: scored.findings,
+    score: scored.score,
+    classification: scored.classification,
+    scoreContributions: scored.scoreContributions,
+    limitations: [...new Set(limitations)].sort(compareText),
+  });
+}

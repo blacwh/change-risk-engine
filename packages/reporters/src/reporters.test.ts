@@ -50,6 +50,8 @@ describe('report skeletons', () => {
       Changed files: 1 (+2 -1; 0 binary)
       Findings:
       - [MEDIUM] Large change (+20): Threshold exceeded.
+      Score contributions:
+      - large-change: +20 (1 finding)
       Limitations:
       - Graph analysis is not available.
       "

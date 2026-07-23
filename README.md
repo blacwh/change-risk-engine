@@ -49,6 +49,24 @@ bounded public-surface comparison without checking out or executing target code,
 and conventional source-to-test mapping supplies explicit relationship evidence.
 Phase 3 is complete; end-to-end CLI composition is next.
 
+The initial Phase 4 CLI now composes those capabilities through `change-risk
+analyze`, with terminal or JSON output and an optional classification exit gate.
+Release packaging, examples, and self-analysis automation remain before Phase 4
+is complete.
+
+## Usage
+
+Build and analyze a repository between two revisions:
+
+```bash
+npm run build
+node apps/cli/dist/run.js analyze --base main --head HEAD
+```
+
+Use `--format json` for the versioned machine-readable result. `--fail-on high`
+returns exit code 2 for high or critical classifications; operational and input
+errors return 1. Run `node apps/cli/dist/run.js --help` for all options.
+
 ## Development
 
 Prerequisites:

@@ -28,4 +28,6 @@ The current category vocabulary is `source`, `test`, `documentation`,
 versioned vocabulary.
 
 `@change-risk/reporters` provides validated JSON and plain-text terminal
-renderers. Both end with a newline for predictable CLI and file output.
+renderers. Both end with a newline for predictable CLI and file output. Terminal
+output shows both configured finding weights and the effective grouped score
+contributions, including mitigation capped at a zero aggregate.
