@@ -1,2 +1,7 @@
-export { analyzeRepository, type AnalyzeRepositoryOptions } from './analyze.js';
+export {
+  analyzeRepository,
+  analyzeRepositoryWithArtifacts,
+  type AnalyzeRepositoryOptions,
+  type RepositoryAnalysis,
+} from './analyze.js';
 export { runCli, type CliResult } from './main.js';

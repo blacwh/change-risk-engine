@@ -15,6 +15,11 @@ A new rule requires a stable ID, purpose, evidence, default weight, configuratio
 
 Never add default behavior that executes analyzed repository code.
 
+Visualization changes must preserve a machine-validated source model, explicit
+bounds and truncation, escaped repository-derived content, and a non-visual
+equivalent such as a table. Do not infer graph structure from finding prose or
+silently extend an existing schema version.
+
 Run `npm run quality` before opening a pull request. To validate the
 distributable CLI boundary, also run:
 

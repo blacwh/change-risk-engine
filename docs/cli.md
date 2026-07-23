@@ -52,3 +52,11 @@ The HTML contains no JavaScript, network requests, or external assets. It uses a
 restrictive content security policy and escapes repository-derived text. The
 report includes all findings, effective score contributions, changed files,
 evidence records, and limitations from the validated version 1 result.
+
+When graph evidence is eligible, the same report includes a focused SVG and
+accessible table for changed source modules and their transitive dependents.
+Impact distance zero identifies a changed module; increasing distance follows
+reverse dependency reach. Arrows retain the underlying importer-to-dependency
+direction. The report states when traversal or display bounds truncate the view
+and lists changed source paths that were not indexed. Graph evidence is omitted
+when the clean worktree does not match the analyzed head.

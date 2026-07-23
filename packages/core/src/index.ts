@@ -16,3 +16,10 @@ export {
   type ClassifiedFile,
   type FileCategory,
 } from './classification.js';
+export {
+  BLAST_RADIUS_SCHEMA_VERSION,
+  blastRadiusVisualizationJsonSchema,
+  blastRadiusVisualizationSchema,
+  parseBlastRadiusVisualization,
+  type BlastRadiusVisualization,
+} from './visualization.js';

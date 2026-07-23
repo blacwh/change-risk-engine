@@ -260,9 +260,15 @@ It includes no script or external resource, applies a restrictive content
 security policy, escapes every repository-derived string, and uses generated
 numeric anchors rather than untrusted IDs in HTML attributes. It presents the
 complete result as summary metrics, proportional contribution bars, findings,
-changed files, evidence records, and limitations. Graph visualization remains a
-separate contract because the version 1 result does not yet carry graph nodes
-and edges.
+changed files, evidence records, and limitations.
+
+Graph visualization uses a separately versioned companion schema so result
+version 1 remains stable. A bounded multi-source reverse traversal assigns
+minimum impact distance from changed modules, then carries those nodes, their
+in-scope importer-to-dependency edges, fan-in/fan-out, source graph counts,
+unindexed changed paths, and explicit truncation into the HTML reporter. The
+report renders deterministic SVG plus an accessible table. This artifact is
+created only under the same clean head-worktree invariant as graph rule evidence.
 
 ## CLI composition
 

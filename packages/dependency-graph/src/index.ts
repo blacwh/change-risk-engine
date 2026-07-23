@@ -9,3 +9,7 @@ export {
   type PackageRoot,
   type TransitiveDependents,
 } from './graph.js';
+export {
+  buildBlastRadiusVisualization,
+  type BlastRadiusOptions,
+} from './visualization.js';

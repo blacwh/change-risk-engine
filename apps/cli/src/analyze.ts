@@ -1,10 +1,17 @@
-import type { AnalysisResult, ChangedFile } from '@change-risk/core';
+import type {
+  AnalysisResult,
+  BlastRadiusVisualization,
+  ChangedFile,
+} from '@change-risk/core';
 import {
   ANALYSIS_RESULT_SCHEMA_VERSION,
   classifyFile,
   parseAnalysisResult,
 } from '@change-risk/core';
-import { dependencyGraphFromModules } from '@change-risk/dependency-graph';
+import {
+  buildBlastRadiusVisualization,
+  dependencyGraphFromModules,
+} from '@change-risk/dependency-graph';
 import {
   collectChangedFiles,
   readFileAtRevision,
@@ -30,6 +37,11 @@ export type AnalyzeRepositoryOptions = {
   base: string;
   head: string;
   configPath?: string;
+};
+
+export type RepositoryAnalysis = {
+  result: AnalysisResult;
+  blastRadius?: BlastRadiusVisualization;
 };
 
 function compareText(left: string, right: string): number {
@@ -108,9 +120,10 @@ async function publicSurfaceEvidence(
   return comparison.changes;
 }
 
-export async function analyzeRepository(
+async function analyzeRepositoryInternal(
   options: AnalyzeRepositoryOptions,
-): Promise<AnalysisResult> {
+  includeVisualization: boolean,
+): Promise<RepositoryAnalysis> {
   const config = await loadRepositoryConfig(
     options.repositoryRoot,
     options.configPath,
@@ -137,6 +150,7 @@ export async function analyzeRepository(
     ReturnType<typeof dependencyGraphFromModules> | undefined;
   let testRelationships:
     ReturnType<typeof inferConventionalTestRelationships> | undefined;
+  let blastRadius: BlastRadiusVisualization | undefined;
   if (
     await worktreeMatchesRevision(options.repositoryRoot, diff.headRevision)
   ) {
@@ -179,6 +193,18 @@ export async function analyzeRepository(
     ) {
       dependencyGraph = candidateGraph;
       testRelationships = candidateRelationships;
+      if (includeVisualization) {
+        blastRadius = buildBlastRadiusVisualization(
+          candidateGraph,
+          changedFiles
+            .filter(
+              ({ categories }) =>
+                categories.includes('source') && !categories.includes('test'),
+            )
+            .map(({ path }) => path),
+          { maxDepth: config.analysis.maxTraversalDepth },
+        );
+      }
       limitations.push(
         'Dependency graph and test relationships represent the head tree; deleted modules may be absent.',
         'Test relationships are inferred from path conventions; tests and coverage are not executed.',
@@ -229,7 +255,7 @@ export async function analyzeRepository(
     ),
   );
   const scored = scoreRuleEvaluation(evaluation, config.thresholds);
-  return parseAnalysisResult({
+  const result = parseAnalysisResult({
     schemaVersion: ANALYSIS_RESULT_SCHEMA_VERSION,
     revisions: { base: diff.baseRevision, head: diff.headRevision },
     changedFiles,
@@ -240,4 +266,20 @@ export async function analyzeRepository(
     scoreContributions: scored.scoreContributions,
     limitations: [...new Set(limitations)].sort(compareText),
   });
+  return {
+    result,
+    ...(blastRadius === undefined ? {} : { blastRadius }),
+  };
+}
+
+export async function analyzeRepository(
+  options: AnalyzeRepositoryOptions,
+): Promise<AnalysisResult> {
+  return (await analyzeRepositoryInternal(options, false)).result;
+}
+
+export async function analyzeRepositoryWithArtifacts(
+  options: AnalyzeRepositoryOptions,
+): Promise<RepositoryAnalysis> {
+  return analyzeRepositoryInternal(options, true);
 }
