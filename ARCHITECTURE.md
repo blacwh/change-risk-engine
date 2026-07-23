@@ -280,10 +280,26 @@ prefix, captures its version through a pipe, and runs an analysis outside the
 workspace dependency graph.
 
 The self-analysis workflow checks out the exact pull-request head (or pushed
-master head), builds the CLI, compares the event's base/head object IDs, and
-uploads the validated JSON result. The release workflow reruns all quality gates,
-packages and freshly installs the CLI, writes a SHA-256 checksum, and creates a
-GitHub release only for an existing version tag.
+master head), runs the bundled Action against the event's base/head object IDs,
+and uploads the validated JSON result. The release workflow reruns all quality
+gates, packages and freshly installs the CLI, writes a SHA-256 checksum, and
+creates a GitHub release only for an existing version tag.
+
+## GitHub Action composition
+
+The JavaScript Action reads a bounded, no-follow GitHub event payload and derives
+the exact base and head object IDs for pull-request or push events. It calls the
+exported CLI analysis composition directly, then writes the shared JSON and
+GitHub Markdown reporters. The JSON path is constrained beneath the canonical
+workspace and rejects symbolic-link traversal.
+
+Reporting precedes the classification gate: JSON, step outputs, job summary, and
+an eligible pull-request comment are written before exit code 2 is returned. A
+same-repository pull request may create or update one marker-bearing comment
+owned by `github-actions[bot]`; a fork pull request never calls the comments API.
+API response sizes and comment pagination are bounded, and API errors expose
+status only. The checked-in Node 24 bundle is reproduced and compared during the
+quality gate so `uses:` requires no target dependency installation.
 
 ## Security
 

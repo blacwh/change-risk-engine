@@ -27,7 +27,11 @@ The current category vocabulary is `source`, `test`, `documentation`,
 `configuration`, `asset`, and `other`. Reporters reject values outside this
 versioned vocabulary.
 
-`@change-risk/reporters` provides validated JSON and plain-text terminal
-renderers. Both end with a newline for predictable CLI and file output. Terminal
-output shows both configured finding weights and the effective grouped score
-contributions, including mitigation capped at a zero aggregate.
+`@change-risk/reporters` provides validated JSON, plain-text terminal, and
+bounded GitHub Markdown renderers. JSON and terminal output end with a newline
+for predictable CLI and file output. Terminal and GitHub output show configured
+finding weights and effective grouped score contributions, including mitigation
+capped at a zero aggregate. The Markdown report also cites finding evidence IDs,
+escapes repository-derived content, and links its maintained-comment identity to
+a stable hidden marker. If comment-size bounds require a summary, the Action's
+JSON artifact remains the complete canonical result.

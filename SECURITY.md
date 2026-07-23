@@ -57,9 +57,21 @@ filesystem contents only when the worktree is clean and matches the analyzed
 head before and after indexing. If that invariant fails, the CLI omits those
 signals and reports a limitation rather than mixing worktree and revision state.
 
-Pull-request self-analysis uses only read permission and uploads a JSON artifact;
-it receives no repository-write token or secrets. The tag-only release workflow
-has content-write permission solely to create release assets after quality,
+The GitHub Action uses `contents: read` and needs `pull-requests: write` only when
+maintained comments are enabled. It validates same-repository identity from the
+event before reading `GITHUB_TOKEN` or calling the comments API; fork pull
+requests still receive JSON, outputs, and a job summary without a write attempt.
+Only a marker-bearing comment owned by `github-actions[bot]` can be updated.
+Event and API responses are bounded, API failures omit response bodies, report
+paths remain inside the canonical workspace, and symbolic-link report targets
+are rejected. JSON is written before comment or severity-gate failures.
+
+Self-analysis checks out the exact event head with credentials persistence
+disabled. Its token expression is empty for forks, while GitHub also downgrades
+fork workflow permissions. Do not run this Action with `pull_request_target`
+after checking out untrusted pull-request code; that event can expose privileged
+credentials to attacker-controlled files. The tag-only release workflow has
+content-write permission solely to create release assets after quality,
 package-install, version, and analysis verification. Release archives include a
 SHA-256 checksum. The bundled analyzer preserves the same no-execution and
 bounded-input behavior as the workspace CLI.

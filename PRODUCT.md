@@ -88,6 +88,9 @@ All positive and mitigating contributions are visible. Weights and thresholds ar
 
 The first release can analyze a TypeScript repository between revisions, build an import graph, calculate blast radius, apply at least eight deterministic rules, explain every contribution, load configuration, output terminal/JSON reports, run in GitHub Actions, and analyze its own repository.
 
+Status: implemented through the Phase 5 GitHub Action milestone. Visualization
+and additional ecosystem integrations remain post-MVP work.
+
 ## Boundaries
 
 The tool is an aid, not a safety guarantee, security-scanner replacement, AI reviewer, or production-incident predictor.

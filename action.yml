@@ -1,0 +1,31 @@
+name: Change Risk Engine
+description: Deterministic, explainable pull-request change-risk analysis
+inputs:
+  config:
+    description: Repository-relative JSON configuration path
+    required: false
+  fail-on:
+    description: Lowest classification that fails the step
+    required: false
+    default: none
+  comment:
+    description: Maintain a pull-request comment for same-repository changes
+    required: false
+    default: 'true'
+  output:
+    description: Repository-relative JSON report path
+    required: false
+    default: change-risk-report.json
+outputs:
+  classification:
+    description: low, moderate, high, or critical
+  score:
+    description: Transparent numeric risk score
+  json-path:
+    description: Absolute path to the complete JSON report
+runs:
+  using: node24
+  main: action-dist/index.js
+branding:
+  icon: activity
+  color: orange
