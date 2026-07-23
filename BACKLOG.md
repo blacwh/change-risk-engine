@@ -31,8 +31,8 @@
 - [x] Missing-related-tests rule
 - [x] Tests-added mitigation
 - [x] Transparent score breakdown
-- [ ] Terminal and JSON reporters
-- [ ] CLI commands and exit policy
+- [x] Terminal and JSON reporters
+- [x] CLI commands and exit policy
 
 ## P2
 

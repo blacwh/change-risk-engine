@@ -3,9 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "bin": {
+    "change-risk": "./dist/run.js"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@change-risk/config": "0.0.0",
+    "@change-risk/core": "0.0.0",
+    "@change-risk/dependency-graph": "0.0.0",
+    "@change-risk/git-adapter": "0.0.0",
+    "@change-risk/language-typescript": "0.0.0",
+    "@change-risk/reporters": "0.0.0",
+    "@change-risk/rules": "0.0.0"
+  },
   "scripts": {
-    "build": "tsc --project tsconfig.json"
+    "build": "tsc --build tsconfig.json"
   }
 }

@@ -3,10 +3,17 @@
   "compilerOptions": {
     "noEmit": true,
     "paths": {
+      "@change-risk/config": ["./packages/config/src/index.ts"],
       "@change-risk/core": ["./packages/core/src/index.ts"],
       "@change-risk/dependency-graph": [
         "./packages/dependency-graph/src/index.ts"
-      ]
+      ],
+      "@change-risk/git-adapter": ["./packages/git-adapter/src/index.ts"],
+      "@change-risk/language-typescript": [
+        "./packages/language-typescript/src/index.ts"
+      ],
+      "@change-risk/reporters": ["./packages/reporters/src/index.ts"],
+      "@change-risk/rules": ["./packages/rules/src/index.ts"]
     },
     "types": ["node"]
   },

@@ -3,6 +3,11 @@
 Configuration is validated by `@change-risk/config`. Version 1 rejects unknown
 keys and unsupported schema versions.
 
+The CLI loads `.change-risk.json` from the repository root when present. Use
+`--config <repository-relative-path>` to require another file. Configuration is
+read without following symlinks, must remain inside the repository, and is
+limited to 1 MB.
+
 ```json
 {
   "schemaVersion": 1,
@@ -35,6 +40,10 @@ keys and unsupported schema versions.
 Omitted sections receive deterministic defaults. Thresholds must increase from
 moderate to high to critical. Directory-entry, file-count, file-size, graph-edge,
 and graph-depth limits are positive and bounded.
+
+`ignorePatterns` accepts at most 1,000 patterns of at most 1,000 characters.
+Ignored changed files do not enter findings, and ignored modules are removed
+from graph and test-relationship evidence.
 
 Sensitive-area IDs must be unique and contain 1–200 characters. Each area has
 1–100 glob patterns, each containing 1–1,000 characters. The supported glob

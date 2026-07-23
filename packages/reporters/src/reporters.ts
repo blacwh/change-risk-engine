@@ -30,6 +30,18 @@ export function renderTerminalReport(input: unknown): string {
       );
     }
   }
+  if (result.scoreContributions.length > 0) {
+    lines.push('Score contributions:');
+    for (const contribution of result.scoreContributions) {
+      const weight =
+        contribution.weight >= 0
+          ? `+${contribution.weight}`
+          : String(contribution.weight);
+      lines.push(
+        `- ${contribution.ruleId}: ${weight} (${contribution.findingIds.length} finding${contribution.findingIds.length === 1 ? '' : 's'})`,
+      );
+    }
+  }
   if (result.limitations.length > 0) {
     lines.push(
       'Limitations:',

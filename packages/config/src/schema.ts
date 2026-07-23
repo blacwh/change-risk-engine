@@ -17,7 +17,10 @@ const thresholdsSchema = z
 export const changeRiskConfigSchema = z
   .object({
     schemaVersion: z.literal(CONFIG_SCHEMA_VERSION),
-    ignorePatterns: z.array(z.string().min(1)).default([]),
+    ignorePatterns: z
+      .array(z.string().min(1).max(1_000))
+      .max(1_000)
+      .default([]),
     analysis: z
       .object({
         maxEntries: z.number().int().positive().max(1_000_000).default(100_000),

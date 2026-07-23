@@ -26,3 +26,4 @@ export {
   type RiskThresholds,
   type ScoredRuleEvaluation,
 } from './scoring.js';
+export { globMatches } from './options.js';

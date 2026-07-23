@@ -14,6 +14,7 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
+    "change-risk": "node apps/cli/dist/run.js",
     "format": "prettier --write \"**/*.{json,js,mjs,ts,yaml,yml}\"",
     "format:check": "prettier --check \"**/*.{json,js,mjs,ts,yaml,yml}\"",
     "lint": "eslint . --max-warnings 0",

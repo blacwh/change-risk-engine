@@ -127,6 +127,13 @@ export function evaluateRules(
   if (new Set(sortedRules.map(({ id }) => id)).size !== sortedRules.length) {
     throw new Error('Rule ids must be unique');
   }
+  const ruleIds = new Set(sortedRules.map(({ id }) => id));
+  const unknownSetting = Object.keys(settings)
+    .sort(compareText)
+    .find((id) => !ruleIds.has(id));
+  if (unknownSetting !== undefined) {
+    throw new Error(`Unknown rule setting: ${unknownSetting}`);
+  }
 
   const evidence: Evidence[] = [];
   const findings: Finding[] = [];
