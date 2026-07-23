@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "sensitiveAreas": [
+    {
+      "id": "authentication",
+      "patterns": ["src/auth/**"]
+    }
+  ],
+  "rules": {
+    "large-change": {
+      "options": {
+        "maxFiles": 15,
+        "maxLines": 400
+      }
+    },
+    "high-fan-in": {
+      "options": {
+        "minFanIn": 3
+      }
+    }
+  }
+}

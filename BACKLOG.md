@@ -42,4 +42,4 @@
 - [ ] JSON artifact
 - [ ] Fork security
 - [ ] Visualization
-- [ ] Release automation
+- [x] Release automation

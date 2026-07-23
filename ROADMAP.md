@@ -47,11 +47,13 @@ the inputs required for CLI composition.
 
 Installable CLI, terminal/JSON output, exit policy, examples, release workflow, self-analysis.
 
-Status: in progress. The installable `change-risk analyze` command now composes
+Status: complete. The installable `change-risk analyze` command composes
 configuration, exact Git diff/public-surface evidence, safe head-worktree graph
 and test evidence, all default rules, transparent scoring, terminal/JSON output,
-and classification-based exit policy. Packaging examples, release automation,
-and repository self-analysis remain.
+and classification-based exit policy. Standalone bundled tarballs are verified
+through a fresh install, tag versions are injected into the executable, examples
+are documented, CI uploads repository self-analysis JSON, and tag pushes create
+checksummed GitHub releases.
 
 ## Phase 5 — GitHub Action
 

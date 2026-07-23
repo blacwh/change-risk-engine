@@ -24,3 +24,9 @@ bounded file content at exact revisions. Unit fixtures cover shared modules,
 public API changes, related-test conventions, cycles, and parse failures.
 Broader authentication, migration, and monorepo scenarios remain for end-to-end
 CLI goldens.
+
+`examples/typescript-service` supplies a validated sensitive-area/rule
+configuration and representative terminal output. Package verification adds a
+fresh temporary npm installation and analyzes this repository through the
+standalone executable, covering the release boundary as well as in-workspace
+fixtures.

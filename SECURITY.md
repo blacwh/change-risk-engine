@@ -57,6 +57,13 @@ filesystem contents only when the worktree is clean and matches the analyzed
 head before and after indexing. If that invariant fails, the CLI omits those
 signals and reports a limitation rather than mixing worktree and revision state.
 
+Pull-request self-analysis uses only read permission and uploads a JSON artifact;
+it receives no repository-write token or secrets. The tag-only release workflow
+has content-write permission solely to create release assets after quality,
+package-install, version, and analysis verification. Release archives include a
+SHA-256 checksum. The bundled analyzer preserves the same no-execution and
+bounded-input behavior as the workspace CLI.
+
 Any future build/test execution must be opt-in, isolated, and clearly unsafe for untrusted code.
 
 Report vulnerabilities through private security advisories.

@@ -14,3 +14,16 @@ Pull requests should include:
 A new rule requires a stable ID, purpose, evidence, default weight, configuration, positive and negative fixtures, false-positive discussion, and remediation guidance.
 
 Never add default behavior that executes analyzed repository code.
+
+Run `npm run quality` before opening a pull request. To validate the
+distributable CLI boundary, also run:
+
+```bash
+npm run package:cli
+npm run verify:package
+```
+
+Maintainer releases use a semantic version tag such as `v0.1.0`. The tag
+workflow reruns quality, injects the tag version, freshly installs and exercises
+the standalone tarball, writes `SHA256SUMS`, and creates the GitHub release. Do
+not create or move a release tag until its commit has passed CI.

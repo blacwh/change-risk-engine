@@ -269,6 +269,22 @@ repository. Terminal and JSON formats share the same validated result. Exit 0
 means analysis completed without triggering the configured gate, exit 2 means
 the risk classification met that gate, and exit 1 means input or analysis failed.
 
+## Distribution and self-analysis
+
+The release build bundles the CLI and all runtime dependencies into one ESM
+entrypoint. Its prelude provides Node's CommonJS bridge required by the
+TypeScript compiler dependency, while the command itself remains ESM. The tag's
+validated semantic version is injected at build time. `npm pack` creates a
+standalone tarball, and verification installs that tarball into a new temporary
+prefix, captures its version through a pipe, and runs an analysis outside the
+workspace dependency graph.
+
+The self-analysis workflow checks out the exact pull-request head (or pushed
+master head), builds the CLI, compares the event's base/head object IDs, and
+uploads the validated JSON result. The release workflow reruns all quality gates,
+packages and freshly installs the CLI, writes a SHA-256 checksum, and creates a
+GitHub release only for an existing version tag.
+
 ## Security
 
 Read target files without executing project code, installing dependencies, or running tests by default.

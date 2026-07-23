@@ -1,0 +1,13 @@
+Change risk: MODERATE (40)
+Revisions: <base-object-id>..<head-object-id>
+Changed files: 4 (+42 -9; 0 binary)
+Findings:
+- [MEDIUM] Public exports changed (+25): The supplied TypeScript public-surface comparison reports added, modified, or removed exports.
+- [HIGH] Sensitive area changed: authentication (+25): One or more changed paths match a configured sensitive-area pattern.
+- [INFO] Related tests added (-10): New test files are explicitly related to source files changed in the same analysis.
+Score contributions:
+- public-export: +25 (1 finding)
+- sensitive-path: +25 (1 finding)
+- tests-added: -10 (1 finding)
+Limitations:
+- Test relationships are inferred from path conventions; tests and coverage are not executed.
