@@ -97,6 +97,14 @@ fails. External repositories should use a pinned release tarball only after
 verifying `SHA256SUMS`; unpinned branch archives are not a supported install
 boundary.
 
+Plugin API version 1 is restricted to trusted programmatic hosts. Registry
+creation validates IDs, versions, counts, weights, functions, and collisions but
+does not execute components. Analysis does execute explicitly selected adapter
+and rule functions with host privileges. The CLI and GitHub Action provide no
+plugin path, repository discovery, dynamic import, or package-install mechanism.
+Never create plugin definitions from an analyzed pull request; third-party code
+requires isolation outside the default SDK boundary.
+
 Any future build/test execution must be opt-in, isolated, and clearly unsafe for untrusted code.
 
 Report vulnerabilities through private security advisories.

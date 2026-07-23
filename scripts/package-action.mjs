@@ -15,6 +15,7 @@ const result = await build({
       ['dependency-graph', 'packages/dependency-graph'],
       ['git-adapter', 'packages/git-adapter'],
       ['language-typescript', 'packages/language-typescript'],
+      ['plugin-sdk', 'packages/plugin-sdk'],
       ['reporters', 'packages/reporters'],
       ['rules', 'packages/rules'],
     ].map(([name, path]) => [

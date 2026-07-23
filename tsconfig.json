@@ -13,6 +13,7 @@
       "@change-risk/language-typescript": [
         "./packages/language-typescript/src/index.ts"
       ],
+      "@change-risk/plugin-sdk": ["./packages/plugin-sdk/src/index.ts"],
       "@change-risk/reporters": ["./packages/reporters/src/index.ts"],
       "@change-risk/rules": ["./packages/rules/src/index.ts"]
     },

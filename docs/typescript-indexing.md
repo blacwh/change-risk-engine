@@ -27,6 +27,10 @@ adapter can still return imports recovered from a syntactically incomplete file,
 but consumers must reduce confidence whenever issues are present. Indexing alone
 does not load configuration, install packages, resolve plugins, or execute target code.
 
+`typeScriptLanguageAdapter` exposes this bounded repository index through plugin
+API version 1's shared language-adapter contract. Programmatic hosts select it
+explicitly; the adapter does not discover other adapters or executable plugins.
+
 ## Module resolution
 
 Resolution operates only on discovered module paths. Relative imports support

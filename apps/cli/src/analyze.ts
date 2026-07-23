@@ -20,14 +20,16 @@ import {
 import {
   comparePublicExportSurfaces,
   inferConventionalTestRelationships,
-  resolveTypeScriptProject,
+  typeScriptLanguageAdapter,
   type SourceSnapshot,
 } from '@change-risk/language-typescript';
+import type { LanguageAdapter } from '@change-risk/plugin-sdk';
 import {
   DEFAULT_RULES,
   evaluateRules,
   globMatches,
   scoreRuleEvaluation,
+  type RiskRule,
 } from '@change-risk/rules';
 
 import { loadRepositoryConfig } from './config.js';
@@ -37,6 +39,8 @@ export type AnalyzeRepositoryOptions = {
   base: string;
   head: string;
   configPath?: string;
+  languageAdapter?: LanguageAdapter;
+  rules?: readonly RiskRule[];
 };
 
 export type RepositoryAnalysis = {
@@ -53,7 +57,7 @@ function isPublicEntryPoint(path: string): boolean {
 }
 
 function issueLimitation(issue: { kind: string; path?: string }): string {
-  return `TypeScript analysis issue: ${issue.kind}${issue.path === undefined ? '' : ` (${issue.path})`}.`;
+  return `Language analysis issue: ${issue.kind}${issue.path === undefined ? '' : ` (${issue.path})`}.`;
 }
 
 function publicIssueLimitation(issue: { kind: string; path: string }): string {
@@ -154,7 +158,9 @@ async function analyzeRepositoryInternal(
   if (
     await worktreeMatchesRevision(options.repositoryRoot, diff.headRevision)
   ) {
-    const index = await resolveTypeScriptProject(options.repositoryRoot, {
+    const index = await (
+      options.languageAdapter ?? typeScriptLanguageAdapter
+    ).indexRepository(options.repositoryRoot, {
       maxEntries: config.analysis.maxEntries,
       maxFiles: config.analysis.maxFiles,
       maxFileBytes: config.analysis.maxFileBytes,
@@ -242,7 +248,7 @@ async function analyzeRepositoryInternal(
       ...(dependencyGraph === undefined ? {} : { dependencyGraph }),
       ...(testRelationships === undefined ? {} : { testRelationships }),
     },
-    DEFAULT_RULES,
+    options.rules ?? DEFAULT_RULES,
     Object.fromEntries(
       Object.entries(configuredRules).map(([id, setting]) => [
         id,

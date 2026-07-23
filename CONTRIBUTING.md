@@ -24,6 +24,10 @@ CI examples must resolve exact revisions, preserve machine-readable evidence on
 gate failure, avoid write tokens unless the integration requires them, and pin
 and verify externally downloaded analyzer artifacts.
 
+Plugin additions require an API version, stable IDs, deterministic output,
+component bounds, collision tests, and an explicit trust model. Keep executable
+extension loading out of CLI configuration and analyzed repositories.
+
 Run `npm run quality` before opening a pull request. To validate the
 distributable CLI boundary, also run:
 

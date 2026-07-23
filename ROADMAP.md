@@ -71,14 +71,17 @@ checkout credentials and uploads its JSON artifact.
 
 Dependency graph viewer, blast-radius highlighting, report viewer, adapters, plugins, additional CI systems.
 
-Status: in progress. A self-contained, no-script HTML viewer renders the
+Status: complete. A self-contained, no-script HTML viewer renders the
 complete versioned analysis result from the CLI. A separate validated companion
 model now adds a bounded dependency graph, changed-module seeds, transitive
 impact distance, fan-in/fan-out, unindexed paths, and explicit truncation to the
-HTML viewer without changing result schema version 1. Ecosystem adapters and
-integrations remain. A GitLab CI template now supplies exact merge-request/push
-revisions, classification gating, and always-retained JSON without an API token.
-Adapter and plugin extension contracts remain.
+HTML viewer without changing result schema version 1. A GitLab CI template
+supplies exact merge-request/push revisions, classification gating, and
+always-retained JSON without an API token.
+The trusted-host plugin SDK provides versioned, bounded, collision-safe rule and
+language-adapter registries without target-repository loading. The built-in
+TypeScript indexer implements the adapter contract, and programmatic analysis
+accepts explicit rule and adapter selections. Phase 6 is complete.
 
 ## Later
 
