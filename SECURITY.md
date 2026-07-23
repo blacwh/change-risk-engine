@@ -89,6 +89,14 @@ table; untrusted paths never become element IDs, selectors, coordinates, or URL
 targets. Layout coordinates derive only from validated integer distances and
 deterministic array positions.
 
+The GitLab CI example requests full history but no API token or write permission.
+It rejects a missing or all-zero push base rather than substituting an ambiguous
+revision, disables npm lifecycle scripts while installing this repository's
+locked analyzer dependencies, and retains JSON when a classification gate
+fails. External repositories should use a pinned release tarball only after
+verifying `SHA256SUMS`; unpinned branch archives are not a supported install
+boundary.
+
 Any future build/test execution must be opt-in, isolated, and clearly unsafe for untrusted code.
 
 Report vulnerabilities through private security advisories.

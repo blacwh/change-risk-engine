@@ -1,0 +1,35 @@
+stages:
+  - analyze
+
+change-risk:
+  stage: analyze
+  image: node:22.13-bookworm
+  variables:
+    GIT_DEPTH: '0'
+  before_script:
+    - npm ci --ignore-scripts
+    - npm run build
+  script:
+    - |
+      set -eu
+      if [ -n "${CI_MERGE_REQUEST_DIFF_BASE_SHA:-}" ]; then
+        CHANGE_RISK_BASE="$CI_MERGE_REQUEST_DIFF_BASE_SHA"
+      elif [ -n "${CI_COMMIT_BEFORE_SHA:-}" ] && [ "$CI_COMMIT_BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
+        CHANGE_RISK_BASE="$CI_COMMIT_BEFORE_SHA"
+      else
+        echo "No analyzable base revision is available" >&2
+        exit 1
+      fi
+      node apps/cli/dist/run.js analyze \
+        --base "$CHANGE_RISK_BASE" \
+        --head "$CI_COMMIT_SHA" \
+        --format json \
+        --fail-on high > change-risk-report.json
+  artifacts:
+    when: always
+    paths:
+      - change-risk-report.json
+    expire_in: 14 days
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

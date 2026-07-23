@@ -317,6 +317,14 @@ API response sizes and comment pagination are bounded, and API errors expose
 status only. The checked-in Node 24 bundle is reproduced and compared during the
 quality gate so `uses:` requires no target dependency installation.
 
+## Additional CI systems
+
+Non-GitHub CI consumes the standalone CLI rather than duplicating orchestration.
+The GitLab template maps merge-request or push variables to exact base/head
+commits, requests full history, retains canonical JSON on gate failure, and does
+not require an API token. External repositories must use a pinned, checksummed
+release artifact; source-build examples are scoped to mirrors of this repository.
+
 ## Security
 
 Read target files without executing project code, installing dependencies, or running tests by default.

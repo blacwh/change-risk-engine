@@ -75,6 +75,9 @@ Analyze pull requests with the GitHub Action:
 See [GitHub Action usage](docs/github-action.md) for complete permissions,
 artifact upload, immutable pinning, and fork behavior.
 
+GitLab mirrors can use the exact-revision, artifact-preserving job in
+[GitLab CI usage](docs/gitlab-ci.md). It requires no GitLab API token.
+
 ## Development
 
 Prerequisites:

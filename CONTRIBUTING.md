@@ -20,6 +20,10 @@ bounds and truncation, escaped repository-derived content, and a non-visual
 equivalent such as a table. Do not infer graph structure from finding prose or
 silently extend an existing schema version.
 
+CI examples must resolve exact revisions, preserve machine-readable evidence on
+gate failure, avoid write tokens unless the integration requires them, and pin
+and verify externally downloaded analyzer artifacts.
+
 Run `npm run quality` before opening a pull request. To validate the
 distributable CLI boundary, also run:
 
