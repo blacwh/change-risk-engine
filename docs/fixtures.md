@@ -30,3 +30,9 @@ configuration and representative terminal output. Package verification adds a
 fresh temporary npm installation and analyzes this repository through the
 standalone executable, covering the release boundary as well as in-workspace
 fixtures.
+
+Extension coverage registers a trusted example rule alongside the built-in
+TypeScript adapter, runs it against exact fixture revisions, and verifies its
+finding and score contribution. Adapter contract tests use fixture modules with
+a resolved internal import; fixture repositories never supply executable plugin
+code.

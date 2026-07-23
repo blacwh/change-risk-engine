@@ -66,3 +66,8 @@ for evidence-backed mitigations such as `tests-added`; aggregation caps their
 effective contribution so the total score remains nonnegative. Classification
 is `low` below `thresholds.moderate`, `moderate` below `thresholds.high`, `high`
 below `thresholds.critical`, and `critical` at or above the critical threshold.
+
+Programmatic hosts may register additional rule IDs through the plugin SDK and
+pass the complete rule registry to analysis. Settings for those IDs use this same
+validated configuration shape. The stock CLI and GitHub Action use only built-in
+rules and never interpret configuration as a module or plugin path.

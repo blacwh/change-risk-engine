@@ -89,9 +89,9 @@ All positive and mitigating contributions are visible. Weights and thresholds ar
 
 The first release can analyze a TypeScript repository between revisions, build an import graph, calculate blast radius, apply at least eight deterministic rules, explain every contribution, load configuration, output terminal/JSON reports, run in GitHub Actions, and analyze its own repository.
 
-Status: implemented through the Phase 5 GitHub Action milestone. Visualization
-and additional ecosystem integrations remain post-MVP work; static HTML, graph
-visualization, and GitLab CI usage are now available.
+Status: implemented. Phases 0 through 6 are complete, including the GitHub
+Action, static and graph visualization, GitLab CI usage, and trusted-host
+extension contracts.
 
 ## Boundaries
 
@@ -99,4 +99,4 @@ The tool is an aid, not a safety guarantee, security-scanner replacement, AI rev
 
 ## Future
 
-Additional language adapters, coverage mapping, ownership, history-informed calibration, interactive hosted visualization, GitLab integration, plugin SDK, and optional local summaries constrained to deterministic findings.
+Additional language implementations, coverage mapping, ownership, history-informed calibration, interactive hosted visualization, isolated third-party plugin hosting, and optional local summaries constrained to deterministic findings.

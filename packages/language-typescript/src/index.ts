@@ -1,3 +1,4 @@
+export { typeScriptLanguageAdapter } from './adapter.js';
 export {
   discoverTypeScriptFiles,
   type DiscoveryIssue,

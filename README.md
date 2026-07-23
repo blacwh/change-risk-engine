@@ -18,15 +18,16 @@ The result is a transparent report. The tool must not present its risk classific
 
 ## Project status
 
-Phases 0 through 5 are complete. The engine safely collects exact Git evidence,
+Phases 0 through 6 are complete. The engine safely collects exact Git evidence,
 indexes TypeScript/JavaScript imports, builds a bounded dependency graph, applies
 deterministic evidence-backed rules, and exposes every effective score
 contribution. The installable CLI and bundled GitHub Action use the same core.
 Release automation verifies fresh CLI installs, while repository self-analysis
 exercises the Action and retains the complete versioned JSON report. Phase 6,
-visualization and ecosystem integrations, is in progress. The static HTML report
+visualization and ecosystem integrations, is complete. The static HTML report
 viewer includes a bounded dependency graph with changed modules and transitive
-blast-radius distance highlighted.
+blast-radius distance highlighted. GitLab CI guidance and trusted-host rule and
+language-adapter plugin contracts complete the initial ecosystem layer.
 
 ## Usage
 
@@ -118,7 +119,8 @@ TypeScript and JavaScript repositories.
 - GitHub Action;
 - JSON output;
 - static HTML report;
-- optional dependency/blast-radius visualizer.
+- programmatic rule/language plugin SDK;
+- dependency/blast-radius visualizer.
 
 ## Non-goals
 

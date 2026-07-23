@@ -1,13 +1,12 @@
 {
-  "name": "@change-risk/language-typescript",
+  "name": "@change-risk/plugin-sdk",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@change-risk/plugin-sdk": "0.0.0",
-    "typescript": "^6.0.3"
+    "@change-risk/rules": "0.0.0"
   },
   "scripts": {
     "build": "tsc --build tsconfig.json"

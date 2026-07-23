@@ -15,11 +15,11 @@
 ```text
 apps/cli
 apps/github-action
-apps/web
 packages/core
 packages/git-adapter
 packages/language-typescript
 packages/dependency-graph
+packages/plugin-sdk
 packages/rules
 packages/config
 packages/reporters
@@ -39,14 +39,14 @@ before publishing decisions are made:
 - `packages/git-adapter` collects repository evidence without executing target code;
 - `packages/language-typescript` indexes TypeScript and JavaScript;
 - `packages/dependency-graph` owns bounded graph operations;
+- `packages/plugin-sdk` owns trusted-host extension contracts and registries;
 - `packages/rules` evaluates deterministic rules;
 - `packages/config` validates versioned configuration;
 - `packages/reporters` renders shared results;
 - `packages/fixtures` provides controlled integration-test repositories and helpers.
 
-Workspace entry points are intentionally empty during the foundation milestone.
-Contracts are introduced with the capability that needs them instead of being
-guessed in advance.
+Workspace entry points expose only implemented contracts; private package
+boundaries can mature before independent publishing decisions are made.
 
 ## Pipeline
 
@@ -103,13 +103,20 @@ type Finding = {
 interface LanguageAdapter {
   id: string;
   canHandle(path: string): boolean;
-  index(files: string[], context: IndexContext): Promise<ModuleIndex>;
-  detectPublicApiChanges?(context: ChangeContext): Promise<PublicApiChange[]>;
-  mapTests?(index: ModuleIndex): Promise<TestRelationship[]>;
+  indexRepository(
+    repositoryRoot: string,
+    limits: LanguageAdapterLimits,
+  ): Promise<LanguageAdapterIndex>;
 }
 ```
 
 Support TypeScript/JavaScript first.
+
+The built-in TypeScript implementation conforms to plugin API version 1's
+language-adapter contract: ID and path selection plus a bounded repository index
+that returns normalized modules, references, and explicit issues. Programmatic
+orchestration accepts one explicitly selected adapter; it does not discover or
+load adapters from the target repository.
 
 The initial adapter discovers TypeScript/JavaScript files with deterministic
 ordering and bounded entries, file count, and file size. It skips symlinks,
@@ -219,6 +226,12 @@ weights establish the available score before negative mitigations are applied;
 mitigation is capped at zero and its effective contribution remains visible.
 The result schema requires every finding to appear in exactly one uniquely
 identified rule contribution.
+
+Trusted embedding hosts may compose built-in and plugin rules through the
+versioned plugin registry. Registration validates stable IDs, weights, required
+functions, counts, and collisions, then sorts and freezes copied component
+metadata without executing it. The CLI and CI compositions never load plugins
+from an analyzed repository.
 
 Public-surface comparison operates on caller-selected TypeScript source
 snapshots from resolved revisions. It compares exported declaration signatures,
