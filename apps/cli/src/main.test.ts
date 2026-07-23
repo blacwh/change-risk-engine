@@ -75,6 +75,24 @@ describe('change-risk CLI', () => {
         'tests-added',
       ]);
 
+      const html = await runCli(
+        [
+          'analyze',
+          '--repo',
+          fixture.path,
+          '--base',
+          fixture.revisions[0]!,
+          '--head',
+          fixture.revisions[1]!,
+          '--format',
+          'html',
+        ],
+        '.',
+      );
+      expect(html).toMatchObject({ exitCode: 0, stderr: '' });
+      expect(html.stdout.startsWith('<!doctype html>')).toBe(true);
+      expect(html.stdout).toContain('Repository change report');
+
       await writeFile(`${fixture.path}/untracked.ts`, 'export {};\n', 'utf8');
       const degraded = await runCli(
         [

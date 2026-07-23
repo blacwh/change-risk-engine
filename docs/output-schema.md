@@ -35,3 +35,9 @@ capped at a zero aggregate. The Markdown report also cites finding evidence IDs,
 escapes repository-derived content, and links its maintained-comment identity to
 a stable hidden marker. If comment-size bounds require a summary, the Action's
 JSON artifact remains the complete canonical result.
+
+The self-contained HTML renderer also consumes this exact schema. It presents
+the complete result without adding derived claims or volatile fields, so it can
+be regenerated deterministically from the canonical JSON value. It contains no
+script or external assets; repository-derived values are escaped at the output
+boundary.

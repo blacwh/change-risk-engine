@@ -70,6 +70,28 @@ try {
   ) {
     throw new Error('Installed CLI returned an invalid analysis result');
   }
+  const { stdout: html } = await execFileAsync(
+    executable,
+    [
+      'analyze',
+      '--repo',
+      repositoryRoot,
+      '--base',
+      'HEAD~1',
+      '--head',
+      'HEAD',
+      '--format',
+      'html',
+    ],
+    { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 },
+  );
+  if (
+    !html.startsWith('<!doctype html>') ||
+    !html.includes('Content-Security-Policy') ||
+    !html.includes('Repository change report')
+  ) {
+    throw new Error('Installed CLI returned an invalid HTML report');
+  }
   process.stdout.write(`verified ${artifacts[0]} (${installedVersion})\n`);
 } finally {
   await rm(installRoot, { force: true, recursive: true });

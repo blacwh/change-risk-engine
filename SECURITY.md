@@ -76,6 +76,13 @@ package-install, version, and analysis verification. Release archives include a
 SHA-256 checksum. The bundled analyzer preserves the same no-execution and
 bounded-input behavior as the workspace CLI.
 
+The static HTML reporter emits no JavaScript or external resources. A restrictive
+content security policy blocks network and script loading, and all
+repository-derived strings are HTML-escaped before rendering. Generated numeric
+anchors prevent evidence IDs from becoming attribute injection surfaces. The
+document is a local representation of already-validated report data; it does not
+read files or execute analyzer behavior when opened.
+
 Any future build/test execution must be opt-in, isolated, and clearly unsafe for untrusted code.
 
 Report vulnerabilities through private security advisories.
