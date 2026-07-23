@@ -10,7 +10,8 @@ Build a deterministic, explainable Repository Change-Risk Engine. Do not turn it
 2. `ARCHITECTURE.md`
 3. `ROADMAP.md`
 4. `BACKLOG.md`
-5. relevant ADRs, rules, fixtures, and source
+5. `docs/agent-workflow.md` for continuous or autonomous work
+6. relevant ADRs, rules, fixtures, and source
 
 Before coding, inspect current capabilities, gaps, task scope, risks, affected contracts, and verification commands.
 
@@ -44,18 +45,31 @@ Before coding, inspect current capabilities, gaps, task scope, risks, affected c
 1. Restate acceptance criteria.
 2. Inspect implementation and fixtures.
 3. Identify affected contracts.
-4. Implement one coherent milestone.
+4. Define one bounded work packet and its verification plan.
 5. Add unit and fixture tests.
 6. Run format, lint, type check, tests, and builds.
 7. Review the diff.
 8. Update documentation.
-9. Summarize changes, evidence, tests, limitations, and follow-ups.
+9. Commit, open a pull request, wait for required checks, and merge only when
+   the user has authorized repository publishing.
+10. Synchronize the default branch and summarize changes, evidence, tests,
+    limitations, and follow-ups.
+
+For continuous work, follow the four-hour run protocol, packet limits, merge
+checkpoints, stop rules, and verification matrix in
+`docs/agent-workflow.md`. Do not start work merely because it appears in
+`ROADMAP.md` or `BACKLOG.md`; select only a packet that is ready and fits the
+remaining run budget.
 
 ## Required docs
 
-Maintain `README.md`, `PRODUCT.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `BACKLOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `docs/adr`, `docs/configuration.md`, `docs/rules`, `docs/output-schema.md`, and `docs/fixtures.md`.
+Maintain `README.md`, `PRODUCT.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `BACKLOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `docs/agent-workflow.md`, `docs/adr`, `docs/configuration.md`, `docs/rules`, `docs/output-schema.md`, and `docs/fixtures.md`.
 
-## Initial sequence
+## Completed initial sequence
+
+The initial capability sequence below is historical context, not an active work
+queue. Before another continuous run, define a ready packet in `BACKLOG.md` with
+acceptance criteria as described in `docs/agent-workflow.md`.
 
 1. foundation and CI;
 2. config and output schemas;

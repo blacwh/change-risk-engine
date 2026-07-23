@@ -86,3 +86,8 @@ accepts explicit rule and adapter selections. Phase 6 is complete.
 ## Later
 
 Coverage, ownership, history-based calibration, policy packs, additional languages, constrained optional summaries.
+
+These are candidate directions, not a prioritized implementation queue. Before
+a future continuous run, select a direction, define acceptance criteria and
+non-goals in `BACKLOG.md`, and size it using the
+[continuous agent work protocol](docs/agent-workflow.md).

@@ -47,3 +47,12 @@
 - [x] GitLab CI integration example
 - [x] Adapter and plugin extension contracts
 - [x] Release automation
+
+## Next planning cycle
+
+All currently scoped backlog items are complete. Before starting another
+continuous implementation run, add a prioritized item with acceptance criteria,
+affected contracts, explicit non-goals, documentation impact, and verification.
+Size it as a work packet using
+[`docs/agent-workflow.md`](docs/agent-workflow.md). Do not treat the unprioritized
+directions in `ROADMAP.md` as implementation authorization.

@@ -108,6 +108,11 @@ The repository uses npm workspaces. Applications live in `apps/`, reusable
 analysis components live in `packages/`, and repository-level tests live in
 `tests/`.
 
+Contributors using an AI agent should follow the
+[continuous agent work protocol](docs/agent-workflow.md). It defines bounded
+work packets, a four-hour run ceiling, autonomous merge checkpoints, verification
+by change type, and exact handoff requirements.
+
 ## Initial scope
 
 TypeScript and JavaScript repositories.
