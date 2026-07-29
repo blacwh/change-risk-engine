@@ -19,6 +19,7 @@ packages/core
 packages/git-adapter
 packages/language-typescript
 packages/dependency-graph
+packages/coverage
 packages/ownership
 packages/plugin-sdk
 packages/rules
@@ -40,6 +41,7 @@ before publishing decisions are made:
 - `packages/git-adapter` collects repository evidence without executing target code;
 - `packages/language-typescript` indexes TypeScript and JavaScript;
 - `packages/dependency-graph` owns bounded graph operations;
+- `packages/coverage` reads and maps bounded caller-supplied LCOV line evidence;
 - `packages/ownership` reads and maps bounded root CODEOWNERS policy;
 - `packages/plugin-sdk` owns trusted-host extension contracts and registries;
 - `packages/rules` evaluates deterministic rules;
@@ -56,6 +58,7 @@ boundaries can mature before independent publishing decisions are made.
 resolve revisions
 → collect Git diff
 → classify files
+→ map supplied line coverage
 → index modules
 → build dependency graph
 → map changed nodes
@@ -238,6 +241,17 @@ over-limit input suppresses ownership findings and becomes an explicit
 limitation. The `missing-owner` rule aggregates paths with no owners into one
 evidence-backed finding; it does not query identity, access, approval, or team
 membership.
+
+Coverage policy consumes an exact relationship for every eligible changed
+non-test, non-generated source or no relationship set at all. The stock mapper
+reads one explicitly selected repository-relative LCOV artifact with bounded
+no-follow semantics, validates line records and summaries, and assigns raw
+counts or an explicit missing record. Any reader or parser issue suppresses the
+complete relationship set and becomes a source-free limitation. The
+`insufficient-coverage` rule aggregates missing, zero-measurable, and
+below-threshold paths into one evidence-backed finding. It does not run tests,
+discover artifacts, or assert freshness, revision alignment, suite completeness,
+or behavioral adequacy.
 
 Trusted embedding hosts may compose built-in and plugin rules through the
 versioned plugin registry. Registration validates stable IDs, weights, required

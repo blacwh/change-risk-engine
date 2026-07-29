@@ -16,6 +16,25 @@ export function integerOption(
   return value as number;
 }
 
+export function numberOption(
+  options: Readonly<Record<string, unknown>>,
+  name: string,
+  defaultValue: number,
+  minimum: number,
+  maximum: number,
+): number {
+  const value = options[name] ?? defaultValue;
+  if (
+    typeof value !== 'number' ||
+    !Number.isFinite(value) ||
+    value < minimum ||
+    value > maximum
+  ) {
+    throw new Error(`${name} must be a number from ${minimum} to ${maximum}`);
+  }
+  return value;
+}
+
 export function globMatches(pattern: string, path: string): boolean {
   if (pattern.length === 0 || pattern.length > 1_000) {
     throw new Error('Glob patterns must contain from 1 to 1000 characters');

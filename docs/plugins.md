@@ -42,6 +42,12 @@ worktree. Hosts calling the rule engine directly must either omit ownership
 evidence or provide exactly one validated relationship for every changed path;
 partial maps are rejected because they could turn missing input into a finding.
 
+Programmatic rules receive coverage relationships only when the stock
+orchestrator parsed a complete supplied artifact. Hosts calling the rule engine
+directly must omit coverage evidence or provide exactly one validated
+relationship for every eligible changed non-test, non-generated source. Missing
+LCOV records use paired `null` counts; partial or ineligible maps are rejected.
+
 ## Language adapter contract
 
 A language adapter declares an ID, a path predicate, and an asynchronous bounded

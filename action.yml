@@ -4,6 +4,9 @@ inputs:
   config:
     description: Repository-relative JSON configuration path
     required: false
+  coverage:
+    description: Repository-relative LCOV artifact path
+    required: false
   fail-on:
     description: Lowest classification that fails the step
     required: false

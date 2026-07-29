@@ -220,11 +220,13 @@ export async function runGitHubAction(
   }
   const context = eventContext(await readEvent(eventPath), repository);
   const configPath = input(environment, 'CONFIG');
+  const coveragePath = input(environment, 'COVERAGE');
   const result = await analyzeRepository({
     repositoryRoot: workspace,
     base: context.base,
     head: context.head,
     ...(configPath === undefined ? {} : { configPath }),
+    ...(coveragePath === undefined ? {} : { coveragePath }),
   });
   const outputPath = await safeOutputPath(
     workspace,

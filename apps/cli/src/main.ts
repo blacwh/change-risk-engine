@@ -15,6 +15,7 @@ Options:
   --head <revision>       Head revision (default: HEAD)
   --repo <path>           Repository root (default: current directory)
   --config <path>         Repository-relative JSON config (default: .change-risk.json if present)
+  --coverage <path>       Repository-relative LCOV artifact
   --format <terminal|json|html>
   --fail-on <none|low|moderate|high|critical>
   --help
@@ -41,6 +42,7 @@ type AnalyzeArguments = {
   head: string;
   repositoryRoot: string;
   configPath?: string;
+  coveragePath?: string;
   format: 'html' | 'json' | 'terminal';
   failOn: FailOn;
 };
@@ -61,6 +63,7 @@ function parseAnalyzeArguments(
   let head = 'HEAD';
   let repositoryRoot = workingDirectory;
   let configPath: string | undefined;
+  let coveragePath: string | undefined;
   let format: 'html' | 'json' | 'terminal' = 'terminal';
   let failOn: FailOn = 'none';
   const seen = new Set<string>();
@@ -72,6 +75,7 @@ function parseAnalyzeArguments(
       ![
         '--base',
         '--config',
+        '--coverage',
         '--fail-on',
         '--format',
         '--head',
@@ -89,6 +93,7 @@ function parseAnalyzeArguments(
     else if (option === '--repo')
       repositoryRoot = resolve(workingDirectory, value);
     else if (option === '--config') configPath = value;
+    else if (option === '--coverage') coveragePath = value;
     else if (option === '--format') {
       if (value !== 'html' && value !== 'json' && value !== 'terminal') {
         throw new Error('--format must be terminal, json, or html');
@@ -108,6 +113,7 @@ function parseAnalyzeArguments(
     head,
     repositoryRoot,
     ...(configPath === undefined ? {} : { configPath }),
+    ...(coveragePath === undefined ? {} : { coveragePath }),
     format,
     failOn,
   };
@@ -145,6 +151,9 @@ export async function runCli(
       ...(parsed.configPath === undefined
         ? {}
         : { configPath: parsed.configPath }),
+      ...(parsed.coveragePath === undefined
+        ? {}
+        : { coveragePath: parsed.coveragePath }),
     });
     const { result } = analysis;
     const stdout =

@@ -6,6 +6,7 @@ import { evaluateRules, type RiskRule, type RuleContext } from './engine.js';
 import {
   DEFAULT_RULES,
   highFanInRule,
+  insufficientCoverageRule,
   largeChangeRule,
   missingOwnerRule,
   missingRelatedTestsRule,
@@ -287,6 +288,164 @@ describe('ownership rule', () => {
         [missingOwnerRule],
       ),
     ).toThrow(/unchanged path/);
+  });
+});
+
+describe('coverage rule', () => {
+  const coverageFiles: ChangedFile[] = [
+    file('src/at-threshold.ts', ['source']),
+    file('src/below.ts', ['source']),
+    file('src/missing.ts', ['source']),
+    file('src/no-lines.ts', ['source']),
+    file('src/generated.ts', ['source', 'generated']),
+    file('src/a.test.ts', ['source', 'test']),
+    { ...file('src/deleted.ts', ['source']), status: 'deleted' },
+  ];
+
+  it('aggregates missing, unmeasurable, and below-threshold coverage', () => {
+    const result = evaluateRules(
+      {
+        changedFiles: coverageFiles,
+        coverageRelationships: [
+          { path: 'src/no-lines.ts', linesFound: 0, linesHit: 0 },
+          { path: 'src/missing.ts', linesFound: null, linesHit: null },
+          { path: 'src/below.ts', linesFound: 2, linesHit: 1 },
+          { path: 'src/at-threshold.ts', linesFound: 10, linesHit: 8 },
+        ],
+        sensitiveAreas: [],
+      },
+      [insufficientCoverageRule],
+      {
+        'insufficient-coverage': {
+          options: { minLinePercent: 80 },
+          weight: 12,
+        },
+      },
+    );
+    expect(result.findings[0]).toMatchObject({
+      ruleId: 'insufficient-coverage',
+      weight: 12,
+      affectedPaths: ['src/below.ts', 'src/missing.ts', 'src/no-lines.ts'],
+    });
+    expect(result.evidence[0]?.data).toEqual({
+      minLinePercent: 80,
+      paths: [
+        {
+          path: 'src/below.ts',
+          linesFound: 2,
+          linesHit: 1,
+          linePercent: 50,
+          reason: 'below-threshold',
+        },
+        {
+          path: 'src/missing.ts',
+          linesFound: null,
+          linesHit: null,
+          linePercent: null,
+          reason: 'missing-record',
+        },
+        {
+          path: 'src/no-lines.ts',
+          linesFound: 0,
+          linesHit: 0,
+          linePercent: null,
+          reason: 'no-measurable-lines',
+        },
+      ],
+    });
+  });
+
+  it('does not infer coverage without evidence or below-threshold paths', () => {
+    expect(
+      evaluateRules(
+        {
+          changedFiles: [file('src/a.ts', ['source'])],
+          sensitiveAreas: [],
+        },
+        [insufficientCoverageRule],
+      ),
+    ).toEqual({ evidence: [], findings: [] });
+    expect(
+      evaluateRules(
+        {
+          changedFiles: [file('src/a.ts', ['source'])],
+          coverageRelationships: [
+            { path: 'src/a.ts', linesFound: 10, linesHit: 9 },
+          ],
+          sensitiveAreas: [],
+        },
+        [insufficientCoverageRule],
+      ),
+    ).toEqual({ evidence: [], findings: [] });
+    expect(
+      evaluateRules(
+        {
+          changedFiles: [file('src/a.ts', ['source'])],
+          coverageRelationships: [
+            { path: 'src/a.ts', linesFound: null, linesHit: null },
+          ],
+          sensitiveAreas: [],
+        },
+        [insufficientCoverageRule],
+        { 'insufficient-coverage': { enabled: false } },
+      ),
+    ).toEqual({ evidence: [], findings: [] });
+  });
+
+  it('validates threshold options and complete eligible relationships', () => {
+    const changedFiles = [
+      file('src/a.ts', ['source']),
+      file('src/b.ts', ['source']),
+    ];
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles,
+          coverageRelationships: [
+            { path: 'src/a.ts', linesFound: 1, linesHit: 1 },
+          ],
+          sensitiveAreas: [],
+        },
+        [insufficientCoverageRule],
+      ),
+    ).toThrow(/cover every eligible changed source/);
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [changedFiles[0]!],
+          coverageRelationships: [
+            { path: 'src/a.ts', linesFound: 1, linesHit: null },
+          ],
+          sensitiveAreas: [],
+        },
+        [insufficientCoverageRule],
+      ),
+    ).toThrow(/invalid fields/);
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [changedFiles[0]!],
+          coverageRelationships: [
+            { path: 'src/a.test.ts', linesFound: 1, linesHit: 1 },
+          ],
+          sensitiveAreas: [],
+        },
+        [insufficientCoverageRule],
+      ),
+    ).toThrow(/ineligible changed path/);
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [changedFiles[0]!],
+          coverageRelationships: [
+            { path: 'src/a.ts', linesFound: 1, linesHit: 1 },
+          ],
+          sensitiveAreas: [],
+        },
+        [insufficientCoverageRule],
+        { 'insufficient-coverage': { options: { minLinePercent: 101 } } },
+      ),
+    ).toThrow(/minLinePercent/);
   });
 });
 

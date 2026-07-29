@@ -2,6 +2,7 @@ export {
   DEFAULT_RULES,
   dependencyManifestRule,
   highFanInRule,
+  insufficientCoverageRule,
   infrastructureRule,
   largeChangeRule,
   migrationRule,
@@ -13,6 +14,7 @@ export {
   testsAddedRule,
 } from './rules.js';
 export {
+  type CoverageRelationship,
   evaluateRules,
   type OwnershipRelationship,
   type PublicExportChange,

@@ -11,6 +11,7 @@
   "references": [
     { "path": "../../packages/config" },
     { "path": "../../packages/core" },
+    { "path": "../../packages/coverage" },
     { "path": "../../packages/dependency-graph" },
     { "path": "../../packages/git-adapter" },
     { "path": "../../packages/language-typescript" },

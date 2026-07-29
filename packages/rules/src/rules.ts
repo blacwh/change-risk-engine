@@ -1,7 +1,7 @@
 import type { ChangedFile } from '@change-risk/core';
 
 import type { RiskRule, RuleMatch } from './engine.js';
-import { globMatches, integerOption } from './options.js';
+import { globMatches, integerOption, numberOption } from './options.js';
 
 function compareText(left: string, right: string): number {
   return left < right ? -1 : left > right ? 1 : 0;
@@ -10,6 +10,14 @@ function compareText(left: string, right: string): number {
 function paths(files: readonly ChangedFile[]): string[] {
   return files.map(({ path }) => path).sort(compareText);
 }
+
+type CoverageConcern = {
+  path: string;
+  linesFound: number | null;
+  linesHit: number | null;
+  linePercent: number | null;
+  reason: 'below-threshold' | 'missing-record' | 'no-measurable-lines';
+};
 
 function categoryRule(definition: {
   id: string;
@@ -410,6 +418,75 @@ export const missingOwnerRule: RiskRule = {
   },
 };
 
+export const insufficientCoverageRule: RiskRule = {
+  id: 'insufficient-coverage',
+  defaultWeight: 20,
+  evaluate(context, options) {
+    const relationships = context.coverageRelationships;
+    if (relationships === undefined) return [];
+    const minLinePercent = numberOption(options, 'minLinePercent', 80, 0, 100);
+    const insufficient = [...relationships]
+      .sort((left, right) => compareText(left.path, right.path))
+      .flatMap<CoverageConcern>((relationship) => {
+        if (
+          relationship.linesFound === null ||
+          relationship.linesHit === null
+        ) {
+          return [
+            {
+              ...relationship,
+              linePercent: null,
+              reason: 'missing-record' as const,
+            },
+          ];
+        }
+        if (relationship.linesFound === 0) {
+          return [
+            {
+              ...relationship,
+              linePercent: null,
+              reason: 'no-measurable-lines' as const,
+            },
+          ];
+        }
+        const linePercent =
+          (relationship.linesHit * 100) / relationship.linesFound;
+        if (linePercent >= minLinePercent) return [];
+        return [
+          {
+            ...relationship,
+            linePercent: Math.round(linePercent * 100) / 100,
+            reason: 'below-threshold' as const,
+          },
+        ];
+      });
+    if (insufficient.length === 0) return [];
+    const affectedPaths = insufficient.map(({ path }) => path);
+    return [
+      {
+        evidence: {
+          kind: 'coverage',
+          summary: `${insufficient.length} changed source file(s) have insufficient supplied line coverage`,
+          data: {
+            minLinePercent,
+            paths: insufficient,
+          },
+          sourcePaths: affectedPaths,
+        },
+        finding: {
+          title: 'Changed source has insufficient supplied coverage',
+          severity: 'medium',
+          explanation:
+            'Complete supplied coverage evidence reports missing, unmeasurable, or below-threshold line coverage for changed source files.',
+          affectedPaths,
+          remediation:
+            'Add or update tests, regenerate the LCOV artifact for the analyzed head, or document why the configured threshold is not appropriate.',
+        },
+      },
+    ];
+  },
+};
+
 export const dependencyManifestRule = categoryRule({
   id: 'dependency-manifest',
   title: 'Dependency files changed',
@@ -447,6 +524,7 @@ export const infrastructureRule = categoryRule({
 export const DEFAULT_RULES = [
   dependencyManifestRule,
   highFanInRule,
+  insufficientCoverageRule,
   infrastructureRule,
   largeChangeRule,
   migrationRule,

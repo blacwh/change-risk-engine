@@ -9,6 +9,7 @@ export type RuleSetting = {
 
 export type RuleContext = {
   changedFiles: readonly ChangedFile[];
+  coverageRelationships?: readonly CoverageRelationship[];
   dependencyGraph?: DirectedDependencyGraph;
   ownershipRelationships?: readonly OwnershipRelationship[];
   publicExportChanges?: readonly PublicExportChange[];
@@ -30,6 +31,12 @@ export type TestRelationship = {
 export type OwnershipRelationship = {
   path: string;
   owners: readonly string[];
+};
+
+export type CoverageRelationship = {
+  path: string;
+  linesFound: number | null;
+  linesHit: number | null;
 };
 
 export type RuleMatch = {
@@ -60,6 +67,60 @@ export function evaluateRules(
   rules: readonly RiskRule[],
   settings: Readonly<Record<string, RuleSetting>> = {},
 ): RuleEvaluation {
+  const coverageRelationships = context.coverageRelationships;
+  if (coverageRelationships !== undefined) {
+    if (coverageRelationships.length > 100_000) {
+      throw new Error('Coverage relationship limit exceeded');
+    }
+    const eligiblePaths = new Set(
+      context.changedFiles
+        .filter(
+          ({ categories, status }) =>
+            status !== 'deleted' &&
+            categories.includes('source') &&
+            !categories.includes('test') &&
+            !categories.includes('generated'),
+        )
+        .map(({ path }) => path),
+    );
+    const coveragePaths = new Set<string>();
+    for (const relationship of coverageRelationships) {
+      const bothMissing =
+        relationship.linesFound === null && relationship.linesHit === null;
+      const bothMeasured =
+        relationship.linesFound !== null &&
+        relationship.linesHit !== null &&
+        Number.isSafeInteger(relationship.linesFound) &&
+        Number.isSafeInteger(relationship.linesHit) &&
+        relationship.linesFound >= 0 &&
+        relationship.linesHit >= 0 &&
+        relationship.linesHit <= relationship.linesFound;
+      if (
+        relationship.path.length === 0 ||
+        relationship.path.length > 1_000 ||
+        (!bothMissing && !bothMeasured)
+      ) {
+        throw new Error('Coverage relationships contain invalid fields');
+      }
+      if (coveragePaths.has(relationship.path)) {
+        throw new Error('Coverage relationship paths must be unique');
+      }
+      if (!eligiblePaths.has(relationship.path)) {
+        throw new Error(
+          'Coverage relationships contain an ineligible changed path',
+        );
+      }
+      coveragePaths.add(relationship.path);
+    }
+    if (
+      coveragePaths.size !== eligiblePaths.size ||
+      [...eligiblePaths].some((path) => !coveragePaths.has(path))
+    ) {
+      throw new Error(
+        'Coverage relationships must cover every eligible changed source exactly once',
+      );
+    }
+  }
   const publicExportChanges = context.publicExportChanges ?? [];
   if (publicExportChanges.length > 100_000) {
     throw new Error('Public export change limit exceeded');

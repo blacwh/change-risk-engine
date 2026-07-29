@@ -96,10 +96,23 @@ maps every changed path through the last matching rule. The built-in
 paths and is suppressed when ownership input is incomplete. CLI and GitHub
 Action reporting preserve result schema version 1.
 
+## Phase 8 — Supplied coverage evidence
+
+Bounded LCOV parsing, eligible changed-source mapping, insufficient-coverage
+policy, and shared CLI/CI reporting.
+
+Status: complete. The analyzer accepts one explicit repository-relative LCOV
+artifact, rejects linked, malformed, inconsistent, unsupported, and over-limit
+input, and maps every eligible changed source to raw line counts or an explicit
+missing record. The configurable `insufficient-coverage` rule aggregates
+missing, zero-measurable, and below-threshold paths. CLI and GitHub Action
+reporting preserve result schema version 1, do not run target tests, and state
+that freshness and revision alignment are not verified.
+
 ## Later
 
-Coverage, history-based calibration, policy packs, additional languages,
-constrained optional summaries.
+Changed-line and historical coverage, history-based calibration, policy packs,
+additional languages, constrained optional summaries.
 
 These are candidate directions, not a prioritized implementation queue. Before
 a future continuous run, select a direction, define acceptance criteria and

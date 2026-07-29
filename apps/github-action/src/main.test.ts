@@ -76,6 +76,63 @@ describe('GitHub Action composition', () => {
     expect(await readFile(summary, 'utf8')).toContain('Change risk report');
   });
 
+  it('forwards the optional coverage artifact into analysis', async () => {
+    const fixture = await createFixtureRepository([
+      {
+        message: 'base',
+        files: {
+          'coverage/lcov.info':
+            'SF:src/service.ts\nDA:1,0\nLF:1\nLH:0\nend_of_record\n',
+          'src/service.ts': 'export const service = 1;\n',
+        },
+      },
+      {
+        message: 'head',
+        files: { 'src/service.ts': 'export const service = 2;\n' },
+      },
+    ]);
+    cleanup.push(fixture.cleanup);
+    const runtimeRoot = await mkdtemp(join(tmpdir(), 'change-risk-action-'));
+    cleanup.push(() => rm(runtimeRoot, { recursive: true, force: true }));
+    const eventPath = join(runtimeRoot, 'event.json');
+    await writeFile(
+      eventPath,
+      JSON.stringify({
+        before: fixture.revisions[0],
+        after: fixture.revisions[1],
+      }),
+    );
+
+    const result = await runGitHubAction({
+      environment: {
+        GITHUB_WORKSPACE: fixture.path,
+        GITHUB_EVENT_PATH: eventPath,
+        GITHUB_REPOSITORY: 'owner/repository',
+        INPUT_COVERAGE: 'coverage/lcov.info',
+      },
+    });
+    const report = JSON.parse(await readFile(result.outputPath, 'utf8')) as {
+      evidence: { kind: string; sourcePaths?: string[] }[];
+      findings: { ruleId: string; affectedPaths: string[] }[];
+      limitations: string[];
+    };
+    expect(report.findings).toContainEqual(
+      expect.objectContaining({
+        ruleId: 'insufficient-coverage',
+        affectedPaths: ['src/service.ts'],
+      }),
+    );
+    expect(report.evidence).toContainEqual(
+      expect.objectContaining({
+        kind: 'coverage',
+        sourcePaths: ['src/service.ts'],
+      }),
+    );
+    expect(report.limitations).toContain(
+      'Coverage evidence is caller supplied; freshness and revision alignment are not verified.',
+    );
+  });
+
   it('never calls the comments API for fork pull requests', async () => {
     const fixture = await createFixtureRepository([
       { message: 'base', files: { 'src/index.ts': 'export {};\n' } },
