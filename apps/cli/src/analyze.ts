@@ -23,6 +23,7 @@ import {
   typeScriptLanguageAdapter,
   type SourceSnapshot,
 } from '@change-risk/language-typescript';
+import { readCodeowners } from '@change-risk/ownership';
 import type { LanguageAdapter } from '@change-risk/plugin-sdk';
 import {
   DEFAULT_RULES,
@@ -62,6 +63,13 @@ function issueLimitation(issue: { kind: string; path?: string }): string {
 
 function publicIssueLimitation(issue: { kind: string; path: string }): string {
   return `Public-surface comparison issue: ${issue.kind} (${issue.path}).`;
+}
+
+function ownershipIssueLimitation(issue: {
+  kind: string;
+  line?: number;
+}): string {
+  return `Ownership evidence unavailable: ${issue.kind}${issue.line === undefined ? '' : ` (line ${issue.line})`}.`;
 }
 
 function ignored(path: string, patterns: readonly string[]): boolean {
@@ -154,10 +162,18 @@ async function analyzeRepositoryInternal(
     ReturnType<typeof dependencyGraphFromModules> | undefined;
   let testRelationships:
     ReturnType<typeof inferConventionalTestRelationships> | undefined;
+  let ownershipRelationships: Awaited<
+    ReturnType<typeof readCodeowners>
+  >['relationships'];
   let blastRadius: BlastRadiusVisualization | undefined;
   if (
     await worktreeMatchesRevision(options.repositoryRoot, diff.headRevision)
   ) {
+    const ownership = await readCodeowners(
+      options.repositoryRoot,
+      changedFiles.map(({ path }) => path),
+    );
+    limitations.push(...ownership.issues.map(ownershipIssueLimitation));
     const index = await (
       options.languageAdapter ?? typeScriptLanguageAdapter
     ).indexRepository(options.repositoryRoot, {
@@ -199,6 +215,7 @@ async function analyzeRepositoryInternal(
     ) {
       dependencyGraph = candidateGraph;
       testRelationships = candidateRelationships;
+      ownershipRelationships = ownership.relationships;
       if (includeVisualization) {
         blastRadius = buildBlastRadiusVisualization(
           candidateGraph,
@@ -218,11 +235,13 @@ async function analyzeRepositoryInternal(
     } else {
       limitations.push(
         'Dependency graph and test relationships were discarded because the worktree changed during analysis.',
+        'Ownership evidence was discarded because the worktree changed during analysis.',
       );
     }
   } else {
     limitations.push(
       'Dependency graph and test relationships were omitted because the clean worktree did not match the analyzed head revision.',
+      'Ownership evidence was omitted because the clean worktree did not match the analyzed head revision.',
     );
   }
 
@@ -243,6 +262,9 @@ async function analyzeRepositoryInternal(
   const evaluation = evaluateRules(
     {
       changedFiles,
+      ...(ownershipRelationships === undefined
+        ? {}
+        : { ownershipRelationships }),
       sensitiveAreas: config.sensitiveAreas,
       publicExportChanges,
       ...(dependencyGraph === undefined ? {} : { dependencyGraph }),

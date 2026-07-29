@@ -10,4 +10,5 @@ Score contributions:
 - sensitive-path: +25 (1 finding)
 - tests-added: -10 (1 finding)
 Limitations:
+- Ownership evidence unavailable: file-missing.
 - Test relationships are inferred from path conventions; tests and coverage are not executed.

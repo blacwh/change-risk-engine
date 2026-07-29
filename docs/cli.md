@@ -36,11 +36,14 @@ Exit code 0 means analysis completed and did not meet the configured gate. Exit
 code 2 means analysis completed and met or exceeded it. Exit code 1 indicates an
 invalid command, configuration error, Git failure, or analysis failure.
 
-Graph and conventional test mapping use the filesystem only when its clean state
-matches the analyzed head commit before and after indexing. Otherwise the report
-still contains exact Git and public-surface evidence, omits those two inputs, and
-states the limitation. The CLI never installs dependencies, loads target
-plugins, or executes target source or tests.
+Graph, conventional test mapping, and `.github/CODEOWNERS` ownership mapping use
+the filesystem only when its clean state matches the analyzed head commit before
+and after indexing. Otherwise the report still contains exact Git and
+public-surface evidence, omits those inputs, and states the limitation. A
+missing, linked, unreadable, malformed, unsupported, or over-limit CODEOWNERS
+file also produces a limitation and suppresses missing-owner inference. See
+[ownership evidence](ownership.md). The CLI never installs dependencies, loads
+target plugins, or executes target source or tests.
 
 Generate a report that can be opened directly in a browser:
 

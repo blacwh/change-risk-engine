@@ -13,6 +13,11 @@ Every result records:
 - an aggregate score equal to the contribution total;
 - a risk classification and explicit analysis limitations.
 
+Ownership uses the existing evidence and finding records rather than adding a
+top-level result field. A `missing-owner` finding cites `ownership` evidence
+whose source paths and data identify the unowned changed paths. Parser or
+worktree failures remain limitations, so result schema version 1 is unchanged.
+
 Evidence and finding IDs must be unique. Unknown fields, broken references,
 unsupported versions, non-finite weights, and hidden score contributions are
 rejected. Contribution rule IDs are unique, and every finding must be counted

@@ -7,6 +7,7 @@ import {
   DEFAULT_RULES,
   highFanInRule,
   largeChangeRule,
+  missingOwnerRule,
   missingRelatedTestsRule,
   multiAreaRule,
   publicExportRule,
@@ -163,6 +164,129 @@ describe('path and category rules', () => {
     expect(
       evaluateRules({ changedFiles: [], sensitiveAreas: [] }, DEFAULT_RULES),
     ).toEqual({ evidence: [], findings: [] });
+  });
+});
+
+describe('ownership rule', () => {
+  it('reports one deterministic finding for all unowned changed paths', () => {
+    const result = evaluateRules(
+      {
+        changedFiles: [
+          file('src/owned.ts', ['source']),
+          file('src/z-unowned.ts', ['source']),
+          file('docs/a-unowned.md', ['documentation']),
+        ],
+        ownershipRelationships: [
+          { path: 'src/z-unowned.ts', owners: [] },
+          { path: 'src/owned.ts', owners: ['@owner'] },
+          { path: 'docs/a-unowned.md', owners: [] },
+        ],
+        sensitiveAreas: [],
+      },
+      [missingOwnerRule],
+      { 'missing-owner': { weight: 7 } },
+    );
+    expect(result.findings[0]).toMatchObject({
+      ruleId: 'missing-owner',
+      weight: 7,
+      affectedPaths: ['docs/a-unowned.md', 'src/z-unowned.ts'],
+    });
+    expect(result.evidence[0]?.data).toEqual({
+      fileCount: 2,
+      unownedPaths: ['docs/a-unowned.md', 'src/z-unowned.ts'],
+    });
+  });
+
+  it('does not infer missing ownership from absent or complete evidence', () => {
+    expect(
+      evaluateRules(
+        {
+          changedFiles: [file('src/a.ts', ['source'])],
+          sensitiveAreas: [],
+        },
+        [missingOwnerRule],
+      ),
+    ).toEqual({ evidence: [], findings: [] });
+    expect(
+      evaluateRules(
+        {
+          changedFiles: [file('src/a.ts', ['source'])],
+          ownershipRelationships: [{ path: 'src/a.ts', owners: ['@owner'] }],
+          sensitiveAreas: [],
+        },
+        [missingOwnerRule],
+      ),
+    ).toEqual({ evidence: [], findings: [] });
+    expect(
+      evaluateRules(
+        {
+          changedFiles: [file('src/a.ts', ['source'])],
+          ownershipRelationships: [{ path: 'src/a.ts', owners: [] }],
+          sensitiveAreas: [],
+        },
+        [missingOwnerRule],
+        { 'missing-owner': { enabled: false } },
+      ),
+    ).toEqual({ evidence: [], findings: [] });
+  });
+
+  it('rejects partial, duplicate, unbounded, and unrelated relationships', () => {
+    const changedFiles = [
+      file('src/a.ts', ['source']),
+      file('src/b.ts', ['source']),
+    ];
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles,
+          ownershipRelationships: [{ path: 'src/a.ts', owners: [] }],
+          sensitiveAreas: [],
+        },
+        [missingOwnerRule],
+      ),
+    ).toThrow(/cover every changed path/);
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [changedFiles[0]!],
+          ownershipRelationships: [
+            { path: 'src/a.ts', owners: ['@owner', '@owner'] },
+          ],
+          sensitiveAreas: [],
+        },
+        [missingOwnerRule],
+      ),
+    ).toThrow(/owners must be unique/);
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [changedFiles[0]!],
+          ownershipRelationships: [
+            {
+              path: 'src/a.ts',
+              owners: Array.from(
+                { length: 101 },
+                (_, index) => `@owner-${index}`,
+              ),
+            },
+          ],
+          sensitiveAreas: [],
+        },
+        [missingOwnerRule],
+      ),
+    ).toThrow(/invalid fields/);
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [changedFiles[0]!],
+          ownershipRelationships: [
+            { path: 'src/other.ts', owners: ['@owner'] },
+          ],
+          sensitiveAreas: [],
+        },
+        [missingOwnerRule],
+      ),
+    ).toThrow(/unchanged path/);
   });
 });
 

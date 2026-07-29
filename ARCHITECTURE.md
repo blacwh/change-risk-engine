@@ -19,6 +19,7 @@ packages/core
 packages/git-adapter
 packages/language-typescript
 packages/dependency-graph
+packages/ownership
 packages/plugin-sdk
 packages/rules
 packages/config
@@ -39,6 +40,7 @@ before publishing decisions are made:
 - `packages/git-adapter` collects repository evidence without executing target code;
 - `packages/language-typescript` indexes TypeScript and JavaScript;
 - `packages/dependency-graph` owns bounded graph operations;
+- `packages/ownership` reads and maps bounded root CODEOWNERS policy;
 - `packages/plugin-sdk` owns trusted-host extension contracts and registries;
 - `packages/rules` evaluates deterministic rules;
 - `packages/config` validates versioned configuration;
@@ -57,6 +59,7 @@ resolve revisions
 → index modules
 → build dependency graph
 → map changed nodes
+→ map changed-path ownership
 → collect test/policy evidence
 → run rules
 → aggregate transparent classification
@@ -227,6 +230,15 @@ mitigation is capped at zero and its effective contribution remains visible.
 The result schema requires every finding to appear in exactly one uniquely
 identified rule contribution.
 
+Ownership policy consumes an exact relationship for every changed path or no
+relationship set at all. The stock mapper reads only `.github/CODEOWNERS` from a
+clean worktree matching the analyzed head, applies supported patterns in file
+order, and assigns the last matching rule. Missing, linked, malformed, or
+over-limit input suppresses ownership findings and becomes an explicit
+limitation. The `missing-owner` rule aggregates paths with no owners into one
+evidence-backed finding; it does not query identity, access, approval, or team
+membership.
+
 Trusted embedding hosts may compose built-in and plugin rules through the
 versioned plugin registry. Registration validates stable IDs, weights, required
 functions, counts, and collisions, then sorts and freezes copied component
@@ -287,11 +299,13 @@ created only under the same clean head-worktree invariant as graph rule evidence
 
 `change-risk analyze` resolves and compares the requested Git revisions, applies
 classification and ignore patterns, compares changed conventional public index
-modules at the exact object IDs, and then evaluates rules and scoring. Graph and
-test-relationship evidence may use the filesystem adapter only when the
-worktree is clean and matches the analyzed head both before and after indexing;
-otherwise that evidence is omitted with an explicit limitation. This prevents a
-dirty or moving worktree from being presented as revision evidence.
+modules at the exact object IDs, and then evaluates rules and scoring. Graph,
+test-relationship, and ownership evidence may use the filesystem only when the
+worktree is clean and matches the analyzed head both before and after indexing.
+Ownership reads the fixed `.github/CODEOWNERS` file through its bounded
+no-follow reader. Otherwise this evidence is omitted with an explicit
+limitation. This prevents a dirty or moving worktree from being presented as
+revision evidence.
 
 The CLI reads only bounded no-follow JSON configuration from inside the
 repository. Terminal, JSON, and HTML formats share the same validated result. Exit 0

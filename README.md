@@ -10,6 +10,7 @@ It analyzes:
 - fan-in and fan-out;
 - public API changes;
 - tests and coverage evidence;
+- CODEOWNERS coverage for changed paths;
 - migrations;
 - infrastructure and CI changes;
 - repository-specific policies.
@@ -18,7 +19,7 @@ The result is a transparent report. The tool must not present its risk classific
 
 ## Project status
 
-Phases 0 through 6 are complete. The engine safely collects exact Git evidence,
+Phases 0 through 7 are complete. The engine safely collects exact Git evidence,
 indexes TypeScript/JavaScript imports, builds a bounded dependency graph, applies
 deterministic evidence-backed rules, and exposes every effective score
 contribution. The installable CLI and bundled GitHub Action use the same core.
@@ -27,7 +28,10 @@ exercises the Action and retains the complete versioned JSON report. Phase 6,
 visualization and ecosystem integrations, is complete. The static HTML report
 viewer includes a bounded dependency graph with changed modules and transitive
 blast-radius distance highlighted. GitLab CI guidance and trusted-host rule and
-language-adapter plugin contracts complete the initial ecosystem layer.
+language-adapter plugin contracts complete the initial ecosystem layer. Phase 7
+adds bounded, last-match-wins `.github/CODEOWNERS` mapping and an
+evidence-backed missing-owner rule. Invalid or unavailable ownership input is
+reported as a limitation instead of becoming a risk claim.
 
 ## Usage
 
@@ -62,6 +66,11 @@ change-risk --version
 
 See [`examples/typescript-service`](examples/typescript-service) for a complete
 configuration and representative terminal output.
+
+When a clean worktree matches the analyzed head, the analyzer can map changed
+paths through a bounded `.github/CODEOWNERS` file and report unowned changes.
+See [ownership evidence](docs/ownership.md) for supported syntax, security
+bounds, and limitations.
 
 Analyze pull requests with the GitHub Action:
 

@@ -374,6 +374,42 @@ export const testsAddedRule: RiskRule = {
   },
 };
 
+export const missingOwnerRule: RiskRule = {
+  id: 'missing-owner',
+  defaultWeight: 15,
+  evaluate(context) {
+    const relationships = context.ownershipRelationships;
+    if (relationships === undefined) return [];
+    const unownedPaths = relationships
+      .filter(({ owners }) => owners.length === 0)
+      .map(({ path }) => path)
+      .sort(compareText);
+    if (unownedPaths.length === 0) return [];
+    return [
+      {
+        evidence: {
+          kind: 'ownership',
+          summary: `${unownedPaths.length} changed file(s) have no matching CODEOWNERS rule`,
+          data: {
+            fileCount: unownedPaths.length,
+            unownedPaths,
+          },
+          sourcePaths: unownedPaths,
+        },
+        finding: {
+          title: 'Changed files lack CODEOWNERS',
+          severity: 'medium',
+          explanation:
+            'Complete CODEOWNERS evidence is available, but one or more changed paths have no matching owner rule.',
+          affectedPaths: unownedPaths,
+          remediation:
+            'Add a matching CODEOWNERS rule or document who is responsible for reviewing these paths.',
+        },
+      },
+    ];
+  },
+};
+
 export const dependencyManifestRule = categoryRule({
   id: 'dependency-manifest',
   title: 'Dependency files changed',
@@ -414,6 +450,7 @@ export const DEFAULT_RULES = [
   infrastructureRule,
   largeChangeRule,
   migrationRule,
+  missingOwnerRule,
   missingRelatedTestsRule,
   multiAreaRule,
   publicExportRule,

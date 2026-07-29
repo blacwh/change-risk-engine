@@ -51,11 +51,24 @@ size issues without source excerpts, and does not resolve imports, load package
 metadata, or execute target code. Conventional test mapping is path-only and
 does not run tests or inspect coverage.
 
+Ownership analysis canonicalizes the repository and fixed `.github` directory,
+rejects a linked directory, opens `.github/CODEOWNERS` read-only without
+following the final symbolic link, and requires a regular file. File bytes,
+lines, line length, rules, pattern length, owners, owner length, changed paths,
+and total rule/path evaluations are bounded. Matching uses iterative wildcard
+operations with no dynamic regular-expression construction. Invalid UTF-8 is
+rejected and parser issue retention is capped. Unsupported or malformed input
+yields issue kind and optional line number only; source text and owner values
+are not placed in limitations. Any ownership issue suppresses the entire
+relationship set so partial policy cannot create a missing-owner claim. Owner
+identity, membership, permissions, and approvals are never queried or asserted.
+
 The CLI loads bounded JSON configuration through a no-follow file descriptor
-inside the canonical repository root. Graph and conventional test evidence use
-filesystem contents only when the worktree is clean and matches the analyzed
-head before and after indexing. If that invariant fails, the CLI omits those
-signals and reports a limitation rather than mixing worktree and revision state.
+inside the canonical repository root. Graph, conventional test, and ownership
+evidence use filesystem contents only when the worktree is clean and matches the
+analyzed head before and after indexing. If that invariant fails, the CLI omits
+those signals and reports a limitation rather than mixing worktree and revision
+state.
 
 The GitHub Action uses `contents: read` and needs `pull-requests: write` only when
 maintained comments are enabled. It validates same-repository identity from the

@@ -14,6 +14,7 @@ disabled or assigned a finite weight through configuration.
 | [`high-fan-in`](high-fan-in.md) | 25 | A changed module has many direct dependents |
 | [`migration`](migration.md) | 25 | Migration-classified paths changed |
 | [`infrastructure`](infrastructure.md) | 25 | Infrastructure or CI paths changed |
+| [`missing-owner`](missing-owner.md) | 15 | Changed paths have no matching CODEOWNERS owner |
 | [`missing-related-tests`](missing-related-tests.md) | 20 | A changed source has no changed explicitly related test |
 | [`public-export`](public-export.md) | 25 | A supplied public-surface comparison reports export changes |
 | [`tests-added`](tests-added.md) | -10 | New tests are explicitly related to changed source files |

@@ -83,9 +83,23 @@ language-adapter registries without target-repository loading. The built-in
 TypeScript indexer implements the adapter contract, and programmatic analysis
 accepts explicit rule and adapter selections. Phase 6 is complete.
 
+## Phase 7 — Ownership evidence
+
+Bounded CODEOWNERS parsing, changed-path ownership mapping, missing-owner policy,
+and shared CLI/CI reporting.
+
+Status: complete. The analyzer reads the fixed `.github/CODEOWNERS` file only
+from a clean head-matching worktree, rejects linked, malformed, unsupported, and
+over-limit input, applies supported case-sensitive patterns in file order, and
+maps every changed path through the last matching rule. The built-in
+`missing-owner` rule emits one transparent evidence-backed finding for unowned
+paths and is suppressed when ownership input is incomplete. CLI and GitHub
+Action reporting preserve result schema version 1.
+
 ## Later
 
-Coverage, ownership, history-based calibration, policy packs, additional languages, constrained optional summaries.
+Coverage, history-based calibration, policy packs, additional languages,
+constrained optional summaries.
 
 These are candidate directions, not a prioritized implementation queue. Before
 a future continuous run, select a direction, define acceptance criteria and

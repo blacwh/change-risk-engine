@@ -5,6 +5,7 @@ export {
   infrastructureRule,
   largeChangeRule,
   migrationRule,
+  missingOwnerRule,
   missingRelatedTestsRule,
   multiAreaRule,
   publicExportRule,
@@ -13,6 +14,7 @@ export {
 } from './rules.js';
 export {
   evaluateRules,
+  type OwnershipRelationship,
   type PublicExportChange,
   type RiskRule,
   type RuleContext,

@@ -59,7 +59,9 @@ of silently falling back.
 The `high-fan-in` rule accepts `minFanIn` (default 5) and
 `maxTraversalDepth` (default 20). Public-export policy has no rule-specific
 options because its public-entry-point selection and surface comparison are
-explicit upstream evidence.
+explicit upstream evidence. The `missing-owner` rule likewise has no
+rule-specific options because parsing, bounds, and last-match-wins ownership
+mapping are upstream evidence contracts.
 
 Rule weights may be positive, zero, or negative. Negative values are intended
 for evidence-backed mitigations such as `tests-added`; aggregation caps their

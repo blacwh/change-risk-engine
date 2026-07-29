@@ -72,6 +72,12 @@ content and shows finding evidence IDs, configured weights, effective grouped
 score contributions, and limitations. The JSON artifact remains the complete
 source of record when a large report must be shortened.
 
+When the checked-out head is clean, ownership analysis uses its bounded
+`.github/CODEOWNERS` file and the shared `missing-owner` rule. This is head-tree
+risk evidence, not a reproduction of GitHub's base-branch reviewer assignment.
+Missing or invalid ownership input becomes a limitation and does not trigger the
+rule.
+
 Fork pull requests never call the comments API, even if a token is present. They
 still produce JSON, outputs, and a summary. The conditional token expression in
 the example adds a second boundary by withholding the token from forks. Set
@@ -79,4 +85,3 @@ the example adds a second boundary by withholding the token from forks. Set
 
 Do not combine `pull_request_target`, privileged credentials, and a checkout of
 untrusted pull-request code. Use the ordinary `pull_request` event shown above.
-

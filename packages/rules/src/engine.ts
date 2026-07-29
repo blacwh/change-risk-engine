@@ -10,6 +10,7 @@ export type RuleSetting = {
 export type RuleContext = {
   changedFiles: readonly ChangedFile[];
   dependencyGraph?: DirectedDependencyGraph;
+  ownershipRelationships?: readonly OwnershipRelationship[];
   publicExportChanges?: readonly PublicExportChange[];
   sensitiveAreas: readonly { id: string; patterns: readonly string[] }[];
   testRelationships?: readonly TestRelationship[];
@@ -24,6 +25,11 @@ export type PublicExportChange = {
 export type TestRelationship = {
   sourcePath: string;
   testPaths: readonly string[];
+};
+
+export type OwnershipRelationship = {
+  path: string;
+  owners: readonly string[];
 };
 
 export type RuleMatch = {
@@ -100,6 +106,44 @@ export function evaluateRules(
       throw new Error('Related test paths must be unique');
     }
     relationshipSources.add(relationship.sourcePath);
+  }
+  const ownershipRelationships = context.ownershipRelationships;
+  if (ownershipRelationships !== undefined) {
+    if (ownershipRelationships.length > 100_000) {
+      throw new Error('Ownership relationship limit exceeded');
+    }
+    const changedPaths = new Set(context.changedFiles.map(({ path }) => path));
+    const ownershipPaths = new Set<string>();
+    for (const relationship of ownershipRelationships) {
+      if (
+        relationship.path.length === 0 ||
+        relationship.path.length > 1_000 ||
+        relationship.owners.length > 100 ||
+        relationship.owners.some(
+          (owner) => owner.length === 0 || owner.length > 200,
+        )
+      ) {
+        throw new Error('Ownership relationships contain invalid fields');
+      }
+      if (ownershipPaths.has(relationship.path)) {
+        throw new Error('Ownership relationship paths must be unique');
+      }
+      if (new Set(relationship.owners).size !== relationship.owners.length) {
+        throw new Error('Ownership relationship owners must be unique');
+      }
+      if (!changedPaths.has(relationship.path)) {
+        throw new Error('Ownership relationships contain an unchanged path');
+      }
+      ownershipPaths.add(relationship.path);
+    }
+    if (
+      ownershipPaths.size !== changedPaths.size ||
+      [...changedPaths].some((path) => !ownershipPaths.has(path))
+    ) {
+      throw new Error(
+        'Ownership relationships must cover every changed path exactly once',
+      );
+    }
   }
   const sensitiveIds = context.sensitiveAreas.map(({ id }) => id);
   if (new Set(sensitiveIds).size !== sensitiveIds.length) {
