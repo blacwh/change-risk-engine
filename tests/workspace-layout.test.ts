@@ -7,6 +7,7 @@ const workspacePackages = [
   ['apps/github-action', '@change-risk/github-action'],
   ['packages/config', '@change-risk/config'],
   ['packages/core', '@change-risk/core'],
+  ['packages/coverage', '@change-risk/coverage'],
   ['packages/dependency-graph', '@change-risk/dependency-graph'],
   ['packages/fixtures', '@change-risk/fixtures'],
   ['packages/git-adapter', '@change-risk/git-adapter'],

@@ -46,13 +46,17 @@ jobs:
 Use a released tag for readability or pin the Action to a full commit ID for an
 immutable supply-chain boundary. Full history is required because both event
 revisions must be available locally. The workflow does not install or execute
-the analyzed repository's dependencies.
+the analyzed repository's dependencies. Generate the coverage artifact in a
+separate, appropriately isolated step before the analyzer when coverage policy
+is desired, then add `coverage: coverage/lcov.info` to the Action's `with`
+mapping.
 
 ## Inputs and outputs
 
 | Input | Default | Meaning |
 | --- | --- | --- |
 | `config` | optional | Repository-relative JSON configuration path. |
+| `coverage` | optional | Repository-relative caller-supplied LCOV tracefile. |
 | `fail-on` | `none` | `none`, `low`, `moderate`, `high`, or `critical`. |
 | `comment` | `true` | Maintain a comment when the pull request is from the same repository. |
 | `output` | `change-risk-report.json` | Repository-relative JSON artifact path. |
@@ -77,6 +81,11 @@ When the checked-out head is clean, ownership analysis uses its bounded
 risk evidence, not a reproduction of GitHub's base-branch reviewer assignment.
 Missing or invalid ownership input becomes a limitation and does not trigger the
 rule.
+
+Coverage input is bounded, no-follow, and all-or-nothing. A valid artifact maps
+eligible changed sources and can trigger `insufficient-coverage`; invalid input
+becomes a limitation and suppresses that rule. The Action does not generate or
+discover coverage and cannot verify artifact freshness or revision alignment.
 
 Fork pull requests never call the comments API, even if a token is present. They
 still produce JSON, outputs, and a summary. The conditional token expression in

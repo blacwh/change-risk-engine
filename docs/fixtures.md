@@ -27,6 +27,11 @@ wildcards, malformed and over-limit input, linked files and directories, exact
 changed-path mapping, CLI findings, and repeat-run JSON determinism. Broader
 authentication, migration, and monorepo scenarios remain for end-to-end CLI
 goldens.
+Coverage fixtures add repository-relative and absolute in-root source records,
+explicit missing and zero-measurable relationships, inconsistent and duplicate
+records, every parser bound, linked artifacts and parents, invalid UTF-8,
+deterministic CLI results, source-free failure limitations, and Action input
+composition.
 
 `examples/typescript-service` supplies a validated sensitive-area/rule
 configuration and representative terminal output. Package verification adds a

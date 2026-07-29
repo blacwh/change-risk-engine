@@ -8,6 +8,7 @@ import {
   classifyFile,
   parseAnalysisResult,
 } from '@change-risk/core';
+import { readLcov } from '@change-risk/coverage';
 import {
   buildBlastRadiusVisualization,
   dependencyGraphFromModules,
@@ -40,6 +41,7 @@ export type AnalyzeRepositoryOptions = {
   base: string;
   head: string;
   configPath?: string;
+  coveragePath?: string;
   languageAdapter?: LanguageAdapter;
   rules?: readonly RiskRule[];
 };
@@ -70,6 +72,13 @@ function ownershipIssueLimitation(issue: {
   line?: number;
 }): string {
   return `Ownership evidence unavailable: ${issue.kind}${issue.line === undefined ? '' : ` (line ${issue.line})`}.`;
+}
+
+function coverageIssueLimitation(issue: {
+  kind: string;
+  line?: number;
+}): string {
+  return `Coverage evidence unavailable: ${issue.kind}${issue.line === undefined ? '' : ` (line ${issue.line})`}.`;
 }
 
 function ignored(path: string, patterns: readonly string[]): boolean {
@@ -149,6 +158,29 @@ async function analyzeRepositoryInternal(
     .filter(({ path }) => !ignored(path, config.ignorePatterns))
     .map((file) => ({ ...file, categories: [...classifyFile(file.path)] }));
   const limitations: string[] = [];
+  let coverageRelationships: Awaited<
+    ReturnType<typeof readLcov>
+  >['relationships'];
+  if (options.coveragePath !== undefined) {
+    const coverage = await readLcov(
+      options.repositoryRoot,
+      options.coveragePath,
+      changedFiles
+        .filter(
+          ({ categories, status }) =>
+            status !== 'deleted' &&
+            categories.includes('source') &&
+            !categories.includes('test') &&
+            !categories.includes('generated'),
+        )
+        .map(({ path }) => path),
+    );
+    coverageRelationships = coverage.relationships;
+    limitations.push(
+      'Coverage evidence is caller supplied; freshness and revision alignment are not verified.',
+      ...coverage.issues.map(coverageIssueLimitation),
+    );
+  }
   const publicExportChanges = await publicSurfaceEvidence(
     options.repositoryRoot,
     diff.baseRevision,
@@ -262,6 +294,7 @@ async function analyzeRepositoryInternal(
   const evaluation = evaluateRules(
     {
       changedFiles,
+      ...(coverageRelationships === undefined ? {} : { coverageRelationships }),
       ...(ownershipRelationships === undefined
         ? {}
         : { ownershipRelationships }),

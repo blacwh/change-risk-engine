@@ -19,7 +19,7 @@ The result is a transparent report. The tool must not present its risk classific
 
 ## Project status
 
-Phases 0 through 7 are complete. The engine safely collects exact Git evidence,
+Phases 0 through 8 are complete. The engine safely collects exact Git evidence,
 indexes TypeScript/JavaScript imports, builds a bounded dependency graph, applies
 deterministic evidence-backed rules, and exposes every effective score
 contribution. The installable CLI and bundled GitHub Action use the same core.
@@ -30,8 +30,10 @@ viewer includes a bounded dependency graph with changed modules and transitive
 blast-radius distance highlighted. GitLab CI guidance and trusted-host rule and
 language-adapter plugin contracts complete the initial ecosystem layer. Phase 7
 adds bounded, last-match-wins `.github/CODEOWNERS` mapping and an
-evidence-backed missing-owner rule. Invalid or unavailable ownership input is
-reported as a limitation instead of becoming a risk claim.
+evidence-backed missing-owner rule. Phase 8 adds caller-supplied, bounded LCOV
+line-coverage mapping and an insufficient-coverage rule. Invalid or unavailable
+ownership and coverage inputs are reported as limitations instead of becoming
+risk claims.
 
 ## Usage
 
@@ -71,6 +73,17 @@ When a clean worktree matches the analyzed head, the analyzer can map changed
 paths through a bounded `.github/CODEOWNERS` file and report unowned changes.
 See [ownership evidence](docs/ownership.md) for supported syntax, security
 bounds, and limitations.
+
+Supply an existing LCOV artifact without running target tests:
+
+```bash
+change-risk analyze --base main --head HEAD --coverage coverage/lcov.info
+```
+
+The analyzer maps all eligible changed sources, including missing and
+zero-measurable records, and always states that artifact freshness and revision
+alignment are caller responsibilities. See
+[supplied coverage evidence](docs/coverage.md).
 
 Analyze pull requests with the GitHub Action:
 

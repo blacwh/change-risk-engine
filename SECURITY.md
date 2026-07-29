@@ -63,6 +63,18 @@ are not placed in limitations. Any ownership issue suppresses the entire
 relationship set so partial policy cannot create a missing-owner claim. Owner
 identity, membership, permissions, and approvals are never queried or asserted.
 
+Coverage analysis canonicalizes the repository and artifact parent, requires a
+repository-relative path inside the root, rejects linked parents, opens the
+final file read-only without following symbolic links, and requires a regular
+file. File bytes, lines, line length, source records, source path length, data
+records, numeric values, and retained issues are bounded. Source records must
+normalize inside the repository. Invalid UTF-8, unknown records, duplicate or
+inconsistent data, escaping paths, and incomplete sections invalidate the
+entire relationship set. Limitations contain only stable issue kinds and
+optional line numbers, never tracefile source text. The analyzer does not
+discover artifacts, run tests, verify provenance or revision alignment, or
+interpret valid coverage as proof of adequate testing.
+
 The CLI loads bounded JSON configuration through a no-follow file descriptor
 inside the canonical repository root. Graph, conventional test, and ownership
 evidence use filesystem contents only when the worktree is clean and matches the

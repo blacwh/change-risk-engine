@@ -12,6 +12,7 @@ const result = await build({
       ['cli', 'apps/cli'],
       ['config', 'packages/config'],
       ['core', 'packages/core'],
+      ['coverage', 'packages/coverage'],
       ['dependency-graph', 'packages/dependency-graph'],
       ['git-adapter', 'packages/git-adapter'],
       ['language-typescript', 'packages/language-typescript'],

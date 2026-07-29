@@ -25,8 +25,9 @@ Users can:
 5. examine test evidence;
 6. apply repository policies;
 7. identify changed paths without a declared code owner;
-8. receive explainable findings and classification;
-9. use the result locally and in CI.
+8. relate caller-supplied line coverage to changed source files;
+9. receive explainable findings and classification;
+10. use the result locally and in CI.
 
 ## MVP command
 
@@ -60,7 +61,8 @@ Configurable patterns for authentication, authorization, infrastructure, migrati
 
 - related tests changed;
 - no tests for affected central modules;
-- coverage evidence when supplied;
+- bounded caller-supplied LCOV line evidence;
+- explicit missing, zero-measurable, and below-threshold changed sources;
 - broad implementation changes with only snapshot updates.
 
 ### Ownership evidence
@@ -97,10 +99,11 @@ All positive and mitigating contributions are visible. Weights and thresholds ar
 
 The first release can analyze a TypeScript repository between revisions, build an import graph, calculate blast radius, apply at least eight deterministic rules, explain every contribution, load configuration, output terminal/JSON reports, run in GitHub Actions, and analyze its own repository.
 
-Status: implemented. Phases 0 through 7 are complete, including the GitHub
+Status: implemented. Phases 0 through 8 are complete, including the GitHub
 Action, static and graph visualization, GitLab CI usage, and trusted-host
-extension contracts. Phase 7 adds conservative changed-path ownership evidence
-without changing result schema version 1.
+extension contracts. Phase 7 adds conservative changed-path ownership evidence.
+Phase 8 adds conservative supplied LCOV line evidence without changing result
+schema version 1 or the default no-execution boundary.
 
 ## Boundaries
 
@@ -108,4 +111,7 @@ The tool is an aid, not a safety guarantee, security-scanner replacement, AI rev
 
 ## Future
 
-Additional language implementations, coverage mapping, history-informed calibration, interactive hosted visualization, isolated third-party plugin hosting, and optional local summaries constrained to deterministic findings.
+Additional language implementations, changed-line or historical coverage,
+history-informed calibration, interactive hosted visualization, isolated
+third-party plugin hosting, and optional local summaries constrained to
+deterministic findings.

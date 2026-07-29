@@ -18,6 +18,12 @@ top-level result field. A `missing-owner` finding cites `ownership` evidence
 whose source paths and data identify the unowned changed paths. Parser or
 worktree failures remain limitations, so result schema version 1 is unchanged.
 
+Supplied coverage likewise uses existing records. An `insufficient-coverage`
+finding cites `coverage` evidence containing sorted eligible changed-source
+paths, raw line counts, percentages when measurable, and stable reasons.
+Missing or invalid artifacts remain limitations and do not produce partial
+coverage evidence, so schema version 1 remains unchanged.
+
 Evidence and finding IDs must be unique. Unknown fields, broken references,
 unsupported versions, non-finite weights, and hidden score contributions are
 rejected. Contribution rule IDs are unique, and every finding must be counted

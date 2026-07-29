@@ -28,6 +28,8 @@ prefix and capturing both version and JSON analysis output.
 - `--repo <path>` selects the repository.
 - `--base <revision>` and `--head <revision>` select the comparison.
 - `--config <path>` requires a repository-relative JSON configuration file.
+- `--coverage <path>` reads one repository-relative LCOV tracefile without
+  discovering artifacts or running tests.
 - `--format terminal|json|html` selects concise text, versioned machine output,
   or a self-contained static report.
 - `--fail-on none|low|moderate|high|critical` sets the classification gate.
@@ -44,6 +46,13 @@ missing, linked, unreadable, malformed, unsupported, or over-limit CODEOWNERS
 file also produces a limitation and suppresses missing-owner inference. See
 [ownership evidence](ownership.md). The CLI never installs dependencies, loads
 target plugins, or executes target source or tests.
+
+A supplied coverage artifact is read through a bounded no-follow path inside
+the repository. A complete valid tracefile maps every eligible changed source;
+malformed, missing, linked, or over-limit input produces a source-free
+limitation and suppresses coverage inference. The report always states that
+artifact freshness and revision alignment are not verified. See
+[supplied coverage evidence](coverage.md).
 
 Generate a report that can be opened directly in a browser:
 

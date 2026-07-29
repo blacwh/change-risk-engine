@@ -14,6 +14,9 @@ export default defineConfig({
       '@change-risk/core': fileURLToPath(
         new URL('./packages/core/src/index.ts', import.meta.url),
       ),
+      '@change-risk/coverage': fileURLToPath(
+        new URL('./packages/coverage/src/index.ts', import.meta.url),
+      ),
       '@change-risk/dependency-graph': fileURLToPath(
         new URL('./packages/dependency-graph/src/index.ts', import.meta.url),
       ),

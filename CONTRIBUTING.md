@@ -40,6 +40,12 @@ iterative matching, and explicit limitations without CODEOWNERS source content.
 Do not infer GitHub membership, permissions, reviewer assignment, or approval
 from a syntactically valid owner string.
 
+Coverage changes must preserve explicit caller selection, repository-contained
+no-follow reads, conservative all-or-nothing relationships, bounded parsing,
+source-free limitations, and the no-target-execution boundary. Do not infer
+artifact freshness, revision alignment, test-suite completeness, or behavioral
+adequacy from a valid LCOV tracefile.
+
 Run `npm run quality` before opening a pull request. To validate the
 distributable CLI boundary, also run:
 
