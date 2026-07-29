@@ -54,6 +54,12 @@ limitation and suppresses coverage inference. The report always states that
 artifact freshness and revision alignment are not verified. See
 [supplied coverage evidence](coverage.md).
 
+When coverage is supplied, the CLI also collects bounded zero-context hunks
+between the exact resolved revisions and intersects their new-side ranges with
+LCOV line records. External diff and textconv execution are disabled. Failure to
+collect hunks adds a limitation and falls back to whole-file coverage instead of
+failing or discarding the valid artifact.
+
 Generate a report that can be opened directly in a browser:
 
 ```bash

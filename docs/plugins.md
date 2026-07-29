@@ -47,6 +47,10 @@ orchestrator parsed a complete supplied artifact. Hosts calling the rule engine
 directly must omit coverage evidence or provide exactly one validated
 relationship for every eligible changed non-test, non-generated source. Missing
 LCOV records use paired `null` counts; partial or ineligible maps are rejected.
+Optional changed-line fields must be supplied as a complete group:
+`changedLineCount`, `changedLinesFound`, and `changedLinesHit`. Counts must be
+internally consistent, and paired `null` measurement counts are valid only when
+the whole-file LCOV source record is also missing.
 
 ## Language adapter contract
 

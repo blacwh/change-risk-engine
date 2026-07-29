@@ -63,6 +63,7 @@ Configurable patterns for authentication, authorization, infrastructure, migrati
 - no tests for affected central modules;
 - bounded caller-supplied LCOV line evidence;
 - explicit missing, zero-measurable, and below-threshold changed sources;
+- exact-revision new-side changed-line coverage when measurable;
 - broad implementation changes with only snapshot updates.
 
 ### Ownership evidence
@@ -99,11 +100,13 @@ All positive and mitigating contributions are visible. Weights and thresholds ar
 
 The first release can analyze a TypeScript repository between revisions, build an import graph, calculate blast radius, apply at least eight deterministic rules, explain every contribution, load configuration, output terminal/JSON reports, run in GitHub Actions, and analyze its own repository.
 
-Status: implemented. Phases 0 through 8 are complete, including the GitHub
+Status: implemented. Phases 0 through 9 are complete, including the GitHub
 Action, static and graph visualization, GitLab CI usage, and trusted-host
 extension contracts. Phase 7 adds conservative changed-path ownership evidence.
 Phase 8 adds conservative supplied LCOV line evidence without changing result
-schema version 1 or the default no-execution boundary.
+schema version 1 or the default no-execution boundary. Phase 9 refines that
+evidence with bounded exact-revision changed-line ranges and one combined
+coverage contribution.
 
 ## Boundaries
 
@@ -111,7 +114,6 @@ The tool is an aid, not a safety guarantee, security-scanner replacement, AI rev
 
 ## Future
 
-Additional language implementations, changed-line or historical coverage,
-history-informed calibration, interactive hosted visualization, isolated
-third-party plugin hosting, and optional local summaries constrained to
-deterministic findings.
+Additional language implementations, historical coverage, history-informed
+calibration, interactive hosted visualization, isolated third-party plugin
+hosting, and optional local summaries constrained to deterministic findings.

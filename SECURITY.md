@@ -75,6 +75,16 @@ optional line numbers, never tracefile source text. The analyzer does not
 discover artifacts, run tests, verify provenance or revision alignment, or
 interpret valid coverage as proof of adequate testing.
 
+Changed-line collection reads exact commit-to-commit Git patch output with
+argument arrays and explicitly disables external diff and textconv execution.
+The subprocess retains the existing output and timeout bounds. NUL-delimited raw
+paths are correlated with textual patch sections only by validated deterministic
+order; only numeric new-side hunk ranges leave the adapter. File count, range
+count, line numbers, and total changed lines are bounded. Patch source content
+and raw paths are never copied into limitations or coverage evidence. Malformed,
+incomplete, or over-limit hunk data suppresses only changed-line mapping and
+cannot invalidate otherwise trustworthy whole-file LCOV evidence.
+
 The CLI loads bounded JSON configuration through a no-follow file descriptor
 inside the canonical repository root. Graph, conventional test, and ownership
 evidence use filesystem contents only when the worktree is clean and matches the

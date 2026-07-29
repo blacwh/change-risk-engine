@@ -46,6 +46,13 @@ source-free limitations, and the no-target-execution boundary. Do not infer
 artifact freshness, revision alignment, test-suite completeness, or behavioral
 adequacy from a valid LCOV tracefile.
 
+Changed-line coverage changes must derive only new-side ranges from exact
+resolved commits, disable executable Git diff extensions, bound patch output and
+numeric ranges, and keep source content out of returned evidence and failures.
+Preserve whole-file coverage when hunk refinement is unavailable, distinguish
+pure deletions from unmeasurable changed lines, and avoid correlated double
+scoring.
+
 Run `npm run quality` before opening a pull request. To validate the
 distributable CLI boundary, also run:
 

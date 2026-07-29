@@ -14,6 +14,7 @@ import {
   dependencyGraphFromModules,
 } from '@change-risk/dependency-graph';
 import {
+  collectChangedLines,
   collectChangedFiles,
   readFileAtRevision,
   worktreeMatchesRevision,
@@ -158,22 +159,74 @@ async function analyzeRepositoryInternal(
     .filter(({ path }) => !ignored(path, config.ignorePatterns))
     .map((file) => ({ ...file, categories: [...classifyFile(file.path)] }));
   const limitations: string[] = [];
+  const eligibleCoverageFiles = changedFiles.filter(
+    ({ categories, status }) =>
+      status !== 'deleted' &&
+      categories.includes('source') &&
+      !categories.includes('test') &&
+      !categories.includes('generated'),
+  );
+  const eligibleCoveragePaths = eligibleCoverageFiles.map(({ path }) => path);
   let coverageRelationships: Awaited<
     ReturnType<typeof readLcov>
   >['relationships'];
   if (options.coveragePath !== undefined) {
+    let changedLineRelationships:
+      | Awaited<ReturnType<typeof collectChangedLines>>['relationships']
+      | undefined;
+    if (eligibleCoveragePaths.length === 0) {
+      changedLineRelationships = [];
+    } else {
+      try {
+        const changedLines = await collectChangedLines(
+          options.repositoryRoot,
+          diff.baseRevision,
+          diff.headRevision,
+          {
+            paths: [
+              ...new Set(
+                eligibleCoverageFiles.flatMap(({ path, previousPath }) => [
+                  path,
+                  ...(previousPath === undefined ? [] : [previousPath]),
+                ]),
+              ),
+            ],
+          },
+        );
+        const byPath = new Map(
+          changedLines.relationships.map((relationship) => [
+            relationship.path,
+            relationship,
+          ]),
+        );
+        if (
+          changedLines.baseRevision !== diff.baseRevision ||
+          changedLines.headRevision !== diff.headRevision ||
+          byPath.size !== changedLines.relationships.length ||
+          byPath.size !== eligibleCoveragePaths.length ||
+          eligibleCoveragePaths.some((path) => !byPath.has(path))
+        ) {
+          throw new Error('Incomplete changed-line evidence');
+        }
+        changedLineRelationships = eligibleCoveragePaths.map((path) =>
+          byPath.get(path)!,
+        );
+        limitations.push(
+          'Changed-line coverage uses new-side zero-context Git hunks; deleted-side and non-instrumented lines are not scored.',
+        );
+      } catch {
+        limitations.push(
+          'Changed-line coverage evidence unavailable: Git changed-line ranges could not be collected.',
+        );
+      }
+    }
     const coverage = await readLcov(
       options.repositoryRoot,
       options.coveragePath,
-      changedFiles
-        .filter(
-          ({ categories, status }) =>
-            status !== 'deleted' &&
-            categories.includes('source') &&
-            !categories.includes('test') &&
-            !categories.includes('generated'),
-        )
-        .map(({ path }) => path),
+      eligibleCoveragePaths,
+      changedLineRelationships === undefined
+        ? {}
+        : { changedLineRelationships },
     );
     coverageRelationships = coverage.relationships;
     limitations.push(

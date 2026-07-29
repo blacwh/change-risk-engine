@@ -19,6 +19,20 @@ Each relationship contains the repository-relative path plus `linesFound` and
 counts. A source record with `LF:0` and `LH:0` remains distinct and represents
 no measurable lines.
 
+When exact changed-line Git evidence is available, the relationship also
+contains:
+
+- `changedLineCount`: all new-side lines in zero-context hunks;
+- `changedLinesFound`: changed lines with an LCOV `DA` record; and
+- `changedLinesHit`: instrumented changed lines with a non-zero count.
+
+Additions and replacement lines are included. Context and deleted-side lines are
+excluded. An unchanged rename or a modified file with only deletions has a zero
+changed-line count and is not evaluated against a changed-line threshold. When a
+file has new-side changed lines but none are instrumented, the changed-line
+percentage is explicitly unmeasurable; non-instrumented lines are not counted as
+uncovered.
+
 The bounded parser accepts the LCOV `TN`, `SF`, `DA`, `LF`, `LH`, and
 `end_of_record` line-coverage structure and ignores function, branch, and
 version record payloads. `DA` checksums are accepted but not interpreted.
@@ -40,9 +54,16 @@ a regular file.
 
 Default parser limits are 10 MB, 1,000,000 lines, 10,000 characters per line,
 100,000 source records, 1,000 characters per source path, and 2,000,000 `DA`
-records. Retained issues are capped at 100. Limit failures expose only a stable
-issue kind and optional line number; report limitations never copy artifact
-source text.
+records. Changed-line mapping is capped at 1,000,000 new-side lines. Retained
+issues are capped at 100. Limit failures expose only a stable issue kind and
+optional line number; report limitations never copy artifact source text.
+
+Changed-line ranges come from a separate bounded Git patch collection between
+the exact resolved revisions. External diff and textconv execution are disabled.
+Raw paths are NUL-delimited, patch output is bounded, and only numeric new-side
+ranges are returned to analysis. Patch source content is never copied into
+reports. If range collection fails, the report states a source-free limitation
+and continues with valid whole-file LCOV evidence.
 
 ## Policy and limitations
 
@@ -59,7 +80,7 @@ omit filesystem-derived dependency, test-relationship, and ownership evidence.
 Use a repository-ignored artifact location when those evidence sources should
 remain eligible.
 
-The integration does not support branch or function thresholds, changed-line
+The integration does not support branch or function thresholds, deleted-line
 coverage, multiple or remote artifacts, artifact merging, historical deltas, or
 formats other than LCOV. It does not declare a change adequately tested.
 Coverage evidence and findings use the existing version 1 evidence model, so no

@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted; changed-line limitations extended by ADR 0010
 
 ## Context
 
@@ -43,6 +43,9 @@ and revision alignment are not verified.
 - result schema version 1 and existing reporters remain compatible;
 - the CLI and Action share identical coverage semantics;
 - callers are responsible for generating and aligning the artifact;
-- branch/function coverage, changed-line coverage, multiple artifacts, merging,
-  remote retrieval, provenance verification, and non-LCOV formats are not
-  supported.
+- branch/function coverage, multiple artifacts, merging, remote retrieval,
+  provenance verification, and non-LCOV formats are not supported.
+
+[ADR 0010](0010-exact-changed-line-coverage.md) later adds exact-revision
+changed-line mapping while preserving this decision's artifact, parser, and
+no-execution boundaries.

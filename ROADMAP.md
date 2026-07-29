@@ -109,10 +109,24 @@ missing, zero-measurable, and below-threshold paths. CLI and GitHub Action
 reporting preserve result schema version 1, do not run target tests, and state
 that freshness and revision alignment are not verified.
 
+## Phase 9 — Changed-line coverage evidence
+
+Exact-revision new-side hunk ranges, LCOV line intersection, combined coverage
+policy, and conservative fallback.
+
+Status: complete. When coverage is supplied, the analyzer collects bounded
+zero-context Git hunks with external diff and textconv disabled, returns only
+numeric new-side ranges, and intersects them with LCOV `DA` counters. Reports
+distinguish total, instrumented, hit, unmeasurable, pure-deletion, and unavailable
+changed-line states. The existing `insufficient-coverage` rule combines
+whole-file and changed-line concerns into at most one finding and contribution.
+Hunk failure preserves whole-file coverage, and result schema version 1 remains
+unchanged.
+
 ## Later
 
-Changed-line and historical coverage, history-based calibration, policy packs,
-additional languages, constrained optional summaries.
+Historical coverage, history-based calibration, policy packs, additional
+languages, constrained optional summaries.
 
 These are candidate directions, not a prioritized implementation queue. Before
 a future continuous run, select a direction, define acceptance criteria and

@@ -89,8 +89,17 @@ describe('change-risk CLI', () => {
           sourcePaths: ['src/low.ts', 'src/missing.ts'],
         }),
       );
+      expect(JSON.stringify(report.evidence)).toContain(
+        '"changedLinePercent":0',
+      );
+      expect(JSON.stringify(report.evidence)).toContain(
+        '"below-changed-line-threshold"',
+      );
       expect(report.limitations).toContain(
         'Coverage evidence is caller supplied; freshness and revision alignment are not verified.',
+      );
+      expect(report.limitations).toContain(
+        'Changed-line coverage uses new-side zero-context Git hunks; deleted-side and non-instrumented lines are not scored.',
       );
       await expect(
         runCli(
@@ -102,6 +111,64 @@ describe('change-risk CLI', () => {
       await fixture.cleanup();
     }
   });
+
+  it('preserves whole-file coverage when bounded Git hunk collection fails', async () => {
+    const repeated = 2_200_000;
+    const fixture = await createFixtureRepository([
+      {
+        message: 'base',
+        files: {
+          'coverage/lcov.info':
+            'SF:src/large.ts\nDA:1,0\nLF:1\nLH:0\nend_of_record\n',
+          'src/large.ts': `export const value = '${'a'.repeat(repeated)}';\n`,
+        },
+      },
+      {
+        message: 'head',
+        files: {
+          'src/large.ts': `export const value = '${'b'.repeat(repeated)}';\n`,
+        },
+      },
+    ]);
+    try {
+      const response = await runCli(
+        [
+          'analyze',
+          '--repo',
+          fixture.path,
+          '--base',
+          fixture.revisions[0]!,
+          '--head',
+          fixture.revisions[1]!,
+          '--coverage',
+          'coverage/lcov.info',
+          '--format',
+          'json',
+        ],
+        '.',
+      );
+      expect(response).toMatchObject({ exitCode: 0, stderr: '' });
+      const report = JSON.parse(response.stdout) as {
+        evidence: { kind: string; data: Record<string, unknown> }[];
+        findings: { ruleId: string }[];
+        limitations: string[];
+      };
+      expect(report.findings.map(({ ruleId }) => ruleId)).toContain(
+        'insufficient-coverage',
+      );
+      const coverageEvidence = report.evidence.find(
+        ({ kind }) => kind === 'coverage',
+      );
+      expect(JSON.stringify(coverageEvidence?.data)).not.toContain(
+        'changedLineCount',
+      );
+      expect(report.limitations).toContain(
+        'Changed-line coverage evidence unavailable: Git changed-line ranges could not be collected.',
+      );
+    } finally {
+      await fixture.cleanup();
+    }
+  }, 20_000);
 
   it('turns malformed LCOV into a source-free limitation without a finding', async () => {
     const fixture = await createFixtureRepository([

@@ -328,6 +328,7 @@ describe('coverage rule', () => {
       affectedPaths: ['src/below.ts', 'src/missing.ts', 'src/no-lines.ts'],
     });
     expect(result.evidence[0]?.data).toEqual({
+      minChangedLinePercent: 80,
       minLinePercent: 80,
       paths: [
         {
@@ -336,6 +337,7 @@ describe('coverage rule', () => {
           linesHit: 1,
           linePercent: 50,
           reason: 'below-threshold',
+          reasons: ['below-threshold'],
         },
         {
           path: 'src/missing.ts',
@@ -343,6 +345,7 @@ describe('coverage rule', () => {
           linesHit: null,
           linePercent: null,
           reason: 'missing-record',
+          reasons: ['missing-record'],
         },
         {
           path: 'src/no-lines.ts',
@@ -350,7 +353,99 @@ describe('coverage rule', () => {
           linesHit: 0,
           linePercent: null,
           reason: 'no-measurable-lines',
+          reasons: ['no-measurable-lines'],
         },
+      ],
+    });
+  });
+
+  it('combines whole-file and changed-line concerns into one finding weight', () => {
+    const result = evaluateRules(
+      {
+        changedFiles: [
+          file('src/changed-low.ts', ['source']),
+          file('src/whole-low.ts', ['source']),
+          file('src/unmeasurable.ts', ['source']),
+          file('src/pure-delete.ts', ['source']),
+        ],
+        coverageRelationships: [
+          {
+            path: 'src/changed-low.ts',
+            linesFound: 10,
+            linesHit: 9,
+            changedLineCount: 2,
+            changedLinesFound: 2,
+            changedLinesHit: 0,
+          },
+          {
+            path: 'src/whole-low.ts',
+            linesFound: 2,
+            linesHit: 1,
+            changedLineCount: 1,
+            changedLinesFound: 1,
+            changedLinesHit: 1,
+          },
+          {
+            path: 'src/unmeasurable.ts',
+            linesFound: 10,
+            linesHit: 10,
+            changedLineCount: 2,
+            changedLinesFound: 0,
+            changedLinesHit: 0,
+          },
+          {
+            path: 'src/pure-delete.ts',
+            linesFound: 10,
+            linesHit: 10,
+            changedLineCount: 0,
+            changedLinesFound: 0,
+            changedLinesHit: 0,
+          },
+        ],
+        sensitiveAreas: [],
+      },
+      [insufficientCoverageRule],
+      {
+        'insufficient-coverage': {
+          options: {
+            minLinePercent: 80,
+            minChangedLinePercent: 90,
+          },
+          weight: 17,
+        },
+      },
+    );
+    expect(result.findings).toHaveLength(1);
+    expect(result.findings[0]).toMatchObject({
+      weight: 17,
+      affectedPaths: [
+        'src/changed-low.ts',
+        'src/unmeasurable.ts',
+        'src/whole-low.ts',
+      ],
+    });
+    expect(result.evidence[0]?.data).toMatchObject({
+      minChangedLinePercent: 90,
+      minLinePercent: 80,
+      paths: [
+        expect.objectContaining({
+          path: 'src/changed-low.ts',
+          linePercent: 90,
+          changedLinePercent: 0,
+          reasons: ['below-changed-line-threshold'],
+        }),
+        expect.objectContaining({
+          path: 'src/unmeasurable.ts',
+          linePercent: 100,
+          changedLinePercent: null,
+          reasons: ['no-measurable-changed-lines'],
+        }),
+        expect.objectContaining({
+          path: 'src/whole-low.ts',
+          linePercent: 50,
+          changedLinePercent: 100,
+          reasons: ['below-threshold'],
+        }),
       ],
     });
   });
@@ -446,6 +541,63 @@ describe('coverage rule', () => {
         { 'insufficient-coverage': { options: { minLinePercent: 101 } } },
       ),
     ).toThrow(/minLinePercent/);
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [changedFiles[0]!],
+          coverageRelationships: [
+            {
+              path: 'src/a.ts',
+              linesFound: 1,
+              linesHit: 1,
+              changedLineCount: 1,
+              changedLinesFound: 2,
+              changedLinesHit: 1,
+            },
+          ],
+          sensitiveAreas: [],
+        },
+        [insufficientCoverageRule],
+      ),
+    ).toThrow(/invalid fields/);
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [changedFiles[0]!],
+          coverageRelationships: [
+            {
+              path: 'src/a.ts',
+              linesFound: 1,
+              linesHit: 1,
+              changedLineCount: 1,
+            },
+          ],
+          sensitiveAreas: [],
+        },
+        [insufficientCoverageRule],
+      ),
+    ).toThrow(/invalid fields/);
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [changedFiles[0]!],
+          coverageRelationships: [
+            {
+              path: 'src/a.ts',
+              linesFound: 1,
+              linesHit: 1,
+            },
+          ],
+          sensitiveAreas: [],
+        },
+        [insufficientCoverageRule],
+        {
+          'insufficient-coverage': {
+            options: { minChangedLinePercent: -1 },
+          },
+        },
+      ),
+    ).toThrow(/minChangedLinePercent/);
   });
 });
 

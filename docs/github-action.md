@@ -86,6 +86,9 @@ Coverage input is bounded, no-follow, and all-or-nothing. A valid artifact maps
 eligible changed sources and can trigger `insufficient-coverage`; invalid input
 becomes a limitation and suppresses that rule. The Action does not generate or
 discover coverage and cannot verify artifact freshness or revision alignment.
+The shared analyzer derives bounded new-side changed-line ranges from the exact
+event revisions without external diff or textconv execution. Hunk collection
+failure preserves whole-file coverage and becomes an explicit limitation.
 
 Fork pull requests never call the comments API, even if a token is present. They
 still produce JSON, outputs, and a summary. The conditional token expression in
