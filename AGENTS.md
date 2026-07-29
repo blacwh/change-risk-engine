@@ -63,7 +63,10 @@ remaining run budget.
 
 ## Required docs
 
-Maintain `README.md`, `PRODUCT.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `BACKLOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `docs/agent-workflow.md`, `docs/adr`, `docs/configuration.md`, `docs/rules`, `docs/output-schema.md`, and `docs/fixtures.md`.
+Maintain `README.md`, `PRODUCT.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `BACKLOG.md`,
+`CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `docs/agent-workflow.md`,
+`docs/release-readiness.md`, `docs/adr`, `docs/configuration.md`, `docs/rules`,
+`docs/output-schema.md`, and `docs/fixtures.md`.
 
 ## Completed initial sequence
 

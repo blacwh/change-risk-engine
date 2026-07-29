@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { mkdtemp, readdir, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -20,6 +20,10 @@ if (artifacts.length !== 1) {
   throw new Error('Exactly one packaged CLI artifact is required');
 }
 const archive = join(repositoryRoot, 'dist', artifacts[0]);
+const rootManifest = JSON.parse(
+  await readFile(join(repositoryRoot, 'package.json'), 'utf8'),
+);
+const rootLicense = await readFile(join(repositoryRoot, 'LICENSE'), 'utf8');
 const installRoot = await mkdtemp(join(tmpdir(), 'change-risk-package-'));
 try {
   await execFileAsync(
@@ -35,6 +39,31 @@ try {
     ],
     { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 },
   );
+  const installedRoot = join(installRoot, 'node_modules/change-risk-engine');
+  const installedManifest = JSON.parse(
+    await readFile(join(installedRoot, 'package.json'), 'utf8'),
+  );
+  const installedLicense = await readFile(
+    join(installedRoot, 'LICENSE'),
+    'utf8',
+  );
+  const installedFiles = (await readdir(installedRoot)).sort();
+  if (
+    installedManifest.license !== rootManifest.license ||
+    installedLicense !== rootLicense
+  ) {
+    throw new Error(
+      'Installed CLI does not contain the declared repository license',
+    );
+  }
+  if (
+    JSON.stringify(installedFiles) !==
+    JSON.stringify(['LICENSE', 'README.md', 'change-risk.js', 'package.json'])
+  ) {
+    throw new Error(
+      `Installed CLI contains unexpected files: ${installedFiles.join(', ')}`,
+    );
+  }
   const executable = join(installRoot, 'node_modules/.bin/change-risk');
   const { stdout: versionOutput } = await execFileAsync(
     executable,
@@ -46,6 +75,9 @@ try {
     throw new Error(
       `Installed CLI did not report the packaged version: ${JSON.stringify(installedVersion)}`,
     );
+  }
+  if (installedVersion !== installedManifest.version) {
+    throw new Error('Installed CLI version does not match package metadata');
   }
   const { stdout } = await execFileAsync(
     executable,

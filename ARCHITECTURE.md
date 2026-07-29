@@ -353,7 +353,9 @@ TypeScript compiler dependency, while the command itself remains ESM. The tag's
 validated semantic version is injected at build time. `npm pack` creates a
 standalone tarball, and verification installs that tarball into a new temporary
 prefix, captures its version through a pipe, and runs an analysis outside the
-workspace dependency graph.
+workspace dependency graph. Packaging requires the root SPDX license declaration
+and complete `LICENSE` text, copies both into the standalone package, and
+verification compares the installed copies with the repository.
 
 The self-analysis workflow checks out the exact pull-request head (or pushed
 master head), runs the bundled Action against the event's base/head object IDs,

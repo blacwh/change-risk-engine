@@ -40,7 +40,7 @@ export async function loadRepositoryConfig(
     ) {
       return parseChangeRiskConfig({ schemaVersion: 1 });
     }
-    throw new Error('Configuration file could not be opened');
+    throw new Error('Configuration file could not be opened', { cause: error });
   }
   try {
     const stats = await handle.stat();

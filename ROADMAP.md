@@ -135,6 +135,20 @@ regressions without a second score contribution. Baseline failure preserves
 valid head whole-file and changed-line evidence. Result schema version 1 and the
 offline, no-target-execution boundary remain unchanged.
 
+## Phase 11 — First-release readiness
+
+Release-ready standard, candidate changelog, compatibility and security review,
+automated preflight, licensed package contents, and a non-publishing `v0.1.0`
+dry run.
+
+Status: complete. The canonical standard and approval record, `v0.1.0`
+changelog, pre-tag/tagged preflight, Apache-2.0 source and package licensing,
+exact standalone-package verification, checksum verification, and clean
+dependency audit are implemented. The release workflow fails closed on missing
+readiness evidence. The candidate is not yet published: merge verification,
+public visibility, final owner approval, changelog date, tag creation, and
+release publication remain explicit post-merge gates.
+
 ## Later
 
 History-based calibration, policy packs, additional languages, constrained
