@@ -16,7 +16,23 @@ type CoverageConcern = {
   linesFound: number | null;
   linesHit: number | null;
   linePercent: number | null;
-  reason: 'below-threshold' | 'missing-record' | 'no-measurable-lines';
+  changedLineCount?: number;
+  changedLinesFound?: number | null;
+  changedLinesHit?: number | null;
+  changedLinePercent?: number | null;
+  reason:
+    | 'below-changed-line-threshold'
+    | 'below-threshold'
+    | 'missing-record'
+    | 'no-measurable-changed-lines'
+    | 'no-measurable-lines';
+  reasons: readonly (
+    | 'below-changed-line-threshold'
+    | 'below-threshold'
+    | 'missing-record'
+    | 'no-measurable-changed-lines'
+    | 'no-measurable-lines'
+  )[];
 };
 
 function categoryRule(definition: {
@@ -425,38 +441,67 @@ export const insufficientCoverageRule: RiskRule = {
     const relationships = context.coverageRelationships;
     if (relationships === undefined) return [];
     const minLinePercent = numberOption(options, 'minLinePercent', 80, 0, 100);
+    const minChangedLinePercent = numberOption(
+      options,
+      'minChangedLinePercent',
+      80,
+      0,
+      100,
+    );
     const insufficient = [...relationships]
       .sort((left, right) => compareText(left.path, right.path))
       .flatMap<CoverageConcern>((relationship) => {
+        const reasons: CoverageConcern['reasons'][number][] = [];
+        let linePercent: number | null = null;
         if (
           relationship.linesFound === null ||
           relationship.linesHit === null
         ) {
-          return [
-            {
-              ...relationship,
-              linePercent: null,
-              reason: 'missing-record' as const,
-            },
-          ];
+          reasons.push('missing-record');
+        } else if (relationship.linesFound === 0) {
+          reasons.push('no-measurable-lines');
+        } else {
+          const rawLinePercent =
+            (relationship.linesHit * 100) / relationship.linesFound;
+          linePercent = Math.round(rawLinePercent * 100) / 100;
+          if (rawLinePercent < minLinePercent) reasons.push('below-threshold');
         }
-        if (relationship.linesFound === 0) {
-          return [
-            {
-              ...relationship,
-              linePercent: null,
-              reason: 'no-measurable-lines' as const,
-            },
-          ];
+
+        let changedLinePercent: number | null | undefined;
+        if (
+          relationship.changedLineCount !== undefined &&
+          relationship.changedLinesFound !== undefined &&
+          relationship.changedLinesHit !== undefined
+        ) {
+          changedLinePercent = null;
+          if (
+            relationship.linesFound !== null &&
+            relationship.changedLineCount > 0 &&
+            relationship.changedLinesFound !== null &&
+            relationship.changedLinesHit !== null
+          ) {
+            if (relationship.changedLinesFound === 0) {
+              reasons.push('no-measurable-changed-lines');
+            } else {
+              const rawChangedLinePercent =
+                (relationship.changedLinesHit * 100) /
+                relationship.changedLinesFound;
+              changedLinePercent =
+                Math.round(rawChangedLinePercent * 100) / 100;
+              if (rawChangedLinePercent < minChangedLinePercent) {
+                reasons.push('below-changed-line-threshold');
+              }
+            }
+          }
         }
-        const linePercent =
-          (relationship.linesHit * 100) / relationship.linesFound;
-        if (linePercent >= minLinePercent) return [];
+        if (reasons.length === 0) return [];
         return [
           {
             ...relationship,
-            linePercent: Math.round(linePercent * 100) / 100,
-            reason: 'below-threshold' as const,
+            linePercent,
+            ...(changedLinePercent === undefined ? {} : { changedLinePercent }),
+            reason: reasons[0]!,
+            reasons,
           },
         ];
       });
@@ -469,6 +514,7 @@ export const insufficientCoverageRule: RiskRule = {
           summary: `${insufficient.length} changed source file(s) have insufficient supplied line coverage`,
           data: {
             minLinePercent,
+            minChangedLinePercent,
             paths: insufficient,
           },
           sourcePaths: affectedPaths,
@@ -477,7 +523,7 @@ export const insufficientCoverageRule: RiskRule = {
           title: 'Changed source has insufficient supplied coverage',
           severity: 'medium',
           explanation:
-            'Complete supplied coverage evidence reports missing, unmeasurable, or below-threshold line coverage for changed source files.',
+            'Complete supplied coverage evidence reports missing, unmeasurable, or below-threshold whole-file or changed-line coverage for changed source files.',
           affectedPaths,
           remediation:
             'Add or update tests, regenerate the LCOV artifact for the analyzed head, or document why the configured threshold is not appropriate.',

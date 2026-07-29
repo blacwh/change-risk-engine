@@ -134,11 +134,59 @@ function coverage scoring, changed-line coverage, merging multiple artifacts,
 coverage-delta history, non-LCOV formats, declaring adequate testing, and result
 schema version 2.
 
+## P5 — Changed-line coverage evidence
+
+- [x] Bounded new-side changed-line ranges from exact resolved revisions
+- [x] LCOV `DA` intersection with explicit changed-line measurement states
+- [x] Combined whole-file and changed-line coverage policy without double scoring
+- [x] Shared CLI, GitHub Action, and programmatic-host integration
+- [x] Positive, negative, malformed, limit, integration, and determinism tests
+
+Acceptance criteria:
+
+- changed lines are the new-side line numbers in zero-context Git hunks between
+  the exact resolved base and head commits; additions and replacement lines are
+  included, while context, deleted-side lines, binary changes, and unchanged
+  renames are not;
+- Git collection uses argument arrays, disables external diff and textconv
+  execution, returns and reports no source lines, bounds command output, file
+  count, range count, and total changed lines, and returns stable source-free
+  failures;
+- a valid supplied LCOV artifact intersects each eligible changed source's `DA`
+  records with its changed-line ranges and reports the total new-side changed
+  lines, instrumented changed lines, and hit instrumented changed lines;
+- missing LCOV source records, changed sources with no instrumented changed
+  lines, pure deletion hunks, and unavailable Git hunk evidence remain distinct;
+  failure to collect changed-line ranges preserves valid whole-file coverage
+  evidence and adds an explicit limitation;
+- the existing `insufficient-coverage` rule emits at most one aggregate finding
+  and one configured weight for correlated whole-file and changed-line concerns,
+  supports `minChangedLinePercent` as a finite 0–100 option defaulting to 80,
+  and exposes stable reasons and raw counts;
+- the existing CLI `--coverage` option and Action `coverage` input require no
+  new artifact or target-code execution; CLI, Action, terminal, JSON, Markdown,
+  and HTML reporting continue through shared result schema version 1;
+- focused Git hunk, LCOV intersection, missing/unmeasurable/pure-deletion,
+  malformed, limit, ordering, CLI, Action, and repeat-run determinism tests pass
+  with `npm run quality`, distributable CLI verification, Action packaging
+  verification, clean install, and `git diff --check`.
+
+Affected contracts: resolved-revision Git diff evidence, coverage relationships,
+LCOV mapper, rule context and `insufficient-coverage` evidence, configuration
+documentation, CLI/Action composition, trusted programmatic hosts, fixtures,
+security boundary, architecture, packaging, and bundled Action output.
+
+Non-goals: running target tests or builds, automatic or remote artifact
+discovery, baseline/delta history, deleted-line coverage, treating
+non-instrumented lines as uncovered, branch/function coverage, multiple
+artifacts, non-LCOV formats, source-line content in reports, declaring adequate
+testing, and result schema version 2.
+
 ## Next planning cycle
 
-The supplied-coverage packet is complete. Before starting another implementation
-run, add a prioritized item with acceptance criteria, affected contracts,
-explicit non-goals, documentation impact, and verification. Size it as a work
-packet using
+The changed-line coverage packet is complete. Before starting another
+implementation run, add a prioritized item with acceptance criteria, affected
+contracts, explicit non-goals, documentation impact, and verification. Size it
+as a work packet using
 [`docs/agent-workflow.md`](docs/agent-workflow.md); do not treat unprioritized
 directions in `ROADMAP.md` as implementation authorization.

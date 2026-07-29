@@ -9,6 +9,16 @@ export type LcovLimits = {
   maxRecords?: number;
   maxSourcePathLength?: number;
   maxDataLines?: number;
+  maxChangedLines?: number;
+};
+
+export type CoverageChangedLineRelationship = {
+  path: string;
+  ranges: readonly { start: number; count: number }[];
+};
+
+export type LcovOptions = LcovLimits & {
+  changedLineRelationships?: readonly CoverageChangedLineRelationship[];
 };
 
 export type CoverageIssue = {
@@ -39,6 +49,9 @@ export type CoverageRelationship = {
   path: string;
   linesFound: number | null;
   linesHit: number | null;
+  changedLineCount?: number;
+  changedLinesFound?: number | null;
+  changedLinesHit?: number | null;
 };
 
 export type CoverageResult = {
@@ -59,6 +72,7 @@ type PendingRecord = {
 type CoverageRecord = {
   linesFound: number;
   linesHit: number;
+  data: ReadonlyMap<number, number>;
 };
 
 const DEFAULT_LIMITS: RequiredLimits = {
@@ -68,6 +82,7 @@ const DEFAULT_LIMITS: RequiredLimits = {
   maxRecords: 100_000,
   maxSourcePathLength: 1_000,
   maxDataLines: 2_000_000,
+  maxChangedLines: 1_000_000,
 };
 const MAX_ISSUES = 100;
 const MAX_LINE_NUMBER = 100_000_000;
@@ -129,6 +144,11 @@ function resolveLimits(options: LcovLimits): RequiredLimits {
       options.maxDataLines ?? DEFAULT_LIMITS.maxDataLines,
       'maxDataLines',
       DEFAULT_LIMITS.maxDataLines,
+    ),
+    maxChangedLines: boundedPositiveInteger(
+      options.maxChangedLines ?? DEFAULT_LIMITS.maxChangedLines,
+      'maxChangedLines',
+      DEFAULT_LIMITS.maxChangedLines,
     ),
   };
 }
@@ -224,6 +244,8 @@ function recordIssue(issues: CoverageIssue[], issue: CoverageIssue): boolean {
 function relationshipResult(
   records: ReadonlyMap<string, CoverageRecord>,
   changedPaths: readonly string[],
+  changedLines:
+    ReadonlyMap<string, CoverageChangedLineRelationship['ranges']> | undefined,
 ): CoverageResult {
   const uniquePaths = new Set(changedPaths);
   if (
@@ -237,10 +259,35 @@ function relationshipResult(
   return {
     relationships: [...changedPaths].sort(compareText).map((path) => {
       const record = records.get(path);
+      const ranges = changedLines?.get(path);
+      let changedLineCount = 0;
+      let changedLinesFound = 0;
+      let changedLinesHit = 0;
+      for (const range of ranges ?? []) {
+        changedLineCount += range.count;
+        for (
+          let line = range.start;
+          line < range.start + range.count;
+          line += 1
+        ) {
+          const count = record?.data.get(line);
+          if (count === undefined) continue;
+          changedLinesFound += 1;
+          if (count > 0) changedLinesHit += 1;
+        }
+      }
       return {
         path,
         linesFound: record?.linesFound ?? null,
         linesHit: record?.linesHit ?? null,
+        ...(ranges === undefined
+          ? {}
+          : {
+              changedLineCount,
+              changedLinesFound:
+                record === undefined ? null : changedLinesFound,
+              changedLinesHit: record === undefined ? null : changedLinesHit,
+            }),
       };
     }),
     issues: [],
@@ -276,15 +323,73 @@ function finishRecord(
   records.set(record.sourcePath, {
     linesFound: record.linesFound,
     linesHit: record.linesHit,
+    data: new Map(record.data),
   });
   return false;
+}
+
+function changedLineMap(
+  changedPaths: readonly string[],
+  relationships: readonly CoverageChangedLineRelationship[] | undefined,
+  maxChangedLines: number,
+): ReadonlyMap<string, CoverageChangedLineRelationship['ranges']> | undefined {
+  if (relationships === undefined) return undefined;
+  const expectedPaths = new Set(changedPaths);
+  const mapped = new Map<string, CoverageChangedLineRelationship['ranges']>();
+  let totalChangedLines = 0;
+  for (const relationship of relationships) {
+    if (
+      !validChangedPath(relationship.path) ||
+      !expectedPaths.has(relationship.path) ||
+      mapped.has(relationship.path)
+    ) {
+      throw new Error(
+        'Changed-line relationships must contain each coverage path exactly once',
+      );
+    }
+    let previousEnd = 0;
+    for (const range of relationship.ranges) {
+      if (
+        !Number.isSafeInteger(range.start) ||
+        !Number.isSafeInteger(range.count) ||
+        range.start < 1 ||
+        range.start > MAX_LINE_NUMBER ||
+        range.count <= 0 ||
+        range.count > maxChangedLines ||
+        range.start + range.count - 1 > MAX_LINE_NUMBER ||
+        range.start <= previousEnd
+      ) {
+        throw new Error(
+          'Changed-line relationships contain invalid or overlapping ranges',
+        );
+      }
+      previousEnd = range.start + range.count - 1;
+      totalChangedLines += range.count;
+      if (totalChangedLines > maxChangedLines) {
+        throw new Error('Changed-line relationship limit exceeded');
+      }
+    }
+    mapped.set(
+      relationship.path,
+      relationship.ranges.map(({ start, count }) => ({ start, count })),
+    );
+  }
+  if (
+    mapped.size !== expectedPaths.size ||
+    [...expectedPaths].some((path) => !mapped.has(path))
+  ) {
+    throw new Error(
+      'Changed-line relationships must contain each coverage path exactly once',
+    );
+  }
+  return mapped;
 }
 
 export function parseLcov(
   source: string,
   repositoryRoot: string,
   changedPaths: readonly string[],
-  options: LcovLimits = {},
+  options: LcovOptions = {},
 ): CoverageResult {
   if (!isAbsolute(repositoryRoot)) {
     throw new Error('Repository root must be absolute');
@@ -299,6 +404,11 @@ export function parseLcov(
     );
   }
   const limits = resolveLimits(options);
+  const changedLines = changedLineMap(
+    changedPaths,
+    options.changedLineRelationships,
+    limits.maxChangedLines,
+  );
   if (Buffer.byteLength(source, 'utf8') > limits.maxFileBytes) {
     return { issues: [{ kind: 'file-size-limit' }] };
   }
@@ -414,14 +524,14 @@ export function parseLcov(
     recordIssue(issues, { kind: 'unterminated-record', line: lines.length });
   }
   if (issues.length > 0) return { issues };
-  return relationshipResult(records, changedPaths);
+  return relationshipResult(records, changedPaths, changedLines);
 }
 
 export async function readLcov(
   repositoryRoot: string,
   artifactPath: string,
   changedPaths: readonly string[],
-  options: LcovLimits = {},
+  options: LcovOptions = {},
 ): Promise<CoverageResult> {
   const limits = resolveLimits(options);
   const root = await realpath(repositoryRoot).catch(() => {
@@ -471,7 +581,12 @@ export async function readLcov(
     } catch {
       return { issues: [{ kind: 'invalid-utf8' }] };
     }
-    return parseLcov(source, root, changedPaths, limits);
+    return parseLcov(source, root, changedPaths, {
+      ...limits,
+      ...(options.changedLineRelationships === undefined
+        ? {}
+        : { changedLineRelationships: options.changedLineRelationships }),
+    });
   } finally {
     await handle.close().catch(() => undefined);
   }

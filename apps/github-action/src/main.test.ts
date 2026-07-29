@@ -128,6 +128,9 @@ describe('GitHub Action composition', () => {
         sourcePaths: ['src/service.ts'],
       }),
     );
+    expect(JSON.stringify(report.evidence)).toContain(
+      '"below-changed-line-threshold"',
+    );
     expect(report.limitations).toContain(
       'Coverage evidence is caller supplied; freshness and revision alignment are not verified.',
     );

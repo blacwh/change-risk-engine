@@ -58,6 +58,7 @@ boundaries can mature before independent publishing decisions are made.
 resolve revisions
 → collect Git diff
 → classify files
+→ collect bounded new-side changed-line ranges when requested
 → map supplied line coverage
 → index modules
 → build dependency graph
@@ -252,6 +253,16 @@ complete relationship set and becomes a source-free limitation. The
 below-threshold paths into one evidence-backed finding. It does not run tests,
 discover artifacts, or assert freshness, revision alignment, suite completeness,
 or behavioral adequacy.
+
+When coverage is requested, the Git adapter also derives new-side ranges from
+zero-context hunks between the resolved commits. It disables executable diff
+extensions, parses NUL-delimited raw paths separately from hunk text, and returns
+only bounded numeric ranges. The coverage mapper intersects those ranges with
+LCOV `DA` records to distinguish total changed lines, instrumented changed lines,
+and hit instrumented changed lines. The existing coverage rule combines
+whole-file and changed-line concerns into one finding and contribution so
+correlated evidence is not double-scored. Git hunk failure omits this refinement
+without discarding valid whole-file coverage.
 
 Trusted embedding hosts may compose built-in and plugin rules through the
 versioned plugin registry. Registration validates stable IDs, weights, required

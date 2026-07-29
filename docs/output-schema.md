@@ -24,6 +24,13 @@ paths, raw line counts, percentages when measurable, and stable reasons.
 Missing or invalid artifacts remain limitations and do not produce partial
 coverage evidence, so schema version 1 remains unchanged.
 
+When exact changed-line ranges are available, the same `coverage` evidence data
+also carries raw total, instrumented, and hit changed-line counts, measurable
+percentages, configured thresholds, and stable concern reasons. These remain
+rule evidence rather than a new top-level result field. Git hunk failures become
+limitations and omit only the changed-line refinement, so schema version 1 is
+still unchanged.
+
 Evidence and finding IDs must be unique. Unknown fields, broken references,
 unsupported versions, non-finite weights, and hidden score contributions are
 rejected. Contribution rule IDs are unique, and every finding must be counted

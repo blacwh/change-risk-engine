@@ -37,6 +37,9 @@ export type CoverageRelationship = {
   path: string;
   linesFound: number | null;
   linesHit: number | null;
+  changedLineCount?: number;
+  changedLinesFound?: number | null;
+  changedLinesHit?: number | null;
 };
 
 export type RuleMatch = {
@@ -95,10 +98,39 @@ export function evaluateRules(
         relationship.linesFound >= 0 &&
         relationship.linesHit >= 0 &&
         relationship.linesHit <= relationship.linesFound;
+      const changedFields = [
+        relationship.changedLineCount,
+        relationship.changedLinesFound,
+        relationship.changedLinesHit,
+      ];
+      const changedAbsent = changedFields.every((value) => value === undefined);
+      const changedMissing =
+        relationship.changedLineCount !== undefined &&
+        Number.isSafeInteger(relationship.changedLineCount) &&
+        relationship.changedLineCount >= 0 &&
+        relationship.changedLinesFound === null &&
+        relationship.changedLinesHit === null &&
+        bothMissing;
+      const changedMeasured =
+        relationship.changedLineCount !== undefined &&
+        Number.isSafeInteger(relationship.changedLineCount) &&
+        relationship.changedLineCount >= 0 &&
+        relationship.changedLinesFound !== undefined &&
+        relationship.changedLinesFound !== null &&
+        relationship.changedLinesHit !== undefined &&
+        relationship.changedLinesHit !== null &&
+        Number.isSafeInteger(relationship.changedLinesFound) &&
+        Number.isSafeInteger(relationship.changedLinesHit) &&
+        relationship.changedLinesFound >= 0 &&
+        relationship.changedLinesHit >= 0 &&
+        relationship.changedLinesFound <= relationship.changedLineCount &&
+        relationship.changedLinesHit <= relationship.changedLinesFound &&
+        bothMeasured;
       if (
         relationship.path.length === 0 ||
         relationship.path.length > 1_000 ||
-        (!bothMissing && !bothMeasured)
+        (!bothMissing && !bothMeasured) ||
+        (!changedAbsent && !changedMissing && !changedMeasured)
       ) {
         throw new Error('Coverage relationships contain invalid fields');
       }

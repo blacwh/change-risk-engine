@@ -78,6 +78,66 @@ describe('LCOV parsing', () => {
     });
   });
 
+  it('intersects changed-line ranges with instrumented LCOV lines', async () => {
+    const root = await repositoryRoot();
+    const source = [
+      record('src/a.ts', [
+        [1, 2],
+        [2, 0],
+        [4, 1],
+      ]),
+      record('src/pure-delete.ts', [[1, 1]]),
+    ].join('\n');
+    expect(
+      parseLcov(
+        source,
+        root,
+        ['src/missing.ts', 'src/pure-delete.ts', 'src/a.ts'],
+        {
+          changedLineRelationships: [
+            {
+              path: 'src/a.ts',
+              ranges: [
+                { start: 1, count: 2 },
+                { start: 4, count: 2 },
+              ],
+            },
+            { path: 'src/missing.ts', ranges: [{ start: 3, count: 1 }] },
+            { path: 'src/pure-delete.ts', ranges: [] },
+          ],
+        },
+      ),
+    ).toEqual({
+      issues: [],
+      relationships: [
+        {
+          path: 'src/a.ts',
+          linesFound: 3,
+          linesHit: 2,
+          changedLineCount: 4,
+          changedLinesFound: 3,
+          changedLinesHit: 2,
+        },
+        {
+          path: 'src/missing.ts',
+          linesFound: null,
+          linesHit: null,
+          changedLineCount: 1,
+          changedLinesFound: null,
+          changedLinesHit: null,
+        },
+        {
+          path: 'src/pure-delete.ts',
+          linesFound: 1,
+          linesHit: 1,
+          changedLineCount: 0,
+          changedLinesFound: 0,
+          changedLinesHit: 0,
+        },
+      ],
+    });
+  });
+
   it('rejects partial, duplicate, inconsistent, and unsupported records', async () => {
     const root = await repositoryRoot();
     const duplicateSource = [
@@ -129,6 +189,32 @@ describe('LCOV parsing', () => {
     expect(() => parseLcov('', 'relative/root', [])).toThrow(
       /root must be absolute/,
     );
+    expect(() =>
+      parseLcov('', root, ['src/a.ts'], {
+        changedLineRelationships: [],
+      }),
+    ).toThrow(/each coverage path exactly once/);
+    expect(() =>
+      parseLcov('', root, ['src/a.ts'], {
+        changedLineRelationships: [
+          {
+            path: 'src/a.ts',
+            ranges: [
+              { start: 2, count: 2 },
+              { start: 3, count: 1 },
+            ],
+          },
+        ],
+      }),
+    ).toThrow(/overlapping ranges/);
+    expect(() =>
+      parseLcov('', root, ['src/a.ts'], {
+        changedLineRelationships: [
+          { path: 'src/a.ts', ranges: [{ start: 1, count: 2 }] },
+        ],
+        maxChangedLines: 1,
+      }),
+    ).toThrow(/relationship limit|invalid or overlapping/);
   });
 
   it('enforces byte, line, record, source, data, and issue limits', async () => {

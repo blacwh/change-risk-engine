@@ -14,7 +14,7 @@ disabled or assigned a finite weight through configuration.
 | [`high-fan-in`](high-fan-in.md) | 25 | A changed module has many direct dependents |
 | [`migration`](migration.md) | 25 | Migration-classified paths changed |
 | [`infrastructure`](infrastructure.md) | 25 | Infrastructure or CI paths changed |
-| [`insufficient-coverage`](insufficient-coverage.md) | 20 | Supplied line coverage is missing, unmeasurable, or below threshold |
+| [`insufficient-coverage`](insufficient-coverage.md) | 20 | Supplied whole-file or changed-line coverage is missing, unmeasurable, or below threshold |
 | [`missing-owner`](missing-owner.md) | 15 | Changed paths have no matching CODEOWNERS owner |
 | [`missing-related-tests`](missing-related-tests.md) | 20 | A changed source has no changed explicitly related test |
 | [`public-export`](public-export.md) | 25 | A supplied public-surface comparison reports export changes |
