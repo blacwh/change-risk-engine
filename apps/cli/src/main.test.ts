@@ -130,4 +130,117 @@ describe('change-risk CLI', () => {
       await fixture.cleanup();
     }
   });
+
+  it('reports deterministic missing-owner evidence from the head CODEOWNERS file', async () => {
+    const fixture = await createFixtureRepository([
+      {
+        message: 'base',
+        files: {
+          '.github/CODEOWNERS': '/docs/owned.md @docs\n',
+          'docs/owned.md': 'Owned.\n',
+          'docs/unowned.md': 'Unowned.\n',
+        },
+      },
+      {
+        message: 'head',
+        files: {
+          'docs/owned.md': 'Owned and changed.\n',
+          'docs/unowned.md': 'Unowned and changed.\n',
+        },
+      },
+    ]);
+    try {
+      const arguments_ = [
+        'analyze',
+        '--repo',
+        fixture.path,
+        '--base',
+        fixture.revisions[0]!,
+        '--head',
+        fixture.revisions[1]!,
+        '--format',
+        'json',
+      ];
+      const first = await runCli(arguments_, '.');
+      const second = await runCli(arguments_, '.');
+      expect(first).toEqual(second);
+      expect(first).toMatchObject({ exitCode: 0, stderr: '' });
+      const report = JSON.parse(first.stdout) as {
+        evidence: {
+          kind: string;
+          data: Record<string, unknown>;
+          sourcePaths?: string[];
+        }[];
+        findings: { ruleId: string; affectedPaths: string[] }[];
+        score: number;
+      };
+      expect(report.findings).toContainEqual(
+        expect.objectContaining({
+          ruleId: 'missing-owner',
+          affectedPaths: ['docs/unowned.md'],
+        }),
+      );
+      expect(report.evidence).toContainEqual(
+        expect.objectContaining({
+          kind: 'ownership',
+          data: {
+            fileCount: 1,
+            unownedPaths: ['docs/unowned.md'],
+          },
+          sourcePaths: ['docs/unowned.md'],
+        }),
+      );
+      expect(report.score).toBe(15);
+    } finally {
+      await fixture.cleanup();
+    }
+  });
+
+  it('turns malformed CODEOWNERS into a source-free limitation without a finding', async () => {
+    const fixture = await createFixtureRepository([
+      {
+        message: 'base',
+        files: {
+          '.github/CODEOWNERS': '* @maintainers\n',
+          'docs/guide.md': 'Base.\n',
+        },
+      },
+      {
+        message: 'head',
+        files: {
+          '.github/CODEOWNERS': '!private/** @secret-team\n',
+          'docs/guide.md': 'Changed.\n',
+        },
+      },
+    ]);
+    try {
+      const response = await runCli(
+        [
+          'analyze',
+          '--repo',
+          fixture.path,
+          '--base',
+          fixture.revisions[0]!,
+          '--head',
+          fixture.revisions[1]!,
+          '--format',
+          'json',
+        ],
+        '.',
+      );
+      const report = JSON.parse(response.stdout) as {
+        findings: { ruleId: string }[];
+        limitations: string[];
+      };
+      expect(report.findings.map(({ ruleId }) => ruleId)).not.toContain(
+        'missing-owner',
+      );
+      expect(report.limitations).toContain(
+        'Ownership evidence unavailable: unsupported-pattern (line 1).',
+      );
+      expect(JSON.stringify(report.limitations)).not.toContain('secret-team');
+    } finally {
+      await fixture.cleanup();
+    }
+  });
 });

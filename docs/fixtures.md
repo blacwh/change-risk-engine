@@ -22,8 +22,11 @@ option-like revision input, invalid repositories, path traversal, cleanup,
 added/modified/deleted files, exact renames, binary files, unusual paths, and
 bounded file content at exact revisions. Unit fixtures cover shared modules,
 public API changes, related-test conventions, cycles, and parse failures.
-Broader authentication, migration, and monorepo scenarios remain for end-to-end
-CLI goldens.
+Ownership coverage adds last-match ordering, ownerless overrides, supported
+wildcards, malformed and over-limit input, linked files and directories, exact
+changed-path mapping, CLI findings, and repeat-run JSON determinism. Broader
+authentication, migration, and monorepo scenarios remain for end-to-end CLI
+goldens.
 
 `examples/typescript-service` supplies a validated sensitive-area/rule
 configuration and representative terminal output. Package verification adds a

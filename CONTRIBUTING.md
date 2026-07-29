@@ -34,6 +34,12 @@ Plugin additions require an API version, stable IDs, deterministic output,
 component bounds, collision tests, and an explicit trust model. Keep executable
 extension loading out of CLI configuration and analyzed repositories.
 
+Ownership changes must preserve fixed-path no-follow reads, conservative
+all-or-nothing relationships, case-sensitive last-match ordering, bounded
+iterative matching, and explicit limitations without CODEOWNERS source content.
+Do not infer GitHub membership, permissions, reviewer assignment, or approval
+from a syntactically valid owner string.
+
 Run `npm run quality` before opening a pull request. To validate the
 distributable CLI boundary, also run:
 

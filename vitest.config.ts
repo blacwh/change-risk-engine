@@ -23,6 +23,9 @@ export default defineConfig({
       '@change-risk/language-typescript': fileURLToPath(
         new URL('./packages/language-typescript/src/index.ts', import.meta.url),
       ),
+      '@change-risk/ownership': fileURLToPath(
+        new URL('./packages/ownership/src/index.ts', import.meta.url),
+      ),
       '@change-risk/plugin-sdk': fileURLToPath(
         new URL('./packages/plugin-sdk/src/index.ts', import.meta.url),
       ),

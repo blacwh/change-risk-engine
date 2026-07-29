@@ -36,6 +36,12 @@ metadata. It validates function presence without calling rule or adapter code.
 Callers constructing a full rule registry should include `DEFAULT_RULES` so
 ordinary configuration entries remain known to the rule engine.
 
+Programmatic rules receive ownership relationships only when the stock
+orchestrator obtained a complete, bounded mapping from the matching head
+worktree. Hosts calling the rule engine directly must either omit ownership
+evidence or provide exactly one validated relationship for every changed path;
+partial maps are rejected because they could turn missing input into a finding.
+
 ## Language adapter contract
 
 A language adapter declares an ID, a path predicate, and an asynchronous bounded
@@ -57,4 +63,3 @@ may supply plugins it already trusts. Never construct a plugin from pull-request
 files or an analyzed repository. Use process/container isolation if a host must
 support third-party executable extensions; that is outside this SDK's default
 boundary.
-
