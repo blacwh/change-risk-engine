@@ -7,6 +7,9 @@ inputs:
   coverage:
     description: Repository-relative LCOV artifact path
     required: false
+  baseline-coverage:
+    description: Repository-relative baseline LCOV artifact path
+    required: false
   fail-on:
     description: Lowest classification that fails the step
     required: false

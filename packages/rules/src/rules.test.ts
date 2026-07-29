@@ -328,6 +328,7 @@ describe('coverage rule', () => {
       affectedPaths: ['src/below.ts', 'src/missing.ts', 'src/no-lines.ts'],
     });
     expect(result.evidence[0]?.data).toEqual({
+      maxLinePercentDrop: 0,
       minChangedLinePercent: 80,
       minLinePercent: 80,
       paths: [
@@ -354,6 +355,75 @@ describe('coverage rule', () => {
           linePercent: null,
           reason: 'no-measurable-lines',
           reasons: ['no-measurable-lines'],
+        },
+      ],
+    });
+  });
+
+  it('combines baseline regression with current coverage concerns', () => {
+    const result = evaluateRules(
+      {
+        changedFiles: [
+          file('src/regressed.ts', ['source']),
+          file('src/improved.ts', ['source']),
+          file('src/no-baseline.ts', ['source']),
+        ],
+        coverageRelationships: [
+          {
+            path: 'src/regressed.ts',
+            linesFound: 10,
+            linesHit: 8,
+            baselinePath: 'src/old-name.ts',
+            baselineLinesFound: 10,
+            baselineLinesHit: 9,
+          },
+          {
+            path: 'src/improved.ts',
+            linesFound: 10,
+            linesHit: 9,
+            baselinePath: 'src/improved.ts',
+            baselineLinesFound: 10,
+            baselineLinesHit: 8,
+          },
+          {
+            path: 'src/no-baseline.ts',
+            linesFound: 10,
+            linesHit: 10,
+            baselinePath: 'src/no-baseline.ts',
+            baselineLinesFound: null,
+            baselineLinesHit: null,
+          },
+        ],
+        sensitiveAreas: [],
+      },
+      [insufficientCoverageRule],
+      {
+        'insufficient-coverage': {
+          options: { minLinePercent: 70, maxLinePercentDrop: 5 },
+          weight: 13,
+        },
+      },
+    );
+    expect(result.findings).toHaveLength(1);
+    expect(result.findings[0]).toMatchObject({
+      weight: 13,
+      affectedPaths: ['src/regressed.ts'],
+    });
+    expect(result.evidence[0]?.data).toMatchObject({
+      maxLinePercentDrop: 5,
+      paths: [
+        {
+          path: 'src/regressed.ts',
+          linesFound: 10,
+          linesHit: 8,
+          linePercent: 80,
+          baselinePath: 'src/old-name.ts',
+          baselineLinesFound: 10,
+          baselineLinesHit: 9,
+          baselineLinePercent: 90,
+          linePercentDelta: -10,
+          reason: 'coverage-regression',
+          reasons: ['coverage-regression'],
         },
       ],
     });
@@ -598,6 +668,41 @@ describe('coverage rule', () => {
         },
       ),
     ).toThrow(/minChangedLinePercent/);
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [changedFiles[0]!],
+          coverageRelationships: [
+            {
+              path: 'src/a.ts',
+              linesFound: 1,
+              linesHit: 1,
+              baselineLinesFound: 1,
+              baselineLinesHit: 1,
+            },
+          ],
+          sensitiveAreas: [],
+        },
+        [insufficientCoverageRule],
+      ),
+    ).toThrow(/invalid fields/);
+    expect(() =>
+      evaluateRules(
+        {
+          changedFiles: [changedFiles[0]!],
+          coverageRelationships: [
+            { path: 'src/a.ts', linesFound: 1, linesHit: 1 },
+          ],
+          sensitiveAreas: [],
+        },
+        [insufficientCoverageRule],
+        {
+          'insufficient-coverage': {
+            options: { maxLinePercentDrop: 101 },
+          },
+        },
+      ),
+    ).toThrow(/maxLinePercentDrop/);
   });
 });
 

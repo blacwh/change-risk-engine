@@ -43,6 +43,7 @@ export type AnalyzeRepositoryOptions = {
   head: string;
   configPath?: string;
   coveragePath?: string;
+  baselineCoveragePath?: string;
   languageAdapter?: LanguageAdapter;
   rules?: readonly RiskRule[];
 };
@@ -80,6 +81,13 @@ function coverageIssueLimitation(issue: {
   line?: number;
 }): string {
   return `Coverage evidence unavailable: ${issue.kind}${issue.line === undefined ? '' : ` (line ${issue.line})`}.`;
+}
+
+function baselineCoverageIssueLimitation(issue: {
+  kind: string;
+  line?: number;
+}): string {
+  return `Baseline coverage evidence unavailable: ${issue.kind}${issue.line === undefined ? '' : ` (line ${issue.line})`}.`;
 }
 
 function ignored(path: string, patterns: readonly string[]): boolean {
@@ -146,6 +154,12 @@ async function analyzeRepositoryInternal(
   options: AnalyzeRepositoryOptions,
   includeVisualization: boolean,
 ): Promise<RepositoryAnalysis> {
+  if (
+    options.baselineCoveragePath !== undefined &&
+    options.coveragePath === undefined
+  ) {
+    throw new Error('Baseline coverage requires head coverage');
+  }
   const config = await loadRepositoryConfig(
     options.repositoryRoot,
     options.configPath,
@@ -233,6 +247,69 @@ async function analyzeRepositoryInternal(
       'Coverage evidence is caller supplied; freshness and revision alignment are not verified.',
       ...coverage.issues.map(coverageIssueLimitation),
     );
+    if (
+      options.baselineCoveragePath !== undefined &&
+      coverageRelationships !== undefined
+    ) {
+      const baselineMappings = eligibleCoverageFiles.map((file) => ({
+        path: file.path,
+        baselinePath: file.previousPath ?? file.path,
+      }));
+      const baselinePaths = baselineMappings.map(
+        ({ baselinePath }) => baselinePath,
+      );
+      if (new Set(baselinePaths).size !== baselinePaths.length) {
+        limitations.push(
+          'Baseline coverage evidence unavailable: changed paths do not map uniquely to baseline paths.',
+        );
+      } else {
+        try {
+          const baseline = await readLcov(
+            options.repositoryRoot,
+            options.baselineCoveragePath,
+            baselinePaths,
+          );
+          limitations.push(
+            ...baseline.issues.map(baselineCoverageIssueLimitation),
+          );
+          if (baseline.relationships !== undefined) {
+            const baselinePathByCurrentPath = new Map(
+              baselineMappings.map(({ path, baselinePath }) => [
+                path,
+                baselinePath,
+              ]),
+            );
+            const baselineByPath = new Map(
+              baseline.relationships.map((relationship) => [
+                relationship.path,
+                relationship,
+              ]),
+            );
+            coverageRelationships = coverageRelationships.map(
+              (relationship) => {
+                const baselinePath = baselinePathByCurrentPath.get(
+                  relationship.path,
+                )!;
+                const baselineRelationship = baselineByPath.get(baselinePath)!;
+                return {
+                  ...relationship,
+                  baselinePath,
+                  baselineLinesFound: baselineRelationship.linesFound,
+                  baselineLinesHit: baselineRelationship.linesHit,
+                };
+              },
+            );
+            limitations.push(
+              'Baseline coverage evidence is caller supplied; freshness and revision alignment are not verified.',
+            );
+          }
+        } catch {
+          limitations.push(
+            'Baseline coverage evidence unavailable: invalid artifact path.',
+          );
+        }
+      }
+    }
   }
   const publicExportChanges = await publicSurfaceEvidence(
     options.repositoryRoot,

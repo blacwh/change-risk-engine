@@ -12,10 +12,17 @@ describe('change-risk CLI', () => {
       stderr: '',
     });
     expect(help.stdout).toContain('--coverage <path>');
+    expect(help.stdout).toContain('--baseline-coverage <path>');
     await expect(runCli(['unknown'], '.')).resolves.toEqual({
       stdout: '',
       stderr: 'change-risk: Unknown command: unknown\n',
       exitCode: 1,
+    });
+    await expect(
+      runCli(['analyze', '--baseline-coverage', 'coverage/base.info'], '.'),
+    ).resolves.toMatchObject({
+      exitCode: 1,
+      stderr: 'change-risk: --baseline-coverage requires --coverage\n',
     });
   });
 
@@ -107,6 +114,132 @@ describe('change-risk CLI', () => {
           '.',
         ),
       ).resolves.toMatchObject({ exitCode: 1, stdout: '' });
+    } finally {
+      await fixture.cleanup();
+    }
+  });
+
+  it('maps rename-aware baseline LCOV and reports deterministic regression evidence', async () => {
+    const renamedContents = 'export const stable = true;\n'.repeat(10);
+    const fixture = await createFixtureRepository([
+      {
+        message: 'base',
+        files: {
+          'coverage/base.info': [
+            'SF:src/old-name.ts',
+            ...Array.from({ length: 10 }, (_, index) => `DA:${index + 1},1`),
+            'LF:10',
+            'LH:10',
+            'end_of_record',
+          ].join('\n'),
+          'coverage/head.info': '',
+          'src/old-name.ts': renamedContents,
+        },
+      },
+      {
+        message: 'head',
+        files: {
+          'coverage/head.info': [
+            'SF:src/new-name.ts',
+            ...Array.from(
+              { length: 10 },
+              (_, index) => `DA:${index + 1},${index < 8 ? 1 : 0}`,
+            ),
+            'LF:10',
+            'LH:8',
+            'end_of_record',
+          ].join('\n'),
+          'src/old-name.ts': null,
+          'src/new-name.ts': renamedContents,
+        },
+      },
+    ]);
+    try {
+      const arguments_ = [
+        'analyze',
+        '--repo',
+        fixture.path,
+        '--base',
+        fixture.revisions[0]!,
+        '--head',
+        fixture.revisions[1]!,
+        '--coverage',
+        'coverage/head.info',
+        '--baseline-coverage',
+        'coverage/base.info',
+        '--format',
+        'json',
+      ];
+      const first = await runCli(arguments_, '.');
+      const second = await runCli(arguments_, '.');
+      expect(first).toEqual(second);
+      expect(first).toMatchObject({ exitCode: 0, stderr: '' });
+      const report = JSON.parse(first.stdout) as {
+        evidence: { kind: string; data: Record<string, unknown> }[];
+        limitations: string[];
+      };
+      const serialized = JSON.stringify(
+        report.evidence.find(({ kind }) => kind === 'coverage')?.data,
+      );
+      expect(serialized).toContain('"path":"src/new-name.ts"');
+      expect(serialized).toContain('"baselinePath":"src/old-name.ts"');
+      expect(serialized).toContain('"baselineLinePercent":100');
+      expect(serialized).toContain('"linePercentDelta":-20');
+      expect(serialized).toContain('"coverage-regression"');
+      expect(report.limitations).toContain(
+        'Baseline coverage evidence is caller supplied; freshness and revision alignment are not verified.',
+      );
+    } finally {
+      await fixture.cleanup();
+    }
+  });
+
+  it('preserves head coverage when baseline LCOV is invalid', async () => {
+    const fixture = await createFixtureRepository([
+      {
+        message: 'base',
+        files: {
+          'coverage/base.info': 'SF:../private.ts\nLF:0\nLH:0\nend_of_record\n',
+          'coverage/head.info':
+            'SF:src/service.ts\nDA:1,0\nLF:1\nLH:0\nend_of_record\n',
+          'src/service.ts': 'export const service = 1;\n',
+        },
+      },
+      {
+        message: 'head',
+        files: { 'src/service.ts': 'export const service = 2;\n' },
+      },
+    ]);
+    try {
+      const response = await runCli(
+        [
+          'analyze',
+          '--repo',
+          fixture.path,
+          '--base',
+          fixture.revisions[0]!,
+          '--head',
+          fixture.revisions[1]!,
+          '--coverage',
+          'coverage/head.info',
+          '--baseline-coverage',
+          'coverage/base.info',
+          '--format',
+          'json',
+        ],
+        '.',
+      );
+      const report = JSON.parse(response.stdout) as {
+        findings: { ruleId: string }[];
+        limitations: string[];
+      };
+      expect(report.findings.map(({ ruleId }) => ruleId)).toContain(
+        'insufficient-coverage',
+      );
+      expect(report.limitations).toContain(
+        'Baseline coverage evidence unavailable: invalid-source-path (line 1).',
+      );
+      expect(JSON.stringify(report.limitations)).not.toContain('private.ts');
     } finally {
       await fixture.cleanup();
     }

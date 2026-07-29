@@ -123,10 +123,22 @@ whole-file and changed-line concerns into at most one finding and contribution.
 Hunk failure preserves whole-file coverage, and result schema version 1 remains
 unchanged.
 
+## Phase 10 — Historical coverage comparison
+
+Caller-supplied baseline LCOV, rename-aware changed-source mapping, combined
+coverage regression policy, and conservative fallback.
+
+Status: complete. The CLI and GitHub Action accept one explicit baseline LCOV
+artifact alongside head coverage. Eligible renames map through their base-side
+paths, and the existing combined coverage rule reports measurable whole-file
+regressions without a second score contribution. Baseline failure preserves
+valid head whole-file and changed-line evidence. Result schema version 1 and the
+offline, no-target-execution boundary remain unchanged.
+
 ## Later
 
-Historical coverage, history-based calibration, policy packs, additional
-languages, constrained optional summaries.
+History-based calibration, policy packs, additional languages, constrained
+optional summaries.
 
 These are candidate directions, not a prioritized implementation queue. Before
 a future continuous run, select a direction, define acceptance criteria and

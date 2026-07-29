@@ -49,6 +49,9 @@ export type CoverageRelationship = {
   path: string;
   linesFound: number | null;
   linesHit: number | null;
+  baselinePath?: string;
+  baselineLinesFound?: number | null;
+  baselineLinesHit?: number | null;
   changedLineCount?: number;
   changedLinesFound?: number | null;
   changedLinesHit?: number | null;

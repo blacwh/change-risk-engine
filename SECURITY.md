@@ -85,6 +85,14 @@ and raw paths are never copied into limitations or coverage evidence. Malformed,
 incomplete, or over-limit hunk data suppresses only changed-line mapping and
 cannot invalidate otherwise trustworthy whole-file LCOV evidence.
 
+Baseline coverage is a second explicit repository-relative artifact and uses
+the same canonicalization, no-follow reads, parser bounds, all-or-nothing
+validation, and source-free limitations as head coverage. It is read
+independently: baseline failure cannot suppress trustworthy head coverage.
+Rename mapping uses only normalized paths already returned by exact Git diff
+evidence. The analyzer does not fetch history or assert that either artifact
+matches a revision, test suite, or instrumentation configuration.
+
 The CLI loads bounded JSON configuration through a no-follow file descriptor
 inside the canonical repository root. Graph, conventional test, and ownership
 evidence use filesystem contents only when the worktree is clean and matches the

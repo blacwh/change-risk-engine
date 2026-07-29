@@ -16,6 +16,11 @@ type CoverageConcern = {
   linesFound: number | null;
   linesHit: number | null;
   linePercent: number | null;
+  baselinePath?: string;
+  baselineLinesFound?: number | null;
+  baselineLinesHit?: number | null;
+  baselineLinePercent?: number | null;
+  linePercentDelta?: number | null;
   changedLineCount?: number;
   changedLinesFound?: number | null;
   changedLinesHit?: number | null;
@@ -23,12 +28,14 @@ type CoverageConcern = {
   reason:
     | 'below-changed-line-threshold'
     | 'below-threshold'
+    | 'coverage-regression'
     | 'missing-record'
     | 'no-measurable-changed-lines'
     | 'no-measurable-lines';
   reasons: readonly (
     | 'below-changed-line-threshold'
     | 'below-threshold'
+    | 'coverage-regression'
     | 'missing-record'
     | 'no-measurable-changed-lines'
     | 'no-measurable-lines'
@@ -448,6 +455,13 @@ export const insufficientCoverageRule: RiskRule = {
       0,
       100,
     );
+    const maxLinePercentDrop = numberOption(
+      options,
+      'maxLinePercentDrop',
+      0,
+      0,
+      100,
+    );
     const insufficient = [...relationships]
       .sort((left, right) => compareText(left.path, right.path))
       .flatMap<CoverageConcern>((relationship) => {
@@ -465,6 +479,35 @@ export const insufficientCoverageRule: RiskRule = {
             (relationship.linesHit * 100) / relationship.linesFound;
           linePercent = Math.round(rawLinePercent * 100) / 100;
           if (rawLinePercent < minLinePercent) reasons.push('below-threshold');
+        }
+
+        let baselineLinePercent: number | null | undefined;
+        let linePercentDelta: number | null | undefined;
+        if (
+          relationship.baselineLinesFound !== undefined &&
+          relationship.baselineLinesHit !== undefined
+        ) {
+          baselineLinePercent = null;
+          linePercentDelta = null;
+          if (
+            linePercent !== null &&
+            relationship.baselineLinesFound !== null &&
+            relationship.baselineLinesHit !== null &&
+            relationship.baselineLinesFound > 0
+          ) {
+            const rawBaselineLinePercent =
+              (relationship.baselineLinesHit * 100) /
+              relationship.baselineLinesFound;
+            const rawLinePercent =
+              (relationship.linesHit! * 100) / relationship.linesFound!;
+            const rawDelta = rawLinePercent - rawBaselineLinePercent;
+            baselineLinePercent =
+              Math.round(rawBaselineLinePercent * 100) / 100;
+            linePercentDelta = Math.round(rawDelta * 100) / 100;
+            if (rawDelta < -maxLinePercentDrop) {
+              reasons.push('coverage-regression');
+            }
+          }
         }
 
         let changedLinePercent: number | null | undefined;
@@ -499,6 +542,10 @@ export const insufficientCoverageRule: RiskRule = {
           {
             ...relationship,
             linePercent,
+            ...(baselineLinePercent === undefined ||
+            linePercentDelta === undefined
+              ? {}
+              : { baselineLinePercent, linePercentDelta }),
             ...(changedLinePercent === undefined ? {} : { changedLinePercent }),
             reason: reasons[0]!,
             reasons,
@@ -515,6 +562,7 @@ export const insufficientCoverageRule: RiskRule = {
           data: {
             minLinePercent,
             minChangedLinePercent,
+            maxLinePercentDrop,
             paths: insufficient,
           },
           sourcePaths: affectedPaths,
@@ -523,7 +571,7 @@ export const insufficientCoverageRule: RiskRule = {
           title: 'Changed source has insufficient supplied coverage',
           severity: 'medium',
           explanation:
-            'Complete supplied coverage evidence reports missing, unmeasurable, or below-threshold whole-file or changed-line coverage for changed source files.',
+            'Complete supplied coverage evidence reports missing, unmeasurable, below-threshold, or regressed whole-file or changed-line coverage for changed source files.',
           affectedPaths,
           remediation:
             'Add or update tests, regenerate the LCOV artifact for the analyzed head, or document why the configured threshold is not appropriate.',

@@ -37,6 +37,9 @@ export type CoverageRelationship = {
   path: string;
   linesFound: number | null;
   linesHit: number | null;
+  baselinePath?: string;
+  baselineLinesFound?: number | null;
+  baselineLinesHit?: number | null;
   changedLineCount?: number;
   changedLinesFound?: number | null;
   changedLinesHit?: number | null;
@@ -63,6 +66,21 @@ export type RuleEvaluation = {
 
 function compareText(left: string, right: string): number {
   return left < right ? -1 : left > right ? 1 : 0;
+}
+
+function validCoveragePath(path: string): boolean {
+  return (
+    path.length > 0 &&
+    path.length <= 1_000 &&
+    !path.startsWith('/') &&
+    !path.includes('\\') &&
+    !path.includes('\0') &&
+    path
+      .split('/')
+      .every(
+        (segment) => segment.length > 0 && segment !== '.' && segment !== '..',
+      )
+  );
 }
 
 export function evaluateRules(
@@ -103,6 +121,31 @@ export function evaluateRules(
         relationship.changedLinesFound,
         relationship.changedLinesHit,
       ];
+      const baselineFields = [
+        relationship.baselinePath,
+        relationship.baselineLinesFound,
+        relationship.baselineLinesHit,
+      ];
+      const baselineAbsent = baselineFields.every(
+        (value) => value === undefined,
+      );
+      const baselineMissing =
+        relationship.baselinePath !== undefined &&
+        validCoveragePath(relationship.baselinePath) &&
+        relationship.baselineLinesFound === null &&
+        relationship.baselineLinesHit === null;
+      const baselineMeasured =
+        relationship.baselinePath !== undefined &&
+        validCoveragePath(relationship.baselinePath) &&
+        relationship.baselineLinesFound !== undefined &&
+        relationship.baselineLinesFound !== null &&
+        relationship.baselineLinesHit !== undefined &&
+        relationship.baselineLinesHit !== null &&
+        Number.isSafeInteger(relationship.baselineLinesFound) &&
+        Number.isSafeInteger(relationship.baselineLinesHit) &&
+        relationship.baselineLinesFound >= 0 &&
+        relationship.baselineLinesHit >= 0 &&
+        relationship.baselineLinesHit <= relationship.baselineLinesFound;
       const changedAbsent = changedFields.every((value) => value === undefined);
       const changedMissing =
         relationship.changedLineCount !== undefined &&
@@ -127,9 +170,9 @@ export function evaluateRules(
         relationship.changedLinesHit <= relationship.changedLinesFound &&
         bothMeasured;
       if (
-        relationship.path.length === 0 ||
-        relationship.path.length > 1_000 ||
+        !validCoveragePath(relationship.path) ||
         (!bothMissing && !bothMeasured) ||
+        (!baselineAbsent && !baselineMissing && !baselineMeasured) ||
         (!changedAbsent && !changedMissing && !changedMeasured)
       ) {
         throw new Error('Coverage relationships contain invalid fields');
