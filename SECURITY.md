@@ -115,9 +115,9 @@ fork workflow permissions. Do not run this Action with `pull_request_target`
 after checking out untrusted pull-request code; that event can expose privileged
 credentials to attacker-controlled files. The tag-only release workflow has
 content-write permission solely to create release assets after quality,
-package-install, version, and analysis verification. Release archives include a
-SHA-256 checksum. The bundled analyzer preserves the same no-execution and
-bounded-input behavior as the workspace CLI.
+release-readiness, package-install, version, license-content, and analysis
+verification. Release archives include a SHA-256 checksum. The bundled analyzer
+preserves the same no-execution and bounded-input behavior as the workspace CLI.
 
 The static HTML reporter emits no JavaScript or external resources. A restrictive
 content security policy blocks network and script loading, and all

@@ -230,18 +230,62 @@ revision alignment, multiple baselines, aggregate repository-wide trends,
 changed-line history, branch/function coverage deltas, non-LCOV formats,
 declaring adequate testing, and result schema version 2.
 
-## First-release documentation note
+## P7 — First-release readiness
 
-Before creating the first release tag, agree on and document a release-ready
-standard, its required evidence, release notes and compatibility review,
-security and packaging gates, ownership of approval, and stop/rollback
-conditions. The detailed standard is intentionally deferred until the first
-release is being prepared.
+- [x] Canonical release-ready standard and evidence record
+- [x] Versioned changelog and compatibility review for candidate `v0.1.0`
+- [x] Automated preflight with pre-tag dry-run and exact-tag enforcement
+- [x] Declared license propagated into the standalone CLI artifact
+- [x] Full quality, packaging, production audit, and release dry run
+
+Acceptance criteria:
+
+- `docs/release-readiness.md` defines mandatory product, compatibility,
+  documentation, security, CI, packaging, legal, approval, stop, and rollback
+  gates, plus the evidence that proves each gate;
+- the first candidate is `v0.1.0`, has explicit release notes in `CHANGELOG.md`,
+  preserves analysis result schema version 1, graph companion schema version 1,
+  plugin API version 1, existing CLI exit semantics, and documented Action
+  inputs, and records any intentional compatibility exception;
+- `npm run verify:release -- v0.1.0 --allow-untagged` performs a deterministic
+  pre-tag check of the clean candidate tree, required documentation, package
+  metadata, changelog entry, Action bundle, and release workflow; tagged mode
+  additionally requires the exact version tag to point at `HEAD`;
+- the owner-selected SPDX license is declared in repository/package metadata,
+  the complete license text is present at the root, and both the license metadata
+  and text are included in the standalone CLI tarball;
+- a dry run uses `RELEASE_VERSION=v0.1.0` to build and freshly install the
+  standalone CLI, proves its version and JSON/HTML analysis, reproduces the
+  committed Action bundle, and produces a SHA-256 checksum without creating a
+  tag or GitHub release;
+- required PR and default-branch CI pass on Node 20.19, 22.13, and 24; the
+  production dependency audit has no known vulnerabilities, and any accepted
+  development-only audit finding is recorded without weakening a gate;
+- before tagging, the owner records approval of the exact commit and confirms
+  repository visibility is appropriate for the documented open-source release;
+  tag creation, repository visibility changes, and release publication remain
+  separately authorized operations.
+
+Affected contracts: release governance, root and generated package metadata,
+standalone tarball contents, release workflow, changelog, public compatibility
+commitments, security guidance, roadmap, and contributor workflow.
+
+Non-goals: creating or moving a tag, publishing a GitHub or npm release,
+changing repository visibility or settings, choosing a license without owner
+approval, changing schemas or scoring, adding product features, supporting an
+npm-registry publication boundary, or promising long-term stability before
+1.0.
+
+## Release-candidate follow-up
+
+After this packet merges, verify default-branch checks, change repository
+visibility to public as approved, rebuild the candidate from the exact merged
+commit, finalize the changelog date and approval record, and request separate
+authorization before creating `v0.1.0`. Tagging and publication are operational
+release gates, not an unfinished implementation item.
 
 ## Next planning cycle
 
-The historical coverage packet is complete. Before starting another
-implementation run, prioritize a direction and add a bounded item with
-acceptance criteria, affected contracts, explicit non-goals, documentation
-impact, and verification. Do not treat unprioritized directions in
-`ROADMAP.md` as implementation authorization.
+No additional implementation packet is prioritized. After the first release,
+select and define one bounded direction from `ROADMAP.md` before starting more
+feature work.

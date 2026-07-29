@@ -24,6 +24,10 @@ Every release build must install the tarball into a fresh temporary prefix,
 capture the installed version through a pipe, and produce a valid JSON analysis
 before release creation.
 
+[ADR 0012](0012-release-ready-gate.md) later requires the root license metadata
+and text in the standalone package, exact package-content verification, a
+release preflight, and immediate checksum verification.
+
 ## Consequences
 
 - users can install one portable JavaScript tarball without the monorepo;

@@ -17,9 +17,11 @@ It analyzes:
 
 The result is a transparent report. The tool must not present its risk classification as objective truth.
 
+Licensed under the [Apache License 2.0](LICENSE).
+
 ## Project status
 
-Phases 0 through 10 are complete. The engine safely collects exact Git evidence,
+Phases 0 through 11 are complete. The engine safely collects exact Git evidence,
 indexes TypeScript/JavaScript imports, builds a bounded dependency graph, applies
 deterministic evidence-backed rules, and exposes every effective score
 contribution. The installable CLI and bundled GitHub Action use the same core.
@@ -38,6 +40,9 @@ new-side Git ranges, preserving whole-file evidence when hunk refinement is
 unavailable. Phase 10 optionally compares a second caller-supplied baseline LCOV
 artifact, maps renamed sources through their base-side paths, and reports
 whole-file regressions without adding a second coverage score.
+Phase 11 adds the Apache-2.0 license, a `v0.1.0` changelog and compatibility
+baseline, deterministic release preflight, licensed standalone-package
+verification, and checksum gates. No release has been published yet.
 
 ## Usage
 
@@ -149,6 +154,10 @@ Contributors using an AI agent should follow the
 [continuous agent work protocol](docs/agent-workflow.md). It defines bounded
 work packets, a four-hour run ceiling, autonomous merge checkpoints, verification
 by change type, and exact handoff requirements.
+
+Maintainers preparing a version must satisfy the
+[release-ready standard](docs/release-readiness.md) for one exact commit before
+requesting authorization to tag or publish it.
 
 ## Initial scope
 

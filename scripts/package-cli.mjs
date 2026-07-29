@@ -29,6 +29,21 @@ const cliManifest = JSON.parse(
 const rootManifest = JSON.parse(
   await readFile(join(repositoryRoot, 'package.json'), 'utf8'),
 );
+if (
+  typeof rootManifest.license !== 'string' ||
+  rootManifest.license.trim().length === 0
+) {
+  throw new Error('Root package.json must declare an SPDX license');
+}
+const licenseText = await readFile(
+  join(repositoryRoot, 'LICENSE'),
+  'utf8',
+).catch(() => {
+  throw new Error('Root LICENSE file is required for packaging');
+});
+if (licenseText.trim().length === 0) {
+  throw new Error('Root LICENSE file cannot be empty');
+}
 const requestedVersion = process.env.RELEASE_VERSION ?? cliManifest.version;
 const version = requestedVersion.replace(/^v/u, '');
 if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/u.test(version)) {
@@ -64,6 +79,7 @@ await writeFile(
       type: 'module',
       bin: { 'change-risk': './change-risk.js' },
       engines: rootManifest.engines,
+      license: rootManifest.license,
       repository: {
         type: 'git',
         url: 'git+https://github.com/blacwh/change-risk-engine.git',
@@ -74,6 +90,7 @@ await writeFile(
   )}\n`,
   'utf8',
 );
+await writeFile(join(packageRoot, 'LICENSE'), licenseText, 'utf8');
 await writeFile(
   join(packageRoot, 'README.md'),
   `# Change Risk Engine CLI\n\nDeterministic repository change-risk analysis.\n\n\`\`\`bash\nchange-risk analyze --base main --head HEAD\n\`\`\`\n\nSee https://github.com/blacwh/change-risk-engine for configuration, security boundaries, and documentation.\n`,

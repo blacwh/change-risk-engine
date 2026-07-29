@@ -79,6 +79,8 @@ rebuild the bundle, and include both in the same pull request; the quality gate
 rejects stale generated output.
 
 Maintainer releases use a semantic version tag such as `v0.1.0`. The tag
-workflow reruns quality, injects the tag version, freshly installs and exercises
-the standalone tarball, writes `SHA256SUMS`, and creates the GitHub release. Do
-not create or move a release tag until its commit has passed CI.
+workflow enforces the [release-ready standard](docs/release-readiness.md),
+reruns quality, injects the tag version, freshly installs and exercises the
+standalone tarball, verifies its license, writes `SHA256SUMS`, and creates the
+GitHub release. Do not create or move a release tag until its commit has passed
+CI and has explicit owner approval.

@@ -21,7 +21,9 @@ change-risk analyze --base main --head HEAD
 
 The artifact bundles runtime dependencies and does not require a clone of this
 monorepo. The release pipeline proves this by installing into an empty temporary
-prefix and capturing both version and JSON analysis output.
+prefix and capturing both version and JSON analysis output. The package also
+contains the same license declaration and complete `LICENSE` text as the source
+repository.
 
 ## Options
 

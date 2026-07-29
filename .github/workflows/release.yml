@@ -29,12 +29,16 @@ jobs:
         run: npm ci
       - name: Run quality gates
         run: npm run quality
+      - name: Verify release readiness
+        run: npm run verify:release -- "$RELEASE_VERSION"
       - name: Build standalone package
         run: npm run package:cli
       - name: Verify fresh installation
         run: npm run verify:package
-      - name: Write checksums
+      - name: Write and verify checksums
         working-directory: dist
-        run: sha256sum *.tgz > SHA256SUMS
+        run: |
+          sha256sum *.tgz > SHA256SUMS
+          sha256sum --check SHA256SUMS
       - name: Create GitHub release
         run: gh release create "$GITHUB_REF_NAME" dist/*.tgz dist/SHA256SUMS --verify-tag --generate-notes

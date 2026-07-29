@@ -114,6 +114,7 @@ strongest applicable row; commands are cumulative where multiple rows apply.
 | GitHub Action source or bundled dependencies | `npm run package:action`, `npm run quality`, `npm run verify:action`; confirm `action-dist/index.js` is committed |
 | Schemas, scoring, graph behavior, adapters, or security boundaries | `npm run quality` plus focused positive, negative, limit, and determinism tests; review the relevant ADR/security/output docs |
 | Dependency changes | clean install when feasible, `npm run quality`, package verification for affected distributables, and lockfile review |
+| Release-readiness or distribution changes | all affected rows plus `npm run verify:release -- vX.Y.Z --allow-untagged`, production audit, candidate-version package build/install, checksum verification, and the evidence record in `docs/release-readiness.md` |
 
 For an authorized PR:
 
