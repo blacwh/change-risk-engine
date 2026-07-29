@@ -182,11 +182,66 @@ non-instrumented lines as uncovered, branch/function coverage, multiple
 artifacts, non-LCOV formats, source-line content in reports, declaring adequate
 testing, and result schema version 2.
 
+## P6 — Historical coverage comparison
+
+- [x] Explicit caller-supplied baseline LCOV input for CLI and GitHub Action
+- [x] Rename-aware baseline mapping for eligible changed source paths
+- [x] Evidence-backed whole-file coverage regression policy without double scoring
+- [x] Conservative current-coverage fallback when baseline evidence is unavailable
+- [x] Positive, negative, malformed, limit, integration, and determinism tests
+
+Acceptance criteria:
+
+- baseline comparison is enabled only when the caller supplies both the existing
+  head coverage artifact and one repository-relative baseline LCOV artifact;
+  neither interface discovers artifacts, retrieves history, or runs target code,
+  tests, or build tools;
+- the baseline artifact uses the same bounded, repository-contained, no-follow,
+  all-or-nothing LCOV reader as head coverage and maps a renamed changed source
+  through its base-side path while reporting the relationship under its current
+  path;
+- every eligible changed source retains the head artifact's whole-file and
+  changed-line counts and, when baseline evidence is trustworthy, gains explicit
+  baseline whole-file counts; percentage change is derived only when both
+  artifacts contain measurable records;
+- the existing `insufficient-coverage` rule accepts a finite
+  `maxLinePercentDrop` option from 0 through 100, defaults it to 0, and emits at
+  most one aggregate finding and one configured weight for correlated missing,
+  unmeasurable, below-threshold, changed-line, and regression concerns;
+- an invalid, missing, linked, malformed, unsupported, or over-limit baseline
+  artifact adds an explicit source-free limitation and preserves valid head
+  whole-file and changed-line evidence instead of suppressing it;
+- reports state that both supplied artifacts' freshness and revision alignment
+  are caller responsibilities; CLI, Action, terminal, JSON, Markdown, and HTML
+  reporting continue through shared result schema version 1;
+- focused mapping, rename, missing/unmeasurable, improvement/regression,
+  malformed, limit, ordering, CLI, Action, and repeat-run determinism tests pass
+  with `npm run quality`, distributable CLI verification, Action packaging
+  verification, clean install, and `git diff --check`.
+
+Affected contracts: LCOV relationships, rule context and
+`insufficient-coverage` evidence, configuration documentation, CLI options,
+Action inputs, trusted programmatic hosts, fixtures, security boundary,
+architecture, packaging, and bundled Action output.
+
+Non-goals: executing target tests or builds, automatic or remote artifact
+discovery, reading coverage from Git objects, verifying artifact provenance or
+revision alignment, multiple baselines, aggregate repository-wide trends,
+changed-line history, branch/function coverage deltas, non-LCOV formats,
+declaring adequate testing, and result schema version 2.
+
+## First-release documentation note
+
+Before creating the first release tag, agree on and document a release-ready
+standard, its required evidence, release notes and compatibility review,
+security and packaging gates, ownership of approval, and stop/rollback
+conditions. The detailed standard is intentionally deferred until the first
+release is being prepared.
+
 ## Next planning cycle
 
-The changed-line coverage packet is complete. Before starting another
-implementation run, add a prioritized item with acceptance criteria, affected
-contracts, explicit non-goals, documentation impact, and verification. Size it
-as a work packet using
-[`docs/agent-workflow.md`](docs/agent-workflow.md); do not treat unprioritized
-directions in `ROADMAP.md` as implementation authorization.
+The historical coverage packet is complete. Before starting another
+implementation run, prioritize a direction and add a bounded item with
+acceptance criteria, affected contracts, explicit non-goals, documentation
+impact, and verification. Do not treat unprioritized directions in
+`ROADMAP.md` as implementation authorization.

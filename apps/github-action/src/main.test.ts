@@ -83,6 +83,8 @@ describe('GitHub Action composition', () => {
         files: {
           'coverage/lcov.info':
             'SF:src/service.ts\nDA:1,0\nLF:1\nLH:0\nend_of_record\n',
+          'coverage/baseline.info':
+            'SF:src/service.ts\nDA:1,1\nLF:1\nLH:1\nend_of_record\n',
           'src/service.ts': 'export const service = 1;\n',
         },
       },
@@ -109,6 +111,7 @@ describe('GitHub Action composition', () => {
         GITHUB_EVENT_PATH: eventPath,
         GITHUB_REPOSITORY: 'owner/repository',
         INPUT_COVERAGE: 'coverage/lcov.info',
+        'INPUT_BASELINE-COVERAGE': 'coverage/baseline.info',
       },
     });
     const report = JSON.parse(await readFile(result.outputPath, 'utf8')) as {
@@ -131,8 +134,12 @@ describe('GitHub Action composition', () => {
     expect(JSON.stringify(report.evidence)).toContain(
       '"below-changed-line-threshold"',
     );
+    expect(JSON.stringify(report.evidence)).toContain('"coverage-regression"');
     expect(report.limitations).toContain(
       'Coverage evidence is caller supplied; freshness and revision alignment are not verified.',
+    );
+    expect(report.limitations).toContain(
+      'Baseline coverage evidence is caller supplied; freshness and revision alignment are not verified.',
     );
   });
 

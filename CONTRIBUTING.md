@@ -53,6 +53,12 @@ Preserve whole-file coverage when hunk refinement is unavailable, distinguish
 pure deletions from unmeasurable changed lines, and avoid correlated double
 scoring.
 
+Historical coverage changes must keep both artifacts caller-selected,
+repository-contained, bounded, no-follow, and independently all-or-nothing.
+Preserve head evidence on baseline failure, use exact Git rename evidence for
+base-side paths, make incomparable records explicit, and do not infer freshness,
+revision alignment, or equivalent test suites.
+
 Run `npm run quality` before opening a pull request. To validate the
 distributable CLI boundary, also run:
 

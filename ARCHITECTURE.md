@@ -60,6 +60,7 @@ resolve revisions
 → classify files
 → collect bounded new-side changed-line ranges when requested
 → map supplied line coverage
+→ optionally map supplied baseline coverage by base-side path
 → index modules
 → build dependency graph
 → map changed nodes
@@ -263,6 +264,13 @@ and hit instrumented changed lines. The existing coverage rule combines
 whole-file and changed-line concerns into one finding and contribution so
 correlated evidence is not double-scored. Git hunk failure omits this refinement
 without discarding valid whole-file coverage.
+
+Optional historical comparison reads one explicitly supplied baseline LCOV
+artifact through the same bounded no-follow parser. Eligible renamed sources use
+their base-side path for lookup; relationships remain keyed by the current path
+and carry raw baseline counts. The combined coverage rule derives a whole-file
+percentage delta only from two measurable records. Baseline failure adds a
+limitation and cannot discard valid head whole-file or changed-line evidence.
 
 Trusted embedding hosts may compose built-in and plugin rules through the
 versioned plugin registry. Registration validates stable IDs, weights, required

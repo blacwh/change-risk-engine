@@ -49,7 +49,8 @@ revisions must be available locally. The workflow does not install or execute
 the analyzed repository's dependencies. Generate the coverage artifact in a
 separate, appropriately isolated step before the analyzer when coverage policy
 is desired, then add `coverage: coverage/lcov.info` to the Action's `with`
-mapping.
+mapping. An optional `baseline-coverage: coverage/base.lcov.info` compares
+caller-retained baseline evidence and requires `coverage`.
 
 ## Inputs and outputs
 
@@ -57,6 +58,7 @@ mapping.
 | --- | --- | --- |
 | `config` | optional | Repository-relative JSON configuration path. |
 | `coverage` | optional | Repository-relative caller-supplied LCOV tracefile. |
+| `baseline-coverage` | optional | Repository-relative baseline LCOV tracefile; requires `coverage`. |
 | `fail-on` | `none` | `none`, `low`, `moderate`, `high`, or `critical`. |
 | `comment` | `true` | Maintain a comment when the pull request is from the same repository. |
 | `output` | `change-risk-report.json` | Repository-relative JSON artifact path. |
@@ -89,6 +91,9 @@ discover coverage and cannot verify artifact freshness or revision alignment.
 The shared analyzer derives bounded new-side changed-line ranges from the exact
 event revisions without external diff or textconv execution. Hunk collection
 failure preserves whole-file coverage and becomes an explicit limitation.
+Baseline input uses the same bounds and no-follow reads. Invalid baseline
+evidence preserves valid head coverage, while a valid baseline can add a
+rename-aware whole-file regression concern to the existing combined finding.
 
 Fork pull requests never call the comments API, even if a token is present. They
 still produce JSON, outputs, and a summary. The conditional token expression in

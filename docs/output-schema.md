@@ -31,6 +31,12 @@ rule evidence rather than a new top-level result field. Git hunk failures become
 limitations and omit only the changed-line refinement, so schema version 1 is
 still unchanged.
 
+Optional baseline comparison extends the same rule evidence with the base-side
+path, raw baseline line counts, measurable baseline percentage and delta, the
+configured drop allowance, and a stable regression reason. A baseline failure
+is a limitation and leaves valid head coverage evidence intact. These flexible
+evidence records do not change result schema version 1.
+
 Evidence and finding IDs must be unique. Unknown fields, broken references,
 unsupported versions, non-finite weights, and hidden score contributions are
 rejected. Contribution rule IDs are unique, and every finding must be counted

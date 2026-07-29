@@ -30,6 +30,8 @@ prefix and capturing both version and JSON analysis output.
 - `--config <path>` requires a repository-relative JSON configuration file.
 - `--coverage <path>` reads one repository-relative LCOV tracefile without
   discovering artifacts or running tests.
+- `--baseline-coverage <path>` optionally compares one repository-relative
+  baseline LCOV tracefile and requires `--coverage`.
 - `--format terminal|json|html` selects concise text, versioned machine output,
   or a self-contained static report.
 - `--fail-on none|low|moderate|high|critical` sets the classification gate.
@@ -59,6 +61,12 @@ between the exact resolved revisions and intersects their new-side ranges with
 LCOV line records. External diff and textconv execution are disabled. Failure to
 collect hunks adds a limitation and falls back to whole-file coverage instead of
 failing or discarding the valid artifact.
+
+When baseline coverage is supplied, renamed sources use their base-side path
+and other sources use their current path. A valid comparison can add a
+whole-file coverage-regression concern to the existing combined coverage
+finding. Invalid baseline evidence becomes a source-free limitation and does
+not discard valid head coverage.
 
 Generate a report that can be opened directly in a browser:
 

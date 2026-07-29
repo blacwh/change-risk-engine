@@ -51,6 +51,11 @@ Optional changed-line fields must be supplied as a complete group:
 `changedLineCount`, `changedLinesFound`, and `changedLinesHit`. Counts must be
 internally consistent, and paired `null` measurement counts are valid only when
 the whole-file LCOV source record is also missing.
+Optional baseline fields must be supplied together as `baselinePath`,
+`baselineLinesFound`, and `baselineLinesHit`. Paired `null` counts mean that a
+complete baseline artifact had no matching source record. The stock orchestrator
+maps renames through their base-side path and discards only the baseline fields
+when baseline input is invalid.
 
 ## Language adapter contract
 

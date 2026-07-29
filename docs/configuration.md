@@ -62,12 +62,13 @@ options because its public-entry-point selection and surface comparison are
 explicit upstream evidence. The `missing-owner` rule likewise has no
 rule-specific options because parsing, bounds, and last-match-wins ownership
 mapping are upstream evidence contracts.
-The `insufficient-coverage` rule accepts `minLinePercent` and
-`minChangedLinePercent`. Both are finite numbers from 0 through 100 and default
-to 80. The rule combines applicable whole-file and changed-line concerns into
-one finding weight. Artifact selection is an explicit CLI or Action input rather
-than configuration, and the rule emits nothing when complete coverage
-relationships are unavailable.
+The `insufficient-coverage` rule accepts `minLinePercent`,
+`minChangedLinePercent`, and `maxLinePercentDrop`. All are finite numbers from 0
+through 100. The minimum thresholds default to 80; the allowed whole-file drop
+defaults to 0. The rule combines applicable whole-file, changed-line, and
+baseline-regression concerns into one finding weight. Artifact selection is an
+explicit CLI or Action input rather than configuration, and the rule emits
+nothing when complete head coverage relationships are unavailable.
 
 Rule weights may be positive, zero, or negative. Negative values are intended
 for evidence-backed mitigations such as `tests-added`; aggregation caps their

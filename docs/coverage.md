@@ -1,10 +1,13 @@
 # Supplied coverage evidence
 
-The analyzer can consume one caller-supplied LCOV tracefile and relate its line
-coverage to changed source files. The CLI option is
-`--coverage <repository-relative-path>`; the GitHub Action input is `coverage`.
-Neither interface discovers artifacts, runs tests, installs dependencies, or
-executes repository code.
+The analyzer can consume one caller-supplied head LCOV tracefile and relate its
+line coverage to changed source files. It can optionally compare that evidence
+with one caller-supplied baseline LCOV tracefile. The CLI options are
+`--coverage <repository-relative-path>` and
+`--baseline-coverage <repository-relative-path>`; the GitHub Action inputs are
+`coverage` and `baseline-coverage`. A baseline requires head coverage. Neither
+interface discovers or retrieves artifacts, runs tests, installs dependencies,
+or executes repository code.
 
 ## Evidence contract
 
@@ -18,6 +21,13 @@ Each relationship contains the repository-relative path plus `linesFound` and
 `linesHit`. A source missing from a valid tracefile receives explicit `null`
 counts. A source record with `LF:0` and `LH:0` remains distinct and represents
 no measurable lines.
+
+When a baseline is supplied and valid, each relationship also contains the
+base-side path and baseline `linesFound` and `linesHit`. Renames use the Git
+diff's `previousPath`; other sources use their current path. Missing baseline
+records receive paired `null` counts. Percentage change is derived only when
+both records have measurable lines, so a missing or zero-measurable baseline
+does not become a regression claim.
 
 When exact changed-line Git evidence is available, the relationship also
 contains:
@@ -47,7 +57,7 @@ only line records. See the
 
 ## Security and bounds
 
-The artifact path must be repository-relative and normalize inside the
+Each artifact path must be repository-relative and normalize inside the
 canonical repository root. Parent-directory and final-file symbolic links are
 rejected. The reader opens the final path without following links and requires
 a regular file.
@@ -68,20 +78,23 @@ and continues with valid whole-file LCOV evidence.
 ## Policy and limitations
 
 The built-in [`insufficient-coverage`](rules/insufficient-coverage.md) rule uses
-the complete relationship set. Coverage data remains caller-supplied evidence:
-the analyzer does not verify when it was generated, which revision it describes,
-which test commands ran, or whether the test suite was complete. Every analysis
-that accepts a coverage path states this freshness and revision-alignment
-limitation.
+the complete head relationship set and an available complete baseline. It can
+flag a whole-file percentage drop greater than `maxLinePercentDrop` without
+adding a second score contribution. Coverage data remains caller-supplied
+evidence: the analyzer does not verify when either artifact was generated, which
+revision it describes, which test commands ran, or whether the suites and
+instrumentation are comparable. Every accepted artifact states this freshness
+and revision-alignment limitation.
 
-The artifact may be generated and ignored rather than committed. If it is an
+Artifacts may be generated and ignored rather than committed. If either is an
 untracked, non-ignored file, the analyzer's existing clean-head invariant will
 omit filesystem-derived dependency, test-relationship, and ownership evidence.
-Use a repository-ignored artifact location when those evidence sources should
+Use repository-ignored artifact locations when those evidence sources should
 remain eligible.
 
 The integration does not support branch or function thresholds, deleted-line
-coverage, multiple or remote artifacts, artifact merging, historical deltas, or
-formats other than LCOV. It does not declare a change adequately tested.
+coverage, multiple baselines, remote artifacts, artifact merging,
+repository-wide trends, changed-line history, or formats other than LCOV. It
+does not declare a change adequately tested.
 Coverage evidence and findings use the existing version 1 evidence model, so no
 result-schema change is required.

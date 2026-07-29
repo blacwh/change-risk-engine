@@ -19,7 +19,7 @@ The result is a transparent report. The tool must not present its risk classific
 
 ## Project status
 
-Phases 0 through 9 are complete. The engine safely collects exact Git evidence,
+Phases 0 through 10 are complete. The engine safely collects exact Git evidence,
 indexes TypeScript/JavaScript imports, builds a bounded dependency graph, applies
 deterministic evidence-backed rules, and exposes every effective score
 contribution. The installable CLI and bundled GitHub Action use the same core.
@@ -35,7 +35,9 @@ line-coverage mapping and an insufficient-coverage rule. Invalid or unavailable
 ownership and coverage inputs are reported as limitations instead of becoming
 risk claims. Phase 9 intersects LCOV counters with bounded exact-revision
 new-side Git ranges, preserving whole-file evidence when hunk refinement is
-unavailable.
+unavailable. Phase 10 optionally compares a second caller-supplied baseline LCOV
+artifact, maps renamed sources through their base-side paths, and reports
+whole-file regressions without adding a second coverage score.
 
 ## Usage
 
@@ -87,6 +89,16 @@ zero-measurable records. It also evaluates instrumented new-side changed lines
 without executing external diff drivers or target code, and always states that
 artifact freshness and revision alignment are caller responsibilities. See
 [supplied coverage evidence](docs/coverage.md).
+
+Compare the head artifact with a caller-retained baseline:
+
+```bash
+change-risk analyze --base main --head HEAD \
+  --coverage coverage/head.lcov.info \
+  --baseline-coverage coverage/base.lcov.info
+```
+
+Both artifacts remain caller-supplied and revision alignment is not inferred.
 
 Analyze pull requests with the GitHub Action:
 

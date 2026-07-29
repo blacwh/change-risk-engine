@@ -36,6 +36,9 @@ Changed-line fixtures add exact additions, replacements, deleted-only hunks,
 unchanged renames, unusual NUL-delimited paths, malformed patch structure,
 file/range/line limits, LCOV intersection, unmeasurable instrumentation,
 bounded-output fallback, combined rule weighting, and repeat determinism.
+Historical-coverage fixtures add rename-aware base-path mapping, improvement and
+regression percentages, missing baseline records, invalid-baseline fallback,
+combined scoring, Action composition, and repeat determinism.
 
 `examples/typescript-service` supplies a validated sensitive-area/rule
 configuration and representative terminal output. Package verification adds a

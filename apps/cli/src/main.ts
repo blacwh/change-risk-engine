@@ -16,6 +16,8 @@ Options:
   --repo <path>           Repository root (default: current directory)
   --config <path>         Repository-relative JSON config (default: .change-risk.json if present)
   --coverage <path>       Repository-relative LCOV artifact
+  --baseline-coverage <path>
+                          Repository-relative baseline LCOV artifact
   --format <terminal|json|html>
   --fail-on <none|low|moderate|high|critical>
   --help
@@ -43,6 +45,7 @@ type AnalyzeArguments = {
   repositoryRoot: string;
   configPath?: string;
   coveragePath?: string;
+  baselineCoveragePath?: string;
   format: 'html' | 'json' | 'terminal';
   failOn: FailOn;
 };
@@ -64,6 +67,7 @@ function parseAnalyzeArguments(
   let repositoryRoot = workingDirectory;
   let configPath: string | undefined;
   let coveragePath: string | undefined;
+  let baselineCoveragePath: string | undefined;
   let format: 'html' | 'json' | 'terminal' = 'terminal';
   let failOn: FailOn = 'none';
   const seen = new Set<string>();
@@ -74,6 +78,7 @@ function parseAnalyzeArguments(
     if (
       ![
         '--base',
+        '--baseline-coverage',
         '--config',
         '--coverage',
         '--fail-on',
@@ -94,6 +99,7 @@ function parseAnalyzeArguments(
       repositoryRoot = resolve(workingDirectory, value);
     else if (option === '--config') configPath = value;
     else if (option === '--coverage') coveragePath = value;
+    else if (option === '--baseline-coverage') baselineCoveragePath = value;
     else if (option === '--format') {
       if (value !== 'html' && value !== 'json' && value !== 'terminal') {
         throw new Error('--format must be terminal, json, or html');
@@ -108,12 +114,16 @@ function parseAnalyzeArguments(
       failOn = value as FailOn;
     }
   }
+  if (baselineCoveragePath !== undefined && coveragePath === undefined) {
+    throw new Error('--baseline-coverage requires --coverage');
+  }
   return {
     base,
     head,
     repositoryRoot,
     ...(configPath === undefined ? {} : { configPath }),
     ...(coveragePath === undefined ? {} : { coveragePath }),
+    ...(baselineCoveragePath === undefined ? {} : { baselineCoveragePath }),
     format,
     failOn,
   };
@@ -154,6 +164,9 @@ export async function runCli(
       ...(parsed.coveragePath === undefined
         ? {}
         : { coveragePath: parsed.coveragePath }),
+      ...(parsed.baselineCoveragePath === undefined
+        ? {}
+        : { baselineCoveragePath: parsed.baselineCoveragePath }),
     });
     const { result } = analysis;
     const stdout =
