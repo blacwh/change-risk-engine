@@ -175,15 +175,16 @@ Configuration, CLI, and Action interfaces explicitly select one stock language;
 Python selection adds conditional source classification, conventional test
 relationships, graph evidence, and supplied-LCOV eligibility. TypeScript remains
 the default, automatic detection and mixed-language graphs remain out of scope,
-and Python public-surface comparison is explicitly deferred to a separate
-decision.
+and scored Python public-surface comparison is deliberately deferred by
+[ADR 0015](docs/adr/0015-defer-python-public-surface.md).
 
 ## Later
 
 History-based calibration, languages beyond Python, constrained optional
-summaries, and additional policy packs justified by concrete review needs.
+summaries, additional policy packs justified by concrete review needs, and a
+possible observational Python declared-name mode with explicit entry points.
 
-These are candidate directions, not a prioritized implementation queue. Python
-is the only selected next language direction; its bounded packets are defined in
-`BACKLOG.md`. Select and define any other direction before implementation using
-the [continuous agent work protocol](docs/agent-workflow.md).
+These are candidate directions, not a prioritized implementation queue. No
+further implementation packet is ready. Select and define a direction before
+implementation using the
+[continuous agent work protocol](docs/agent-workflow.md).

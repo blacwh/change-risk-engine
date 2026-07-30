@@ -160,6 +160,14 @@ public-surface evidence. Automatic detection and mixed-language graph merging
 remain out of scope. See the reviewed
 [Python adapter plan](docs/python-adapter.md).
 
+Python public-surface analysis remains intentionally absent after the separate
+[ADR 0015](docs/adr/0015-defer-python-public-surface.md) review. Runtime module
+names, typing-stub interfaces, dynamic attributes, and syntactic declarations
+cannot be collapsed into one scored compatibility claim without false
+precision. Any future mode must use explicitly configured entry points, require
+a complete statically resolved `__all__`, keep runtime and typing surfaces
+separate, and begin as observational evidence.
+
 ## Git
 
 Use Git for revision resolution, name-status diff, numstat, content at revisions, and rename detection. Do not assume a clean working tree. Always state analyzed revisions.

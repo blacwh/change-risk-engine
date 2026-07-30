@@ -6,7 +6,8 @@
 
 ## Evidence
 
-The rule records a sorted list of public export changes. Each entry identifies
+The rule currently consumes TypeScript public-surface evidence and records a
+sorted list of public export changes. Each entry identifies
 its repository path, export name, and whether it was added, modified, or
 removed. The evidence must come from a caller-selected public-surface comparison;
 the rule does not infer public entry points.
@@ -28,3 +29,7 @@ Incorrectly selected entry points can create false positives. Runtime exports,
 generated declarations, or surfaces omitted by the upstream comparison can be
 missed. The engine intentionally does not execute package configuration or
 target code to discover exports.
+
+Python analysis does not supply this rule. Scored Python public-surface
+inference is deliberately deferred by
+[ADR 0015](../adr/0015-defer-python-public-surface.md).

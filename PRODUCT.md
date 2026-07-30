@@ -119,9 +119,10 @@ Phase 13 implements a bounded, non-executing Python adapter with explicit
 single-language selection in configuration, CLI, and Action interfaces.
 Python-aware source classification, static-import graph analysis, conventional
 test evidence, and supplied-LCOV eligibility are available without executing
-target code. Python public-surface evidence remains deferred. Current
-capability-by-language details are the source of truth in
-[language support](docs/language-support.md).
+target code. A separate semantics review deliberately defers scored Python
+public-surface evidence rather than inferring a compatibility claim from runtime
+names or syntax. Current capability-by-language details are the source of truth
+in [language support](docs/language-support.md).
 
 ## Boundaries
 

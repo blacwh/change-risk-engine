@@ -32,8 +32,8 @@ classification, test, and public-surface behavior.
 Python source classification, conventional test relationships, and stock
 selection were delivered in a separate integration packet. TypeScript-only
 public-surface comparison is suppressed for Python analysis. A Python
-public-surface model is deferred until its semantics and limitations can be
-reviewed independently.
+public-surface model was reviewed independently and deliberately deferred by
+[ADR 0015](0015-defer-python-public-surface.md).
 
 The foundation uses the JavaScript `@lezer/python` grammar and validates the
 existing adapter contract. The stock integration retains configuration and
@@ -50,7 +50,8 @@ configuration, CLI, Action, coverage, packaging, and repeat-run evidence.
   dependencies;
 - generic path evidence remains available independently of language-aware
   evidence;
-- initial Python analysis will not claim public-export evidence;
+- Python analysis will not claim public-export evidence under the accepted
+  [separate semantics decision](0015-defer-python-public-surface.md);
 - configurable source roots, dynamic imports, environment-dependent resolution,
   namespace-package composition, and languages beyond Python remain future
   work;

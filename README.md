@@ -49,8 +49,9 @@ configuration precedence and no external loading boundary.
 Phase 13 adds a bounded, non-executing Python adapter with explicit stock CLI,
 Action, and configuration selection. Python analysis includes source
 classification, static-import graph and blast-radius evidence, conventional
-test relationships, and caller-supplied LCOV mapping. Python public-surface
-comparison remains explicitly unsupported. See the
+test relationships, and caller-supplied LCOV mapping. After a separate semantics
+review, scored Python public-surface comparison remains deliberately
+unsupported. See the
 [language-support matrix](docs/language-support.md) for the exact boundary and
 the [Python adapter plan](docs/python-adapter.md) for the phased contract.
 
@@ -195,9 +196,10 @@ requesting authorization to tag or publish it.
 The stock CLI and GitHub Action provide explicitly selected
 TypeScript/JavaScript or Python indexing, graph, conventional-test, and coverage
 eligibility. TypeScript/JavaScript additionally provides syntactic
-public-surface evidence; Python does not. Generic Git, path-policy, and ownership
-evidence can observe other files, but that does not imply parser or graph
-support. See [language support](docs/language-support.md).
+public-surface evidence; Python deliberately does not. Generic Git, path-policy,
+and ownership evidence can observe other files, but that does not imply parser
+or graph support. See [language support](docs/language-support.md) and the
+[Python public-surface decision](docs/adr/0015-defer-python-public-surface.md).
 
 ## Interfaces
 

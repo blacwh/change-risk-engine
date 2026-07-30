@@ -54,7 +54,8 @@ versioned vocabulary.
 Language selection is an analysis input, not a new result field. It changes
 which paths receive `source` and `test`, which adapter produces graph evidence,
 and whether public-surface comparison is applicable. Python omission of that
-comparison appears in `limitations`; result schema version 1 remains unchanged.
+comparison appears in `limitations`; this is an accepted capability boundary,
+not partial public evidence. Result schema version 1 remains unchanged.
 
 `@change-risk/reporters` provides validated JSON, plain-text terminal, and
 bounded GitHub Markdown renderers. JSON and terminal output end with a newline
