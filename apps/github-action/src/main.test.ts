@@ -143,6 +143,71 @@ describe('GitHub Action composition', () => {
     );
   });
 
+  it('applies the explicit Python language input over repository configuration', async () => {
+    const fixture = await createFixtureRepository([
+      {
+        message: 'base',
+        files: {
+          '.change-risk.json': JSON.stringify({
+            schemaVersion: 1,
+            language: 'typescript',
+          }),
+          'coverage/lcov.info':
+            'SF:src/service.py\nDA:1,0\nLF:1\nLH:0\nend_of_record\n',
+          'src/service.py': 'value = 1\n',
+        },
+      },
+      {
+        message: 'head',
+        files: { 'src/service.py': 'value = 2\n' },
+      },
+    ]);
+    cleanup.push(fixture.cleanup);
+    const runtimeRoot = await mkdtemp(join(tmpdir(), 'change-risk-action-'));
+    cleanup.push(() => rm(runtimeRoot, { recursive: true, force: true }));
+    const eventPath = join(runtimeRoot, 'event.json');
+    await writeFile(
+      eventPath,
+      JSON.stringify({
+        before: fixture.revisions[0],
+        after: fixture.revisions[1],
+      }),
+    );
+
+    const result = await runGitHubAction({
+      environment: {
+        GITHUB_WORKSPACE: fixture.path,
+        GITHUB_EVENT_PATH: eventPath,
+        GITHUB_REPOSITORY: 'owner/repository',
+        INPUT_COVERAGE: 'coverage/lcov.info',
+        INPUT_LANGUAGE: 'python',
+      },
+    });
+    const report = JSON.parse(await readFile(result.outputPath, 'utf8')) as {
+      changedFiles: { path: string; categories: string[] }[];
+      findings: { ruleId: string }[];
+      limitations: string[];
+    };
+    expect(report.changedFiles[0]?.categories).toEqual(['source']);
+    expect(report.findings.map(({ ruleId }) => ruleId)).toContain(
+      'insufficient-coverage',
+    );
+    expect(report.limitations).toContain(
+      'Python public-surface comparison is not implemented; public-export evidence was omitted.',
+    );
+
+    await expect(
+      runGitHubAction({
+        environment: {
+          GITHUB_WORKSPACE: fixture.path,
+          GITHUB_EVENT_PATH: eventPath,
+          GITHUB_REPOSITORY: 'owner/repository',
+          INPUT_LANGUAGE: 'ruby',
+        },
+      }),
+    ).rejects.toThrow('language input must be typescript or python');
+  });
+
   it('uses policy packs selected by repository configuration', async () => {
     const fixture = await createFixtureRepository([
       {

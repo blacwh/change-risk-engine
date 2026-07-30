@@ -51,6 +51,11 @@ The current category vocabulary is `source`, `test`, `documentation`,
 `configuration`, `asset`, and `other`. Reporters reject values outside this
 versioned vocabulary.
 
+Language selection is an analysis input, not a new result field. It changes
+which paths receive `source` and `test`, which adapter produces graph evidence,
+and whether public-surface comparison is applicable. Python omission of that
+comparison appears in `limitations`; result schema version 1 remains unchanged.
+
 `@change-risk/reporters` provides validated JSON, plain-text terminal, and
 bounded GitHub Markdown renderers. JSON and terminal output end with a newline
 for predictable CLI and file output. Terminal and GitHub output show configured

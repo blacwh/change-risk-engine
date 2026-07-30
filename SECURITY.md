@@ -34,7 +34,7 @@ entries, source-file count, and source bytes are bounded. Parsing uses the
 compiler API only and never loads target configuration, plugins, dependencies,
 or executable modules. Issues omit source text and raw parser messages.
 
-The programmatic Python adapter applies no-follow, repository-contained,
+The Python adapter applies no-follow, repository-contained,
 bounded-read, deterministic-ordering, parse-issue retention, and source-free
 issue requirements. It parses with the bundled JavaScript `@lezer/python`
 grammar and does not invoke a Python interpreter, import target modules, execute
@@ -44,7 +44,8 @@ network service. Static resolution is limited to the bounded in-memory
 repository index. Non-UTF-8 source, namespace-package layouts, ambiguity, parse
 recovery, and unresolved internal imports produce explicit issues. See
 [ADR 0014](docs/adr/0014-python-adapter-boundary.md). The stock CLI and Action
-do not select this adapter yet.
+select it only through the closed explicit language input; they do not inspect
+repository content to infer a language or merge adapter indexes.
 
 Module resolution compares specifiers only with the bounded in-memory module
 set. The adapter reads at most the root `tsconfig.json` with no-follow semantics,

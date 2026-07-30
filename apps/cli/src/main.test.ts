@@ -13,6 +13,7 @@ describe('change-risk CLI', () => {
     });
     expect(help.stdout).toContain('--coverage <path>');
     expect(help.stdout).toContain('--baseline-coverage <path>');
+    expect(help.stdout).toContain('--language <typescript|python>');
     await expect(runCli(['unknown'], '.')).resolves.toEqual({
       stdout: '',
       stderr: 'change-risk: Unknown command: unknown\n',
@@ -24,6 +25,132 @@ describe('change-risk CLI', () => {
       exitCode: 1,
       stderr: 'change-risk: --baseline-coverage requires --coverage\n',
     });
+    await expect(
+      runCli(['analyze', '--language', 'ruby'], '.'),
+    ).resolves.toMatchObject({
+      exitCode: 1,
+      stderr: 'change-risk: --language must be typescript or python\n',
+    });
+  });
+
+  it('selects Python from configuration and applies explicit CLI precedence', async () => {
+    const fixture = await createFixtureRepository([
+      {
+        message: 'base',
+        files: {
+          '.change-risk.json': JSON.stringify({
+            schemaVersion: 1,
+            language: 'python',
+          }),
+          'coverage/lcov.info': [
+            'SF:src/pkg/dependency.py',
+            'DA:1,0',
+            'LF:1',
+            'LH:0',
+            'end_of_record',
+          ].join('\n'),
+          'src/pkg/__init__.py': '',
+          'src/pkg/dependency.py': 'value = 1\n',
+          'src/pkg/service.py': 'from pkg import dependency\n',
+          'tests/pkg/test_dependency.py': 'from pkg import dependency\n',
+        },
+      },
+      {
+        message: 'head',
+        files: {
+          'src/pkg/dependency.py': 'value = 2\n',
+        },
+      },
+    ]);
+    try {
+      const baseArguments = [
+        'analyze',
+        '--repo',
+        fixture.path,
+        '--base',
+        fixture.revisions[0]!,
+        '--head',
+        fixture.revisions[1]!,
+        '--coverage',
+        'coverage/lcov.info',
+        '--format',
+        'json',
+      ];
+      const configured = await runCli(baseArguments, '.');
+      const repeated = await runCli(baseArguments, '.');
+      const explicit = await runCli(
+        [...baseArguments, '--language', 'python'],
+        '.',
+      );
+      expect(configured).toEqual(repeated);
+      expect(configured).toEqual(explicit);
+      expect(configured).toMatchObject({ exitCode: 0, stderr: '' });
+      const report = JSON.parse(configured.stdout) as {
+        changedFiles: { path: string; categories: string[] }[];
+        evidence: { kind: string; data: Record<string, unknown> }[];
+        findings: { ruleId: string }[];
+        limitations: string[];
+      };
+      expect(
+        report.changedFiles.find(({ path }) => path === 'src/pkg/dependency.py')
+          ?.categories,
+      ).toEqual(['source']);
+      expect(report.findings.map(({ ruleId }) => ruleId)).toContain(
+        'insufficient-coverage',
+      );
+      expect(report.findings.map(({ ruleId }) => ruleId)).toContain(
+        'missing-related-tests',
+      );
+      expect(JSON.stringify(report.evidence)).toContain(
+        'tests/pkg/test_dependency.py',
+      );
+      expect(report.findings.map(({ ruleId }) => ruleId)).not.toContain(
+        'public-export',
+      );
+      expect(report.limitations).toContain(
+        'Python public-surface comparison is not implemented; public-export evidence was omitted.',
+      );
+
+      const html = await runCli(
+        [
+          ...baseArguments.slice(0, -2),
+          '--language',
+          'python',
+          '--format',
+          'html',
+        ],
+        '.',
+      );
+      expect(html).toMatchObject({ exitCode: 0, stderr: '' });
+      expect(html.stdout).toContain('src/pkg/dependency.py');
+      expect(html.stdout).toContain('src/pkg/service.py');
+
+      const overridden = await runCli(
+        [...baseArguments, '--language', 'typescript'],
+        '.',
+      );
+      const overriddenReport = JSON.parse(overridden.stdout) as {
+        changedFiles: { path: string; categories: string[] }[];
+        findings: { ruleId: string }[];
+      };
+      expect(
+        overriddenReport.changedFiles.find(
+          ({ path }) => path === 'src/pkg/dependency.py',
+        )?.categories,
+      ).toEqual(['other']);
+      expect(
+        overriddenReport.findings.map(({ ruleId }) => ruleId),
+      ).not.toContain('insufficient-coverage');
+
+      await writeFile(`${fixture.path}/untracked.py`, 'value = 3\n', 'utf8');
+      const degraded = await runCli(baseArguments, '.');
+      const degradedReport = JSON.parse(degraded.stdout) as {
+        limitations: string[];
+      };
+      expect(degradedReport.limitations.join(' ')).toMatch(/clean worktree/u);
+    } finally {
+      await fixture.cleanup();
+    }
   });
 
   it('applies repository-selected policy packs deterministically', async () => {

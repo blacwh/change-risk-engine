@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { composePolicyPacks, POLICY_PACK_IDS } from './policy-packs.js';
 
 export const CONFIG_SCHEMA_VERSION = 1 as const;
+export const ANALYSIS_LANGUAGES = ['typescript', 'python'] as const;
+export type AnalysisLanguage = (typeof ANALYSIS_LANGUAGES)[number];
 
 const thresholdsSchema = z
   .object({
@@ -19,6 +21,7 @@ const thresholdsSchema = z
 const changeRiskConfigInputSchema = z
   .object({
     schemaVersion: z.literal(CONFIG_SCHEMA_VERSION),
+    language: z.enum(ANALYSIS_LANGUAGES).default('typescript'),
     policyPacks: z
       .array(z.enum(POLICY_PACK_IDS))
       .max(POLICY_PACK_IDS.length)
@@ -147,6 +150,7 @@ function resolveConfig(input: ChangeRiskConfigInput) {
   const packed = composePolicyPacks(input.policyPacks);
   return {
     schemaVersion: input.schemaVersion,
+    language: input.language,
     policyPacks: input.policyPacks,
     ignorePatterns: input.ignorePatterns,
     analysis: input.analysis,

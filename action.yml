@@ -4,6 +4,9 @@ inputs:
   config:
     description: Repository-relative JSON configuration path
     required: false
+  language:
+    description: Language adapter selection (typescript or python)
+    required: false
   coverage:
     description: Repository-relative LCOV artifact path
     required: false

@@ -2,7 +2,11 @@ import { constants } from 'node:fs';
 import { appendFile, lstat, mkdir, open, realpath } from 'node:fs/promises';
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 
-import { analyzeRepository } from '@change-risk/cli';
+import {
+  ANALYSIS_LANGUAGES,
+  analyzeRepository,
+  type AnalysisLanguage,
+} from '@change-risk/cli';
 import {
   renderGitHubMarkdownReport,
   renderJsonReport,
@@ -130,6 +134,16 @@ function failOnInput(value: string | undefined): FailOn {
   );
 }
 
+function languageInput(
+  value: string | undefined,
+): AnalysisLanguage | undefined {
+  if (value === undefined) return undefined;
+  if (ANALYSIS_LANGUAGES.includes(value as AnalysisLanguage)) {
+    return value as AnalysisLanguage;
+  }
+  throw new Error('language input must be typescript or python');
+}
+
 function gateFails(classification: RiskLevel, failOn: FailOn): boolean {
   return (
     failOn !== 'none' &&
@@ -222,6 +236,7 @@ export async function runGitHubAction(
   const configPath = input(environment, 'CONFIG');
   const coveragePath = input(environment, 'COVERAGE');
   const baselineCoveragePath = input(environment, 'BASELINE-COVERAGE');
+  const language = languageInput(input(environment, 'LANGUAGE'));
   const result = await analyzeRepository({
     repositoryRoot: workspace,
     base: context.base,
@@ -229,6 +244,7 @@ export async function runGitHubAction(
     ...(configPath === undefined ? {} : { configPath }),
     ...(coveragePath === undefined ? {} : { coveragePath }),
     ...(baselineCoveragePath === undefined ? {} : { baselineCoveragePath }),
+    ...(language === undefined ? {} : { language }),
   });
   const outputPath = await safeOutputPath(
     workspace,

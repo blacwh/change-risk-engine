@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 
+import { ANALYSIS_LANGUAGES, type AnalysisLanguage } from '@change-risk/config';
 import {
   renderHtmlReport,
   renderJsonReport,
@@ -15,6 +16,8 @@ Options:
   --head <revision>       Head revision (default: HEAD)
   --repo <path>           Repository root (default: current directory)
   --config <path>         Repository-relative JSON config (default: .change-risk.json if present)
+  --language <typescript|python>
+                          Override the configured language (default: typescript)
   --coverage <path>       Repository-relative LCOV artifact
   --baseline-coverage <path>
                           Repository-relative baseline LCOV artifact
@@ -46,6 +49,7 @@ type AnalyzeArguments = {
   configPath?: string;
   coveragePath?: string;
   baselineCoveragePath?: string;
+  language?: AnalysisLanguage;
   format: 'html' | 'json' | 'terminal';
   failOn: FailOn;
 };
@@ -68,6 +72,7 @@ function parseAnalyzeArguments(
   let configPath: string | undefined;
   let coveragePath: string | undefined;
   let baselineCoveragePath: string | undefined;
+  let language: AnalysisLanguage | undefined;
   let format: 'html' | 'json' | 'terminal' = 'terminal';
   let failOn: FailOn = 'none';
   const seen = new Set<string>();
@@ -84,6 +89,7 @@ function parseAnalyzeArguments(
         '--fail-on',
         '--format',
         '--head',
+        '--language',
         '--repo',
       ].includes(option)
     ) {
@@ -100,7 +106,12 @@ function parseAnalyzeArguments(
     else if (option === '--config') configPath = value;
     else if (option === '--coverage') coveragePath = value;
     else if (option === '--baseline-coverage') baselineCoveragePath = value;
-    else if (option === '--format') {
+    else if (option === '--language') {
+      if (!ANALYSIS_LANGUAGES.includes(value as AnalysisLanguage)) {
+        throw new Error('--language must be typescript or python');
+      }
+      language = value as AnalysisLanguage;
+    } else if (option === '--format') {
       if (value !== 'html' && value !== 'json' && value !== 'terminal') {
         throw new Error('--format must be terminal, json, or html');
       }
@@ -124,6 +135,7 @@ function parseAnalyzeArguments(
     ...(configPath === undefined ? {} : { configPath }),
     ...(coveragePath === undefined ? {} : { coveragePath }),
     ...(baselineCoveragePath === undefined ? {} : { baselineCoveragePath }),
+    ...(language === undefined ? {} : { language }),
     format,
     failOn,
   };
@@ -167,6 +179,7 @@ export async function runCli(
       ...(parsed.baselineCoveragePath === undefined
         ? {}
         : { baselineCoveragePath: parsed.baselineCoveragePath }),
+      ...(parsed.language === undefined ? {} : { language: parsed.language }),
     });
     const { result } = analysis;
     const stdout =

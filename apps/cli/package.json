@@ -14,6 +14,7 @@
     "@change-risk/coverage": "0.0.0",
     "@change-risk/dependency-graph": "0.0.0",
     "@change-risk/git-adapter": "0.0.0",
+    "@change-risk/language-python": "0.0.0",
     "@change-risk/language-typescript": "0.0.0",
     "@change-risk/ownership": "0.0.0",
     "@change-risk/plugin-sdk": "0.0.0",

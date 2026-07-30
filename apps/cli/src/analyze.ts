@@ -3,6 +3,7 @@ import type {
   BlastRadiusVisualization,
   ChangedFile,
 } from '@change-risk/core';
+import { type AnalysisLanguage } from '@change-risk/config';
 import {
   ANALYSIS_RESULT_SCHEMA_VERSION,
   classifyFile,
@@ -20,6 +21,10 @@ import {
   worktreeMatchesRevision,
 } from '@change-risk/git-adapter';
 import {
+  inferPythonTestRelationships,
+  pythonLanguageAdapter,
+} from '@change-risk/language-python';
+import {
   comparePublicExportSurfaces,
   inferConventionalTestRelationships,
   typeScriptLanguageAdapter,
@@ -33,6 +38,7 @@ import {
   globMatches,
   scoreRuleEvaluation,
   type RiskRule,
+  type TestRelationship,
 } from '@change-risk/rules';
 
 import { loadRepositoryConfig } from './config.js';
@@ -44,6 +50,7 @@ export type AnalyzeRepositoryOptions = {
   configPath?: string;
   coveragePath?: string;
   baselineCoveragePath?: string;
+  language?: AnalysisLanguage;
   languageAdapter?: LanguageAdapter;
   rules?: readonly RiskRule[];
 };
@@ -164,6 +171,10 @@ async function analyzeRepositoryInternal(
     options.repositoryRoot,
     options.configPath,
   );
+  const language = options.language ?? config.language;
+  const languageAdapter =
+    options.languageAdapter ??
+    (language === 'python' ? pythonLanguageAdapter : typeScriptLanguageAdapter);
   const diff = await collectChangedFiles(
     options.repositoryRoot,
     options.base,
@@ -171,7 +182,10 @@ async function analyzeRepositoryInternal(
   );
   const changedFiles: ChangedFile[] = diff.files
     .filter(({ path }) => !ignored(path, config.ignorePatterns))
-    .map((file) => ({ ...file, categories: [...classifyFile(file.path)] }));
+    .map((file) => ({
+      ...file,
+      categories: [...classifyFile(file.path, { language })],
+    }));
   const limitations: string[] = [];
   const eligibleCoverageFiles = changedFiles.filter(
     ({ categories, status }) =>
@@ -311,19 +325,26 @@ async function analyzeRepositoryInternal(
       }
     }
   }
-  const publicExportChanges = await publicSurfaceEvidence(
-    options.repositoryRoot,
-    diff.baseRevision,
-    diff.headRevision,
-    changedFiles,
-    config.analysis.maxFileBytes,
-    limitations,
-  );
+  const publicExportChanges =
+    language === 'typescript'
+      ? await publicSurfaceEvidence(
+          options.repositoryRoot,
+          diff.baseRevision,
+          diff.headRevision,
+          changedFiles,
+          config.analysis.maxFileBytes,
+          limitations,
+        )
+      : [];
+  if (language === 'python') {
+    limitations.push(
+      'Python public-surface comparison is not implemented; public-export evidence was omitted.',
+    );
+  }
 
   let dependencyGraph:
     ReturnType<typeof dependencyGraphFromModules> | undefined;
-  let testRelationships:
-    ReturnType<typeof inferConventionalTestRelationships> | undefined;
+  let testRelationships: readonly TestRelationship[] | undefined;
   let ownershipRelationships: Awaited<
     ReturnType<typeof readCodeowners>
   >['relationships'];
@@ -336,13 +357,14 @@ async function analyzeRepositoryInternal(
       changedFiles.map(({ path }) => path),
     );
     limitations.push(...ownership.issues.map(ownershipIssueLimitation));
-    const index = await (
-      options.languageAdapter ?? typeScriptLanguageAdapter
-    ).indexRepository(options.repositoryRoot, {
-      maxEntries: config.analysis.maxEntries,
-      maxFiles: config.analysis.maxFiles,
-      maxFileBytes: config.analysis.maxFileBytes,
-    });
+    const index = await languageAdapter.indexRepository(
+      options.repositoryRoot,
+      {
+        maxEntries: config.analysis.maxEntries,
+        maxFiles: config.analysis.maxFiles,
+        maxFileBytes: config.analysis.maxFileBytes,
+      },
+    );
     limitations.push(
       ...index.issues
         .filter(
@@ -369,9 +391,11 @@ async function analyzeRepositoryInternal(
       maxEdges: config.analysis.maxGraphEdges,
       maxNodes: config.analysis.maxFiles,
     });
-    const candidateRelationships = inferConventionalTestRelationships(
-      boundedModules.map(({ path }) => path),
-    );
+    const modulePaths = boundedModules.map(({ path }) => path);
+    const candidateRelationships =
+      language === 'python'
+        ? inferPythonTestRelationships(modulePaths)
+        : inferConventionalTestRelationships(modulePaths);
     if (
       await worktreeMatchesRevision(options.repositoryRoot, diff.headRevision)
     ) {

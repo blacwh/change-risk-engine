@@ -58,3 +58,8 @@ parse errors, aliases, relative and star imports, repository-root and root-`src`
 identities, implementation-over-stub preference, ambiguity, unsupported
 namespace layouts, internal/external/unresolved references, and repeat-run
 equality. They never invoke Python or install fixture dependencies.
+
+Stock-integration fixtures also select Python through configuration, CLI, and
+Action inputs; verify conditional classification, static graph and conventional
+test evidence, supplied LCOV mapping, public-surface suppression, clean-worktree
+degradation, packaging behavior, and repeat-run equality.

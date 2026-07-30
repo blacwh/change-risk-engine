@@ -14,6 +14,8 @@ export {
   classifyFile,
   type ClassifiableFile,
   type ClassifiedFile,
+  type ClassificationLanguage,
+  type ClassificationOptions,
   type FileCategory,
 } from './classification.js';
 export {

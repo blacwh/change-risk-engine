@@ -19,9 +19,17 @@ export type ClassifiedFile<T extends ClassifiableFile> = T & {
   categories: readonly FileCategory[];
 };
 
-const sourceExtension = /\.(?:[cm]?[jt]sx?|vue|svelte)$/u;
-const testPath =
+export type ClassificationLanguage = 'python' | 'typescript';
+export type ClassificationOptions = {
+  language?: ClassificationLanguage;
+};
+
+const typeScriptSourceExtension = /\.(?:[cm]?[jt]sx?|vue|svelte)$/u;
+const typeScriptTestPath =
   /(?:^|\/)(?:__tests__|test|tests|spec)(?:\/|$)|\.(?:test|spec)\.[^/]+$/u;
+const pythonSourceExtension = /\.pyi?$/u;
+const pythonTestPath =
+  /(?:^|\/)tests\/[^]*\.py$|(?:^|\/)(?:test_[^/]+|[^/]+_test)\.py$/u;
 const documentationPath =
   /(?:^|\/)docs?(?:\/|$)|(?:^|\/)(?:readme|changelog|contributing|license)(?:\.[^/]*)?$|\.mdx?$/u;
 const generatedPath =
@@ -36,13 +44,30 @@ const assetExtension =
 const configPath =
   /(?:^|\/)(?:tsconfig(?:\.[^/]*)?\.json|eslint\.config\.[^/]+|vite\.config\.[^/]+|vitest\.config\.[^/]+|\.editorconfig|\.prettierrc(?:\.[^/]+)?|[^/]+\.config\.[^/]+)$/u;
 
-export function classifyFile(path: string): readonly FileCategory[] {
+export function classifyFile(
+  path: string,
+  options: ClassificationOptions = {},
+): readonly FileCategory[] {
   const normalized = path.replaceAll('\\', '/').toLowerCase();
   const basename = normalized.slice(normalized.lastIndexOf('/') + 1);
   const categories = new Set<FileCategory>();
+  const language = options.language ?? 'typescript';
 
-  if (sourceExtension.test(normalized)) categories.add('source');
-  if (testPath.test(normalized)) categories.add('test');
+  if (
+    (language === 'python'
+      ? pythonSourceExtension
+      : typeScriptSourceExtension
+    ).test(normalized)
+  ) {
+    categories.add('source');
+  }
+  if (
+    (language === 'python' ? pythonTestPath : typeScriptTestPath).test(
+      normalized,
+    )
+  ) {
+    categories.add('test');
+  }
   if (documentationPath.test(normalized)) categories.add('documentation');
   if (
     ['package.json', 'deno.json', 'deno.jsonc', 'bun.lock'].includes(basename)
@@ -70,9 +95,10 @@ export function classifyFile(path: string): readonly FileCategory[] {
 
 export function classifyChangedFiles<T extends ClassifiableFile>(
   files: readonly T[],
+  options: ClassificationOptions = {},
 ): readonly ClassifiedFile<T>[] {
   return files.map((file) => ({
     ...file,
-    categories: classifyFile(file.path),
+    categories: classifyFile(file.path, options),
   }));
 }
