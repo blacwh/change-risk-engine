@@ -59,8 +59,11 @@ interpret dynamic imports, compose namespace-package environments, or infer
 configurable source roots. Conventional test mapping is path evidence, not
 proof that a test imports or exercises a source.
 
-Python public-surface comparison is deferred. A Python run does not invoke the
-TypeScript comparison and cannot emit a `public-export` finding from absent
-Python evidence; it records the omission as an explicit limitation. The
-separate decision is tracked in [Python adapter plan](python-adapter.md) and
-[ADR 0014](adr/0014-python-adapter-boundary.md).
+Python public-surface comparison is deliberately deferred. A Python run does
+not invoke the TypeScript comparison and cannot emit a `public-export` finding
+from absent Python evidence; it records the omission as an explicit limitation.
+The semantics review found no safe repository-independent way to collapse
+runtime names, `__all__`, dynamic attributes, stubs, and syntactic signatures
+into one scored compatibility surface. See
+[Python adapter plan](python-adapter.md) and
+[ADR 0015](adr/0015-defer-python-public-surface.md).

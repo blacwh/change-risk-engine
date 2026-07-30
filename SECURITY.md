@@ -47,6 +47,13 @@ recovery, and unresolved internal imports produce explicit issues. See
 select it only through the closed explicit language input; they do not inspect
 repository content to infer a language or merge adapter indexes.
 
+Python public-surface comparison remains disabled by
+[ADR 0015](docs/adr/0015-defer-python-public-surface.md). The analyzer does not
+import modules, evaluate `__all__`, execute packaging configuration, inspect an
+installed environment, or guess dynamic module attributes, decorator effects,
+or metaclass-generated members. Unsupported public-surface evidence stays an
+explicit limitation rather than becoming a compatibility or risk claim.
+
 Module resolution compares specifiers only with the bounded in-memory module
 set. The adapter reads at most the root `tsconfig.json` with no-follow semantics,
 rejects configuration paths outside the repository, and does not follow

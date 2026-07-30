@@ -343,9 +343,9 @@ version 2, or claiming that a classification proves safety or insecurity.
 
 ## Next planning cycle
 
-P9a is merged and P9b is implemented by this packet. After its merge checkpoint,
-P9c is the only defined Python follow-up and requires a separate decision based
-on initial stock Python graph evidence.
+P9a and P9b are merged. P9c records the decision to defer scored Python
+public-surface evidence. No implementation packet is ready: select and define a
+new product direction before further implementation.
 
 ## P9 — Python adapter
 
@@ -458,10 +458,37 @@ environments, result schema version 2, tags, and releases.
 
 ### P9c — Python public-surface decision
 
-- [ ] Evaluate whether bounded syntactic Python public-surface evidence is useful
-- [ ] Define semantics and limitations before implementation, if selected
+- [x] Evaluate whether bounded syntactic Python public-surface evidence is useful
+- [x] Define the accepted defer decision, limitations, and future prerequisites
 
-This packet is not ready. It requires evidence from merged P9a and P9b and a
-separate implementation decision. Any proposal must address `__all__`,
-re-exports, dynamic attributes, stubs, inferred public names, parse failures,
-and false-positive/false-negative risks without importing target modules.
+Decision: do not implement scored Python `public-export` findings from inferred
+names or syntactic signatures. Python's runtime namespace, `__all__`, dynamic
+module attributes, typing stubs, decorators, and metaclasses do not provide one
+safe repository-independent static compatibility surface. Continue suppressing
+the TypeScript comparison and reporting the explicit Python limitation.
+
+A future declared-public-name proposal is not ready. It may compare only a
+complete statically resolved `__all__` for explicitly configured entry points,
+must keep runtime `.py` and typing `.pyi` surfaces distinct, and must begin as
+observational evidence. Configuration and any scoring require separate approval.
+See [ADR 0015](docs/adr/0015-defer-python-public-surface.md).
+
+Acceptance evidence:
+
+- official language and typing semantics for `__all__`, re-exports, dynamic
+  module attributes, stubs, decorators, classes, and annotations were reviewed;
+- the decision defines false-positive and false-negative risks, fail-closed
+  behavior, entry-point requirements, and a no-execution boundary;
+- current CLI, Action, result-schema, scoring, and Action bundle behavior remain
+  unchanged;
+- public support claims, roadmap, architecture, security guidance, changelog,
+  and the Python plan agree with the decision;
+- documentation structure, links, formatting, and `git diff --check` pass.
+
+Affected contracts: public support claims, backlog readiness, architecture,
+security guidance, Python adapter plan, rule limitations, ADR history, and
+future configuration/scoring prerequisites.
+
+Non-goals: Python parser or analyzer changes, configuration changes, new
+evidence or findings, rule-weight changes, result schema changes, Action bundle
+changes, target execution, tags, and releases.

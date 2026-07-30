@@ -16,7 +16,10 @@ Versions follow Semantic Versioning.
 - explicit `typescript` or `python` selection in configuration, CLI, and Action
   interfaces, with Python source classification, conventional test
   relationships, supplied-LCOV eligibility, graph reporting, and an explicit
-  limitation in place of unsupported Python public-surface evidence.
+  limitation in place of unsupported Python public-surface evidence;
+- a documented decision to defer scored Python public-surface findings until a
+  future explicitly configured, fail-closed declared-name evidence contract is
+  separately selected.
 
 ## [0.1.0] - 2026-07-30
 

@@ -1,7 +1,8 @@
 # Python Adapter Plan
 
-Status: foundation and stock integration implemented; public-surface decision
-deferred.
+Status: foundation and stock integration implemented; scored public-surface
+evidence deliberately deferred by
+[ADR 0015](adr/0015-defer-python-public-surface.md).
 
 Python is the selected next built-in language direction. This plan defines its
 bounded packets and prevents generic Git/path evidence from being mistaken for
@@ -93,11 +94,20 @@ Once Python paths are classified as source, the existing caller-supplied LCOV
 mapper can relate matching normalized paths to those files. It will still not
 run tests, discover artifacts, or verify freshness or revision alignment.
 
-Python public-surface comparison is deferred. While Python is selected, the
-stock analyzer must not run the TypeScript public-export comparison on Python
-paths or emit a public-export finding from absent Python evidence. A later
-packet may define a conservative Python export contract, including the limits of
-`__all__`, re-exports, dynamic attributes, and inferred public names.
+Python public-surface comparison is deliberately deferred. While Python is
+selected, the stock analyzer does not run the TypeScript public-export
+comparison on Python paths or emit a public-export finding from absent Python
+evidence.
+
+The decision review rejected inferred names and syntactic signatures as scored
+compatibility evidence. Python runtime namespaces can be populated dynamically,
+`__all__` is not a direct-access enforcement boundary, typing stubs define a
+separate interface, and decorators or metaclasses can replace the objects
+described by syntax. A future proposal may compare added and removed names only
+from a complete statically resolved `__all__` at explicitly configured entry
+points. It must keep `.py` runtime and `.pyi` typing surfaces separate, fail
+closed on dynamic composition, and begin without scoring. That proposal is not
+a ready packet.
 
 ## Security and determinism
 
@@ -136,9 +146,9 @@ ships the same behavior in the standalone CLI and committed Action bundle.
 
 ### P9c — Python public surface
 
-After the first two packets are merged and evaluated, decide whether a bounded
-syntactic Python public-surface comparison is useful enough to implement. This
-is not required for initial Python graph support.
+Complete. The semantics review defers scored Python public-surface findings and
+defines the prerequisites for any future observational declared-name evidence.
+No implementation packet is ready.
 
 Each packet has its own acceptance criteria, tests, documentation update,
 commit, review checkpoint, and phase publishing boundary. The packets must not
