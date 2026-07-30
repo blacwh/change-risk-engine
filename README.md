@@ -54,6 +54,10 @@ review, scored Python public-surface comparison remains deliberately
 unsupported. See the
 [language-support matrix](docs/language-support.md) for the exact boundary and
 the [Python adapter plan](docs/python-adapter.md) for the phased contract.
+Phase 14 is design-complete and implementation-planned: it evaluates the
+existing transparent heuristics against a bounded, blinded historical corpus
+before any default tuning. No scoring default has changed. See
+[historical evaluation](docs/history-evaluation.md).
 
 ## Usage
 

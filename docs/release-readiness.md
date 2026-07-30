@@ -50,6 +50,11 @@ removals, renamed flags or inputs, schema changes, scoring changes, Node support
 and security-boundary changes in the changelog. A pre-1.0 release may evolve,
 but compatibility changes must never be silent.
 
+Any future shipped default-weight or classification-threshold change also
+requires the qualified evidence and frozen-holdout record defined by
+[historical evaluation](history-evaluation.md). Passing that evaluation permits
+maintainer review; it does not replace the release gates or owner approval.
+
 ## Verification commands
 
 Run from a clean candidate checkout:

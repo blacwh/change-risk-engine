@@ -90,6 +90,12 @@ effective contribution so the total score remains nonnegative. Classification
 is `low` below `thresholds.moderate`, `moderate` below `thresholds.high`, `high`
 below `thresholds.critical`, and `critical` at or above the critical threshold.
 
+The shipped defaults are transparent heuristics, not incident probabilities or
+statistically qualified estimates. Repository configuration remains
+authoritative for local policy. Any future shipped-default tuning follows the
+separate [historical evaluation contract](history-evaluation.md) and requires a
+compatibility-reviewed release change.
+
 Programmatic hosts may register additional rule IDs through the plugin SDK and
 pass the complete rule registry to analysis. Settings for those IDs use this same
 validated configuration shape. The stock CLI and GitHub Action use only built-in

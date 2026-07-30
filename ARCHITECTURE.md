@@ -266,6 +266,16 @@ mitigation is capped at zero and its effective contribution remains visible.
 The result schema requires every finding to appear in exactly one uniquely
 identified rule contribution.
 
+Historical evaluation remains outside the analyzer result pipeline. A private
+offline evaluator will consume caller-supplied canonical results and blinded
+review-attention labels through its own versioned schema. It computes
+deterministic aggregate metrics without hiding findings, changing contributions,
+fetching repositories, or executing target code. Corpus manifests freeze exact
+revisions, analyzer/configuration identities, duplicate groups, and temporal and
+repository holdouts before results are examined. See
+[historical evaluation](docs/history-evaluation.md) and
+[ADR 0016](docs/adr/0016-history-evaluation-before-default-tuning.md).
+
 Ownership policy consumes an exact relationship for every changed path or no
 relationship set at all. The stock mapper reads only `.github/CODEOWNERS` from a
 clean worktree matching the analyzed head, applies supported patterns in file

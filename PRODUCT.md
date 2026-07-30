@@ -124,13 +124,20 @@ public-surface evidence rather than inferring a compatibility claim from runtime
 names or syntax. Current capability-by-language details are the source of truth
 in [language support](docs/language-support.md).
 
+Phase 14 is selected and design-complete. It defines offline historical
+evaluation of the existing heuristic score against blinded reviewer-attention
+labels, with repository and temporal holdouts before any default tuning. The
+score remains an ordinal prioritization aid, not an incident probability. No
+default weight or threshold changes as part of the design or pilot packets. See
+[historical evaluation](docs/history-evaluation.md).
+
 ## Boundaries
 
 The tool is an aid, not a safety guarantee, security-scanner replacement, AI reviewer, or production-incident predictor.
 
 ## Future
 
-Python is the selected next adapter direction. Languages beyond Python,
-history-informed calibration, interactive hosted visualization, isolated
+The selected next direction is transparent historical evaluation before default
+tuning. Languages beyond Python, interactive hosted visualization, isolated
 third-party plugin hosting, and optional local summaries constrained to
 deterministic findings remain future candidates.

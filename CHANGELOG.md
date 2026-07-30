@@ -19,7 +19,10 @@ Versions follow Semantic Versioning.
   limitation in place of unsupported Python public-surface evidence;
 - a documented decision to defer scored Python public-surface findings until a
   future explicitly configured, fail-closed declared-name evidence contract is
-  separately selected.
+  separately selected;
+- an accepted offline historical-evaluation contract with blinded labels,
+  frozen temporal and repository holdouts, deterministic qualification gates,
+  and no default scoring change.
 
 ## [0.1.0] - 2026-07-30
 

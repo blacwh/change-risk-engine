@@ -127,6 +127,16 @@ paths, import modules, install packages, call a registry, or infer selection
 from analyzed content. Security-sensitive path matches are review heuristics,
 not vulnerability findings or evidence that unmatched paths are safe.
 
+Historical evaluation is local and caller-supplied. The planned evaluator does
+not clone or fetch repositories, call hosting APIs, execute target code or
+tests, install target dependencies, load target plugins, or upload telemetry.
+Repository roots and private case data remain outside portable manifests.
+Committed evaluation evidence omits source, diffs, paths, repository names,
+reviewer identities, environment roots, and credentials; hashing is not treated
+as anonymization. Corpus permission, reviewer access, retention, and external
+artifact acquisition remain owner responsibilities. See
+[historical evaluation](docs/history-evaluation.md).
+
 The GitHub Action uses `contents: read` and needs `pull-requests: write` only when
 maintained comments are enabled. It validates same-repository identity from the
 event before reading `GITHUB_TOKEN` or calling the comments API; fork pull
