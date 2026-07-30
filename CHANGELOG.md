@@ -5,6 +5,12 @@ Versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+### Added
+
+- composable built-in `strict-review` and `security-sensitive` policy packs
+  with bounded selection, deterministic precedence, and shared CLI/Action
+  behavior.
+
 ## [0.1.0] - 2026-07-30
 
 ### Added

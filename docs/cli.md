@@ -9,6 +9,10 @@ node apps/cli/dist/run.js analyze --base main --head HEAD
 The command defaults to the current directory, `HEAD~1..HEAD`, terminal output,
 the optional root `.change-risk.json`, and no exit gate.
 
+The same configuration may select bounded
+[built-in policy packs](policy-packs.md). Packs resolve before explicit
+repository settings and require no additional command-line option.
+
 ## Installation
 
 Each version-tagged GitHub release contains a standalone npm-compatible tarball

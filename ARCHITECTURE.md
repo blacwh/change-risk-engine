@@ -298,6 +298,13 @@ unique IDs, evidence/finding references, rule ownership of contributions, and a
 score equal to the visible contribution total. Canonical results omit volatile
 timestamps so deterministic inputs can remain byte-stable.
 
+Configuration may select an ordered, duplicate-free list of bounded built-in
+policy packs. Pack definitions ship inside `@change-risk/config` and compose
+only existing thresholds, sensitive areas, and rule settings before explicit
+repository values are applied. The CLI and Action share this resolver. No pack
+loads repository modules, files beyond the selected JSON configuration,
+dependencies, or network resources.
+
 ## Reporters
 
 - terminal;

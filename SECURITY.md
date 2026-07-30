@@ -100,6 +100,13 @@ analyzed head before and after indexing. If that invariant fails, the CLI omits
 those signals and reports a limitation rather than mixing worktree and revision
 state.
 
+Policy-pack IDs are a closed, bounded configuration enum. Definitions are
+compiled into the analyzer and may contain only existing thresholds,
+sensitive-area patterns, and rule settings. Packs do not resolve repository
+paths, import modules, install packages, call a registry, or infer selection
+from analyzed content. Security-sensitive path matches are review heuristics,
+not vulnerability findings or evidence that unmatched paths are safe.
+
 The GitHub Action uses `contents: read` and needs `pull-requests: write` only when
 maintained comments are enabled. It validates same-repository identity from the
 event before reading `GITHUB_TOKEN` or calling the comments API; fork pull

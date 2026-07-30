@@ -11,6 +11,7 @@ limited to 1 MB.
 ```json
 {
   "schemaVersion": 1,
+  "policyPacks": ["strict-review"],
   "ignorePatterns": ["dist/**"],
   "analysis": {
     "maxEntries": 100000,
@@ -40,6 +41,15 @@ limited to 1 MB.
 Omitted sections receive deterministic defaults. Thresholds must increase from
 moderate to high to critical. Directory-entry, file-count, file-size, graph-edge,
 and graph-depth limits are positive and bounded.
+
+`policyPacks` is an ordered list of the built-in IDs `strict-review` and
+`security-sensitive`. It rejects unknown IDs, duplicates, and more entries than
+the built-in registry contains. Packs compose left to right, after which
+explicit configuration wins: explicit thresholds and sensitive areas replace
+packed values, while explicit rule fields and option keys override packed
+counterparts. Omitting the list preserves the original defaults. See
+[built-in policy packs](policy-packs.md) for exact values, patterns, rationale,
+and limitations.
 
 `ignorePatterns` accepts at most 1,000 patterns of at most 1,000 characters.
 Ignored changed files do not enter findings, and ignored modules are removed

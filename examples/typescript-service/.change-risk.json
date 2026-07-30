@@ -1,11 +1,6 @@
 {
   "schemaVersion": 1,
-  "sensitiveAreas": [
-    {
-      "id": "authentication",
-      "patterns": ["src/auth/**"]
-    }
-  ],
+  "policyPacks": ["security-sensitive"],
   "rules": {
     "large-change": {
       "options": {

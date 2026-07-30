@@ -150,10 +150,22 @@ default-branch checks, the owner approved the public Apache-2.0 release and
 [`v0.1.0`](https://github.com/blacwh/change-risk-engine/releases/tag/v0.1.0)
 was published on 2026-07-30 with a verified standalone artifact and checksum.
 
+## Phase 12 — Built-in policy packs
+
+Composable, version-controlled built-in policy defaults for common review
+postures, with deterministic precedence and shared CLI/CI behavior.
+
+Status: complete. Configuration schema version 1 accepts ordered,
+duplicate-free `strict-review` and `security-sensitive` selections. Packs
+compose only existing thresholds, sensitive areas, and built-in rule settings
+before explicit repository configuration. CLI and Action behavior share the
+same resolver and result schema version 1. No pack loads code, files,
+dependencies, or network resources.
+
 ## Later
 
-History-based calibration, policy packs, additional languages, constrained
-optional summaries.
+History-based calibration, additional languages, constrained optional
+summaries, and additional policy packs justified by concrete review needs.
 
 These are candidate directions, not a prioritized implementation queue. Before
 a future continuous run, select a direction, define acceptance criteria and

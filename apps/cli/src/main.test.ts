@@ -26,6 +26,70 @@ describe('change-risk CLI', () => {
     });
   });
 
+  it('applies repository-selected policy packs deterministically', async () => {
+    const fixture = await createFixtureRepository([
+      {
+        message: 'base',
+        files: {
+          '.change-risk.json': JSON.stringify({
+            schemaVersion: 1,
+            policyPacks: ['strict-review'],
+          }),
+          'package.json': JSON.stringify({
+            name: 'policy-pack-fixture',
+            version: '1.0.0',
+          }),
+        },
+      },
+      {
+        message: 'head',
+        files: {
+          'package.json': JSON.stringify({
+            name: 'policy-pack-fixture',
+            version: '1.0.1',
+          }),
+        },
+      },
+    ]);
+    try {
+      const arguments_ = [
+        'analyze',
+        '--repo',
+        fixture.path,
+        '--base',
+        fixture.revisions[0]!,
+        '--head',
+        fixture.revisions[1]!,
+        '--format',
+        'json',
+      ];
+      const first = await runCli(arguments_, '.');
+      const second = await runCli(arguments_, '.');
+      expect(first).toEqual(second);
+      expect(first).toMatchObject({ exitCode: 0, stderr: '' });
+      expect(JSON.parse(first.stdout)).toMatchObject({
+        classification: 'moderate',
+        score: 15,
+        findings: [{ ruleId: 'dependency-manifest' }],
+      });
+
+      await writeFile(
+        `${fixture.path}/.change-risk.json`,
+        JSON.stringify({
+          schemaVersion: 1,
+          policyPacks: ['unknown'],
+        }),
+        'utf8',
+      );
+      await expect(runCli(arguments_, '.')).resolves.toMatchObject({
+        exitCode: 1,
+        stdout: '',
+      });
+    } finally {
+      await fixture.cleanup();
+    }
+  });
+
   it('maps supplied LCOV to every eligible changed source deterministically', async () => {
     const fixture = await createFixtureRepository([
       {

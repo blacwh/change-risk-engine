@@ -9,14 +9,16 @@ describe('repository configuration loading', () => {
     const exampleRoot = fileURLToPath(
       new URL('../../../examples/typescript-service', import.meta.url),
     );
-    await expect(
-      loadRepositoryConfig(exampleRoot, undefined),
-    ).resolves.toMatchObject({
-      sensitiveAreas: [{ id: 'authentication', patterns: ['src/auth/**'] }],
+    const config = await loadRepositoryConfig(exampleRoot, undefined);
+    expect(config).toMatchObject({
+      policyPacks: ['security-sensitive'],
       rules: {
         'high-fan-in': { options: { minFanIn: 3 } },
       },
     });
+    expect(config.sensitiveAreas).toContainEqual(
+      expect.objectContaining({ id: 'authentication' }),
+    );
   });
 
   it('loads a bounded root config and defaults when the optional file is absent', async () => {
@@ -26,7 +28,11 @@ describe('repository configuration loading', () => {
         files: {
           '.change-risk.json': JSON.stringify({
             schemaVersion: 1,
+            policyPacks: ['strict-review'],
             thresholds: { moderate: 10, high: 30, critical: 60 },
+            rules: {
+              'large-change': { options: { maxFiles: 5 } },
+            },
           }),
         },
       },
@@ -38,7 +44,13 @@ describe('repository configuration loading', () => {
       await expect(
         loadRepositoryConfig(configured.path, undefined),
       ).resolves.toMatchObject({
+        policyPacks: ['strict-review'],
         thresholds: { moderate: 10, high: 30, critical: 60 },
+        rules: {
+          'large-change': {
+            options: { maxFiles: 5, maxLines: 250 },
+          },
+        },
       });
       await expect(
         loadRepositoryConfig(unconfigured.path, undefined),
