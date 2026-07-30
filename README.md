@@ -46,10 +46,11 @@ verification, and checksum gates. [`v0.1.0` is the first published
 release](https://github.com/blacwh/change-risk-engine/releases/tag/v0.1.0).
 Phase 12 adds composable built-in policy packs with deterministic
 configuration precedence and no external loading boundary.
-Python is the selected next adapter direction, but implementation has not
-started. See the [language-support matrix](docs/language-support.md) for the
-exact current boundary and the [Python adapter plan](docs/python-adapter.md) for
-the proposed phased contract.
+Phase 13 is in progress. Its foundation adds a bounded, non-executing Python
+adapter package for trusted programmatic hosts, but the stock CLI and Action do
+not select it yet. See the [language-support matrix](docs/language-support.md)
+for the exact current boundary and the
+[Python adapter plan](docs/python-adapter.md) for the phased contract.
 
 ## Usage
 
@@ -183,8 +184,9 @@ requesting authorization to tag or publish it.
 The stock CLI and GitHub Action provide language-aware indexing, graph,
 conventional-test, and public-surface evidence for TypeScript and JavaScript.
 Generic Git, path-policy, and ownership evidence can observe other files, but
-that does not imply parser or graph support. Python is planned and is not an
-available language selection today. See [language support](docs/language-support.md).
+that does not imply parser or graph support. A Python adapter foundation exists
+for trusted programmatic hosts, but Python is not an available stock language
+selection today. See [language support](docs/language-support.md).
 
 ## Interfaces
 

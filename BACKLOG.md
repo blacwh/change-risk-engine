@@ -343,10 +343,10 @@ version 2, or claiming that a classification proves safety or insecurity.
 
 ## Next planning cycle
 
-Python is the selected next language direction. Complete and merge this
-documentation packet before starting P9a. P9a is then the only ready
-implementation packet; P9b depends on its accepted adapter behavior, and P9c
-requires a separate decision after initial Python graph support is evaluated.
+Python is the selected next language direction. P9a is implemented by this
+packet. After its merge checkpoint, P9b becomes the next ready implementation
+packet. P9c requires a separate decision after initial stock Python graph
+support is evaluated.
 
 ## P9 — Python adapter
 
@@ -363,8 +363,9 @@ Acceptance criteria:
 - current docs distinguish generic Git/path evidence, source classification,
   LCOV eligibility, module indexing, test relationships, and public-surface
   evidence instead of describing them all as one language-support claim;
-- Python is explicitly planned but not implemented, and no nonexistent
-  configuration value, CLI flag, or Action input is presented as available;
+- the preparation packet explicitly recorded that Python was not implemented at
+  that checkpoint, and no nonexistent configuration value, CLI flag, or Action
+  input was presented as available;
 - the proposed adapter contract defines supported static syntax, initial module
   roots and ambiguity handling, deterministic bounds, source-free issues, and a
   no-interpreter/no-target-execution boundary;
@@ -382,12 +383,12 @@ schema changes, tags, and releases.
 
 ### P9a — Python adapter foundation
 
-- [ ] Add a private `packages/language-python` workspace
-- [ ] Implement bounded no-follow `.py`/`.pyi` discovery
-- [ ] Parse static imports without invoking Python or target code
-- [ ] Resolve repository-root and conventional root-`src` module identities
-- [ ] Return deterministic modules, references, ambiguities, and source-free issues
-- [ ] Add focused unit and fixture determinism/security tests
+- [x] Add a private `packages/language-python` workspace
+- [x] Implement bounded no-follow `.py`/`.pyi` discovery
+- [x] Parse static imports without invoking Python or target code
+- [x] Resolve repository-root and conventional root-`src` module identities
+- [x] Return deterministic modules, references, ambiguities, and source-free issues
+- [x] Add focused unit and fixture determinism/security tests
 
 Acceptance criteria:
 

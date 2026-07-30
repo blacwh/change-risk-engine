@@ -1,16 +1,15 @@
 # Python Adapter Plan
 
-Status: proposed. Documentation review is complete; implementation has not
-started.
+Status: foundation implemented; stock integration not started.
 
-Python is the next planned built-in language adapter. This plan defines a
-bounded first implementation and prevents generic Git/path evidence from being
-mistaken for Python-aware analysis. Current behavior remains documented in
+Python is the selected next built-in language direction. This plan defines its
+bounded packets and prevents generic Git/path evidence from being mistaken for
+stock Python-aware analysis. Current behavior remains documented in
 [language support](language-support.md).
 
 ## Intended first capability
 
-The first Python adapter will discover `.py` and `.pyi` files and produce the
+`@change-risk/language-python` discovers `.py` and `.pyi` files and produces the
 existing plugin API version 1 language index:
 
 - normalized repository-relative module paths;
@@ -18,19 +17,20 @@ existing plugin API version 1 language index:
 - deterministic ordering;
 - explicit bounded discovery, read, parse, ambiguity, and resolution issues.
 
-It will recognize static `import` and `from ... import ...` statements,
+It recognizes static `import` and `from ... import ...` statements,
 including aliases and explicit relative-import levels. Aliases do not change
 the dependency target. Calls through `importlib`, `__import__`, computed module
 names, runtime path mutation, and imports created by executed code will not be
-guessed.
+guessed. Parsing uses the bundled JavaScript `@lezer/python` grammar; it never
+invokes a Python interpreter.
 
-Resolution will operate only on the bounded discovered file set. Package
+Resolution operates only on the bounded discovered file set. Package
 `__init__.py` or `__init__.pyi` files represent their package. A `.py`
 implementation is preferred over a same-identity `.pyi` stub; the stub is used
 when no implementation exists. Initial absolute-import roots are the repository
 root and a root `src` directory when present. Conflicting module identities
 produce explicit ambiguity instead of an arbitrary edge. Relative imports are
-resolved from the importing module's package. The adapter will not read or
+resolved from the importing module's package. The adapter does not read or
 execute `pyproject.toml`, `setup.py`, environment activation, editable-install
 metadata, namespace-package hooks, or target dependencies.
 
@@ -47,7 +47,10 @@ not attempt to infer imported names.
 These initial roots deliberately cover common repository-root and `src`
 layouts. Configurable source roots, namespace packages without an
 `__init__` file, monorepo environment composition, and installed-package
-resolution require later evidence and design.
+resolution require later evidence and design. Files without a supported module
+identity remain indexed but produce `module-identity-unavailable`. Only UTF-8
+Python source is parsed; another declared source encoding produces
+`invalid-utf8` rather than silent replacement.
 
 ## Selection contract
 
@@ -97,7 +100,7 @@ packet may define a conservative Python export contract, including the limits of
 
 ## Security and determinism
 
-The adapter must preserve the existing target-repository trust boundary:
+The foundation preserves the existing target-repository trust boundary:
 
 - do not invoke a Python interpreter;
 - do not import target modules or execute target configuration;
@@ -105,7 +108,8 @@ The adapter must preserve the existing target-repository trust boundary:
 - do not call package registries or other network services;
 - skip symbolic links and keep canonical reads inside the repository;
 - apply caller-provided entry, file-count, and file-byte bounds;
-- use a bundled non-executing parser and bound parser work where supported;
+- use the bundled non-executing `@lezer/python` parser, bound source bytes, walk
+  syntax trees iteratively, and cap retained parse issues per file;
 - return stable issue kinds and locations without source excerpts or raw parser
   messages;
 - resolve imports only against deterministic in-memory module identities.
@@ -117,10 +121,10 @@ silently become a claim that a module has no dependencies.
 
 ### P9a — Adapter foundation
 
-Add `packages/language-python`, bounded discovery, non-executing parsing, module
-identity construction, static import extraction, repository-only resolution,
-and focused fixtures/tests. Conform to the existing adapter contract without
-changing stock CLI or Action behavior.
+Complete. `packages/language-python` provides bounded discovery, non-executing
+parsing, module identity construction, static import extraction,
+repository-only resolution, and focused fixtures/tests through the existing
+adapter contract without changing stock CLI or Action behavior.
 
 ### P9b — Stock selection and evidence integration
 
