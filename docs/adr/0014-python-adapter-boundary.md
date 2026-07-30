@@ -35,9 +35,11 @@ public-surface comparison must be suppressed for Python analysis. A Python
 public-surface model is deferred until its semantics and limitations can be
 reviewed independently.
 
-The exact parser dependency and compatibility treatment of the selection
-surface require implementation-time review. This ADR remains Proposed until
-the foundation and integration contracts are validated and accepted.
+The foundation uses the JavaScript `@lezer/python` grammar and validates the
+existing adapter contract without stock behavior changes. Compatibility
+treatment of the selection surface still requires integration-time review. This
+ADR remains Proposed until the stock integration contract is validated and
+accepted.
 
 ## Consequences
 

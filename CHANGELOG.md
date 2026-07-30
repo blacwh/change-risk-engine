@@ -9,7 +9,11 @@ Versions follow Semantic Versioning.
 
 - composable built-in `strict-review` and `security-sensitive` policy packs
   with bounded selection, deterministic precedence, and shared CLI/Action
-  behavior.
+  behavior;
+- a private plugin-API-v1 Python adapter foundation with bounded `.py`/`.pyi`
+  discovery, non-executing static import parsing, repository-only resolution,
+  and explicit ambiguity and incomplete-evidence issues. Stock CLI and Action
+  selection is not included yet.
 
 ## [0.1.0] - 2026-07-30
 

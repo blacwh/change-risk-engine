@@ -1,0 +1,15 @@
+{
+  "name": "@change-risk/language-python",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "@change-risk/plugin-sdk": "0.0.0",
+    "@lezer/python": "^1.1.19"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.json"
+  }
+}

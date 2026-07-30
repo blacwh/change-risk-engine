@@ -62,7 +62,11 @@ when baseline input is invalid.
 A language adapter declares an ID, a path predicate, and an asynchronous bounded
 repository index operation. It returns normalized module paths, resolved,
 unresolved, or external references, and explicit issues. The TypeScript adapter
-is the first built-in implementation.
+is the implementation selected by stock interfaces.
+
+`@change-risk/language-python` supplies a second bounded implementation for
+trusted programmatic hosts. Hosts must import and select it explicitly; its
+presence in the workspace does not make Python a stock CLI or Action option.
 
 The orchestration API accepts one explicitly selected adapter. Multi-language
 index merging, dependency installation, target configuration plugins, and

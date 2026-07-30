@@ -18,7 +18,7 @@ apps/github-action
 packages/core
 packages/git-adapter
 packages/language-typescript
-packages/language-python (planned)
+packages/language-python
 packages/dependency-graph
 packages/coverage
 packages/ownership
@@ -41,8 +41,8 @@ before publishing decisions are made:
 - `packages/core` owns orchestration and shared domain contracts;
 - `packages/git-adapter` collects repository evidence without executing target code;
 - `packages/language-typescript` indexes TypeScript and JavaScript;
-- `packages/language-python` is the planned bounded Python adapter and does not
-  exist in the current workspace;
+- `packages/language-python` implements bounded Python static-import indexing
+  for trusted programmatic hosts but is not selected by stock interfaces yet;
 - `packages/dependency-graph` owns bounded graph operations;
 - `packages/coverage` reads and maps bounded caller-supplied LCOV line evidence;
 - `packages/ownership` reads and maps bounded root CODEOWNERS policy;
@@ -145,15 +145,17 @@ configuration is not followed and produces an explicit issue. Matched aliases
 and relative references that miss the index are unresolved evidence. Unmatched
 bare specifiers are external and do not trigger package probing or installation.
 
-Python is the selected next adapter, with a Proposed boundary in
-[ADR 0014](docs/adr/0014-python-adapter-boundary.md). Its foundation is planned
-to index static `.py`/`.pyi` imports without invoking an interpreter, importing
-target modules, reading executable project configuration, installing
-dependencies, or using the network. Stock integration will select exactly one
-adapter explicitly; automatic detection and mixed-language graph merging remain
-out of scope. The reviewed delivery contract is in
-[Python adapter plan](docs/python-adapter.md), and none of those Python-aware
-behaviors are implemented yet.
+The Python foundation implements the Proposed boundary in
+[ADR 0014](docs/adr/0014-python-adapter-boundary.md). It uses the bundled
+`@lezer/python` grammar to parse static `.py`/`.pyi` imports without invoking an
+interpreter, importing target modules, reading executable project
+configuration, installing dependencies, or using the network. Resolution uses
+only bounded module identities from the repository root and conventional root
+`src`, reports ambiguity and unsupported namespace layouts explicitly, and
+prefers a `.py` implementation over a same-identity `.pyi` stub. Stock
+integration will select exactly one adapter explicitly; automatic detection and
+mixed-language graph merging remain out of scope. See the reviewed
+[Python adapter plan](docs/python-adapter.md).
 
 ## Git
 

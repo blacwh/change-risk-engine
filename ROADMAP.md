@@ -168,11 +168,13 @@ Bounded static Python import indexing, explicit single-language selection, stock
 CLI/Action integration, and Python-aware source/test evidence without target
 execution.
 
-Status: planned. The current support boundary and proposed adapter contract are
-documented; implementation has not started. Delivery is split into an adapter
-foundation, stock selection/evidence integration, and a separately reviewed
-public-surface decision. The first two packets must preserve explicit
-limitations, deterministic bounds, and the existing single-adapter model.
+Status: in progress. The private Python adapter foundation implements bounded
+`.py`/`.pyi` discovery, non-executing static import parsing, repository-only
+module identities, and explicit resolution issues through plugin API version 1.
+Stock selection, Python source/test evidence, and coverage eligibility remain
+for the integration packet. A Python public-surface decision remains separately
+reviewed. The phase preserves explicit limitations, deterministic bounds, and
+the existing single-adapter model.
 
 ## Later
 

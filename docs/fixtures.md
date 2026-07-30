@@ -51,3 +51,10 @@ TypeScript adapter, runs it against exact fixture revisions, and verifies its
 finding and score contribution. Adapter contract tests use fixture modules with
 a resolved internal import; fixture repositories never supply executable plugin
 code.
+
+Python adapter fixtures cover deterministic `.py`/`.pyi` discovery, ignored and
+linked paths, traversal/file/byte limits, invalid UTF-8, bounded source-free
+parse errors, aliases, relative and star imports, repository-root and root-`src`
+identities, implementation-over-stub preference, ambiguity, unsupported
+namespace layouts, internal/external/unresolved references, and repeat-run
+equality. They never invoke Python or install fixture dependencies.
