@@ -18,6 +18,7 @@ apps/github-action
 packages/core
 packages/git-adapter
 packages/language-typescript
+packages/language-python (planned)
 packages/dependency-graph
 packages/coverage
 packages/ownership
@@ -40,6 +41,8 @@ before publishing decisions are made:
 - `packages/core` owns orchestration and shared domain contracts;
 - `packages/git-adapter` collects repository evidence without executing target code;
 - `packages/language-typescript` indexes TypeScript and JavaScript;
+- `packages/language-python` is the planned bounded Python adapter and does not
+  exist in the current workspace;
 - `packages/dependency-graph` owns bounded graph operations;
 - `packages/coverage` reads and maps bounded caller-supplied LCOV line evidence;
 - `packages/ownership` reads and maps bounded root CODEOWNERS policy;
@@ -118,7 +121,9 @@ interface LanguageAdapter {
 }
 ```
 
-Support TypeScript/JavaScript first.
+The stock CLI and GitHub Action currently support TypeScript/JavaScript
+language-aware analysis. The exact capability boundary is documented in
+[language support](docs/language-support.md).
 
 The built-in TypeScript implementation conforms to plugin API version 1's
 language-adapter contract: ID and path selection plus a bounded repository index
@@ -139,6 +144,16 @@ read of the root `tsconfig.json` supplies optional `baseUrl` and `paths`; inheri
 configuration is not followed and produces an explicit issue. Matched aliases
 and relative references that miss the index are unresolved evidence. Unmatched
 bare specifiers are external and do not trigger package probing or installation.
+
+Python is the selected next adapter, with a Proposed boundary in
+[ADR 0014](docs/adr/0014-python-adapter-boundary.md). Its foundation is planned
+to index static `.py`/`.pyi` imports without invoking an interpreter, importing
+target modules, reading executable project configuration, installing
+dependencies, or using the network. Stock integration will select exactly one
+adapter explicitly; automatic detection and mixed-language graph merging remain
+out of scope. The reviewed delivery contract is in
+[Python adapter plan](docs/python-adapter.md), and none of those Python-aware
+behaviors are implemented yet.
 
 ## Git
 
@@ -166,6 +181,8 @@ Classification is a pure path-based core operation with a closed, stable-order
 category set. Categories may intentionally overlap: tests can also be source,
 lockfiles are dependencies, and generated JavaScript remains source. Unmatched
 paths receive `other`, so every changed file has at least one category.
+The current source-extension set covers TypeScript/JavaScript plus `.vue` and
+`.svelte`; Python files remain `other` unless another category matches.
 
 ## Dependency graph
 
@@ -278,15 +295,15 @@ functions, counts, and collisions, then sorts and freezes copied component
 metadata without executing it. The CLI and CI compositions never load plugins
 from an analyzed repository.
 
-Public-surface comparison operates on caller-selected TypeScript source
+The stock public-surface comparison operates on caller-selected TypeScript source
 snapshots from resolved revisions. It compares exported declaration signatures,
 re-exports, and export assignments without type checking or target execution.
 Parse and source-size failures suppress inference for the affected path and are
 returned as explicit issues. Function and public method bodies plus private
 class members are excluded from signatures. Conventional test mapping compares
-normalized module identities across colocated, `src`, `test`, `tests`, `spec`,
-and `__tests__` layouts; every non-test module receives an explicit relationship,
-including an empty one.
+TypeScript/JavaScript normalized module identities across colocated, `src`,
+`test`, `tests`, `spec`, and `__tests__` layouts; every non-test module receives
+an explicit relationship, including an empty one.
 
 ## Configuration
 

@@ -162,12 +162,24 @@ before explicit repository configuration. CLI and Action behavior share the
 same resolver and result schema version 1. No pack loads code, files,
 dependencies, or network resources.
 
+## Phase 13 — Python adapter
+
+Bounded static Python import indexing, explicit single-language selection, stock
+CLI/Action integration, and Python-aware source/test evidence without target
+execution.
+
+Status: planned. The current support boundary and proposed adapter contract are
+documented; implementation has not started. Delivery is split into an adapter
+foundation, stock selection/evidence integration, and a separately reviewed
+public-surface decision. The first two packets must preserve explicit
+limitations, deterministic bounds, and the existing single-adapter model.
+
 ## Later
 
-History-based calibration, additional languages, constrained optional
+History-based calibration, languages beyond Python, constrained optional
 summaries, and additional policy packs justified by concrete review needs.
 
-These are candidate directions, not a prioritized implementation queue. Before
-a future continuous run, select a direction, define acceptance criteria and
-non-goals in `BACKLOG.md`, and size it using the
-[continuous agent work protocol](docs/agent-workflow.md).
+These are candidate directions, not a prioritized implementation queue. Python
+is the only selected next language direction; its bounded packets are defined in
+`BACKLOG.md`. Select and define any other direction before implementation using
+the [continuous agent work protocol](docs/agent-workflow.md).

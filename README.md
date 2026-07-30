@@ -46,6 +46,10 @@ verification, and checksum gates. [`v0.1.0` is the first published
 release](https://github.com/blacwh/change-risk-engine/releases/tag/v0.1.0).
 Phase 12 adds composable built-in policy packs with deterministic
 configuration precedence and no external loading boundary.
+Python is the selected next adapter direction, but implementation has not
+started. See the [language-support matrix](docs/language-support.md) for the
+exact current boundary and the [Python adapter plan](docs/python-adapter.md) for
+the proposed phased contract.
 
 ## Usage
 
@@ -174,9 +178,13 @@ Maintainers preparing a version must satisfy the
 [release-ready standard](docs/release-readiness.md) for one exact commit before
 requesting authorization to tag or publish it.
 
-## Initial scope
+## Current language scope
 
-TypeScript and JavaScript repositories.
+The stock CLI and GitHub Action provide language-aware indexing, graph,
+conventional-test, and public-surface evidence for TypeScript and JavaScript.
+Generic Git, path-policy, and ownership evidence can observe other files, but
+that does not imply parser or graph support. Python is planned and is not an
+available language selection today. See [language support](docs/language-support.md).
 
 ## Interfaces
 
@@ -194,4 +202,4 @@ TypeScript and JavaScript repositories.
 - predicting production incidents;
 - generic AI review;
 - executing target code by default;
-- supporting every language in the first release.
+- broad or automatically inferred multi-language support.
