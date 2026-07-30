@@ -15,6 +15,7 @@ const result = await build({
       ['coverage', 'packages/coverage'],
       ['dependency-graph', 'packages/dependency-graph'],
       ['git-adapter', 'packages/git-adapter'],
+      ['language-python', 'packages/language-python'],
       ['language-typescript', 'packages/language-typescript'],
       ['plugin-sdk', 'packages/plugin-sdk'],
       ['reporters', 'packages/reporters'],

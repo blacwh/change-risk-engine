@@ -115,11 +115,13 @@ baseline was published as
 2026-07-30. Phase 12 adds explicit, composable built-in policy defaults without
 external loading or a result schema change.
 
-Phase 13 is in progress. Its foundation implements a bounded, non-executing
-Python adapter for trusted programmatic selection. Stock CLI/Action selection,
-Python source/test evidence, and coverage eligibility remain in the separate
-integration packet. Current capability-by-language details are the source of
-truth in [language support](docs/language-support.md).
+Phase 13 implements a bounded, non-executing Python adapter with explicit
+single-language selection in configuration, CLI, and Action interfaces.
+Python-aware source classification, static-import graph analysis, conventional
+test evidence, and supplied-LCOV eligibility are available without executing
+target code. Python public-surface evidence remains deferred. Current
+capability-by-language details are the source of truth in
+[language support](docs/language-support.md).
 
 ## Boundaries
 

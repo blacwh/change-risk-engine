@@ -42,7 +42,7 @@ before publishing decisions are made:
 - `packages/git-adapter` collects repository evidence without executing target code;
 - `packages/language-typescript` indexes TypeScript and JavaScript;
 - `packages/language-python` implements bounded Python static-import indexing
-  for trusted programmatic hosts but is not selected by stock interfaces yet;
+  for trusted programmatic hosts and explicit stock selection;
 - `packages/dependency-graph` owns bounded graph operations;
 - `packages/coverage` reads and maps bounded caller-supplied LCOV line evidence;
 - `packages/ownership` reads and maps bounded root CODEOWNERS policy;
@@ -121,9 +121,10 @@ interface LanguageAdapter {
 }
 ```
 
-The stock CLI and GitHub Action currently support TypeScript/JavaScript
-language-aware analysis. The exact capability boundary is documented in
-[language support](docs/language-support.md).
+The stock CLI and GitHub Action explicitly select either TypeScript/JavaScript
+or Python language-aware analysis. TypeScript is the default, invocation input
+overrides repository configuration, and exactly one adapter is used. The exact
+capability boundary is documented in [language support](docs/language-support.md).
 
 The built-in TypeScript implementation conforms to plugin API version 1's
 language-adapter contract: ID and path selection plus a bounded repository index
@@ -145,7 +146,7 @@ configuration is not followed and produces an explicit issue. Matched aliases
 and relative references that miss the index are unresolved evidence. Unmatched
 bare specifiers are external and do not trigger package probing or installation.
 
-The Python foundation implements the Proposed boundary in
+The Python adapter implements the Accepted boundary in
 [ADR 0014](docs/adr/0014-python-adapter-boundary.md). It uses the bundled
 `@lezer/python` grammar to parse static `.py`/`.pyi` imports without invoking an
 interpreter, importing target modules, reading executable project
@@ -153,8 +154,10 @@ configuration, installing dependencies, or using the network. Resolution uses
 only bounded module identities from the repository root and conventional root
 `src`, reports ambiguity and unsupported namespace layouts explicitly, and
 prefers a `.py` implementation over a same-identity `.pyi` stub. Stock
-integration will select exactly one adapter explicitly; automatic detection and
-mixed-language graph merging remain out of scope. See the reviewed
+integration selects exactly one adapter explicitly and applies Python-specific
+classification and conventional tests while omitting TypeScript-only
+public-surface evidence. Automatic detection and mixed-language graph merging
+remain out of scope. See the reviewed
 [Python adapter plan](docs/python-adapter.md).
 
 ## Git
@@ -183,8 +186,9 @@ Classification is a pure path-based core operation with a closed, stable-order
 category set. Categories may intentionally overlap: tests can also be source,
 lockfiles are dependencies, and generated JavaScript remains source. Unmatched
 paths receive `other`, so every changed file has at least one category.
-The current source-extension set covers TypeScript/JavaScript plus `.vue` and
-`.svelte`; Python files remain `other` unless another category matches.
+The selected language controls source extensions. TypeScript selection covers
+TypeScript/JavaScript plus `.vue` and `.svelte`; Python selection covers `.py`
+and `.pyi`. Language-neutral categories still apply independently.
 
 ## Dependency graph
 

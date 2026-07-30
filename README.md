@@ -46,11 +46,13 @@ verification, and checksum gates. [`v0.1.0` is the first published
 release](https://github.com/blacwh/change-risk-engine/releases/tag/v0.1.0).
 Phase 12 adds composable built-in policy packs with deterministic
 configuration precedence and no external loading boundary.
-Phase 13 is in progress. Its foundation adds a bounded, non-executing Python
-adapter package for trusted programmatic hosts, but the stock CLI and Action do
-not select it yet. See the [language-support matrix](docs/language-support.md)
-for the exact current boundary and the
-[Python adapter plan](docs/python-adapter.md) for the phased contract.
+Phase 13 adds a bounded, non-executing Python adapter with explicit stock CLI,
+Action, and configuration selection. Python analysis includes source
+classification, static-import graph and blast-radius evidence, conventional
+test relationships, and caller-supplied LCOV mapping. Python public-surface
+comparison remains explicitly unsupported. See the
+[language-support matrix](docs/language-support.md) for the exact boundary and
+the [Python adapter plan](docs/python-adapter.md) for the phased contract.
 
 ## Usage
 
@@ -64,6 +66,15 @@ node apps/cli/dist/run.js analyze --base main --head HEAD
 Use `--format json` for the versioned machine-readable result. `--fail-on high`
 returns exit code 2 for high or critical classifications; operational and input
 errors return 1. Run `node apps/cli/dist/run.js --help` for all options.
+
+Select Python explicitly for a Python repository:
+
+```bash
+change-risk analyze --base main --head HEAD --language python
+```
+
+TypeScript remains the default. The analyzer selects one language per run and
+does not infer or merge repository languages.
 
 Write a self-contained report that opens directly in a browser:
 
@@ -181,12 +192,12 @@ requesting authorization to tag or publish it.
 
 ## Current language scope
 
-The stock CLI and GitHub Action provide language-aware indexing, graph,
-conventional-test, and public-surface evidence for TypeScript and JavaScript.
-Generic Git, path-policy, and ownership evidence can observe other files, but
-that does not imply parser or graph support. A Python adapter foundation exists
-for trusted programmatic hosts, but Python is not an available stock language
-selection today. See [language support](docs/language-support.md).
+The stock CLI and GitHub Action provide explicitly selected
+TypeScript/JavaScript or Python indexing, graph, conventional-test, and coverage
+eligibility. TypeScript/JavaScript additionally provides syntactic
+public-surface evidence; Python does not. Generic Git, path-policy, and ownership
+evidence can observe other files, but that does not imply parser or graph
+support. See [language support](docs/language-support.md).
 
 ## Interfaces
 

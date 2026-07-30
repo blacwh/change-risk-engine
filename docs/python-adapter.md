@@ -1,6 +1,7 @@
 # Python Adapter Plan
 
-Status: foundation implemented; stock integration not started.
+Status: foundation and stock integration implemented; public-surface decision
+deferred.
 
 Python is the selected next built-in language direction. This plan defines its
 bounded packets and prevents generic Git/path evidence from being mistaken for
@@ -54,8 +55,7 @@ Python source is parsed; another declared source encoding produces
 
 ## Selection contract
 
-Stock Python support will be explicit, not inferred. The integration packet is
-expected to add:
+Stock Python support is explicit, not inferred:
 
 - a top-level configuration value `language` with the closed values
   `typescript` and `python`, defaulting to `typescript`;
@@ -64,20 +64,21 @@ expected to add:
 - documented precedence in which the invocation override wins over repository
   configuration.
 
-Unknown values will fail validation. One adapter will be selected per analysis.
+Unknown values fail validation. One adapter is selected per analysis.
 Automatic detection and a merged TypeScript/JavaScript-plus-Python graph are
 out of scope. Trusted programmatic callers may continue to pass an explicit
 adapter directly; that explicit object remains their selection authority.
 
-This selection surface is proposed, not present in configuration schema version
-1, the CLI, or the Action today. Its compatibility impact must be reviewed
-during implementation before it is accepted.
+The additive selection surface remains configuration schema version 1 and
+defaults to the prior TypeScript behavior. For programmatic analysis, a supplied
+adapter object controls indexing; the separate language value selects stock
+classification, test, and public-surface behavior.
 
 ## Stock integration
 
-The integration packet will make `.py` and `.pyi` eligible for `source`
-classification when Python is selected and add Python-specific conventional
-test relationships. Initial test conventions are:
+The integration makes `.py` and `.pyi` eligible for `source` classification
+when Python is selected and adds Python-specific conventional test
+relationships:
 
 - `test_*.py` and `*_test.py`;
 - modules beneath a `tests` directory;
@@ -128,10 +129,10 @@ adapter contract without changing stock CLI or Action behavior.
 
 ### P9b — Stock selection and evidence integration
 
-Add validated language selection to shared configuration, CLI, and Action;
-select the built-in adapter; add conditional Python source classification and
-test relationships; suppress unsupported TypeScript-only evidence; update the
-Action bundle and all public usage/security docs.
+Complete. Shared configuration, CLI, and Action interfaces validate explicit
+selection; the analyzer selects one built-in adapter, applies conditional Python
+source/test/coverage behavior, suppresses TypeScript-only public evidence, and
+ships the same behavior in the standalone CLI and committed Action bundle.
 
 ### P9c — Python public surface
 

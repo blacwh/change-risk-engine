@@ -14,6 +14,7 @@
     { "path": "../../packages/coverage" },
     { "path": "../../packages/dependency-graph" },
     { "path": "../../packages/git-adapter" },
+    { "path": "../../packages/language-python" },
     { "path": "../../packages/language-typescript" },
     { "path": "../../packages/ownership" },
     { "path": "../../packages/plugin-sdk" },

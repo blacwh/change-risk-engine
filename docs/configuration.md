@@ -3,12 +3,10 @@
 Configuration is validated by `@change-risk/config`. Version 1 rejects unknown
 keys and unsupported schema versions.
 
-The current schema has no language selection. The stock CLI and Action use the
-built-in TypeScript/JavaScript implementation, and adding `"language": "python"`
-today is an unknown-key error. A closed top-level language value is proposed for
-the Python integration packet; the active schema and this example will change
-only when that implementation is accepted. See
-[language support](language-support.md).
+The top-level `language` value accepts only `typescript` or `python` and defaults
+to `typescript`. An explicit CLI `--language` or Action `language` input
+overrides repository configuration. Selection is never inferred: each analysis
+uses exactly one built-in adapter. See [language support](language-support.md).
 
 The CLI loads `.change-risk.json` from the repository root when present. Use
 `--config <repository-relative-path>` to require another file. Configuration is
@@ -18,6 +16,7 @@ limited to 1 MB.
 ```json
 {
   "schemaVersion": 1,
+  "language": "typescript",
   "policyPacks": ["strict-review"],
   "ignorePatterns": ["dist/**"],
   "analysis": {

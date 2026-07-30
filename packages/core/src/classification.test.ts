@@ -26,4 +26,19 @@ describe('file classification', () => {
     ]);
     expect(file).toEqual({ path: 'src/index.ts', status: 'modified' });
   });
+
+  it.each([
+    ['src/service.py', ['source']],
+    ['src/service.pyi', ['source']],
+    ['test_service.py', ['source', 'test']],
+    ['service_test.py', ['source', 'test']],
+    ['tests/service.py', ['source', 'test']],
+    ['tests/service.pyi', ['source']],
+    ['src/service.ts', ['other']],
+  ] as const)(
+    'classifies Python selection path %s in stable category order',
+    (path, categories) => {
+      expect(classifyFile(path, { language: 'python' })).toEqual(categories);
+    },
+  );
 });

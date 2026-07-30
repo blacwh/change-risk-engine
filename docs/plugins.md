@@ -61,12 +61,13 @@ when baseline input is invalid.
 
 A language adapter declares an ID, a path predicate, and an asynchronous bounded
 repository index operation. It returns normalized module paths, resolved,
-unresolved, or external references, and explicit issues. The TypeScript adapter
-is the implementation selected by stock interfaces.
+unresolved, or external references, and explicit issues. Stock interfaces
+explicitly select either the TypeScript or Python implementation and default to
+TypeScript.
 
 `@change-risk/language-python` supplies a second bounded implementation for
-trusted programmatic hosts. Hosts must import and select it explicitly; its
-presence in the workspace does not make Python a stock CLI or Action option.
+trusted programmatic hosts and stock interfaces. Stock selection uses the closed
+configuration/CLI/Action language value; it does not discover adapters.
 
 The orchestration API accepts one explicitly selected adapter. Multi-language
 index merging, dependency installation, target configuration plugins, and
@@ -74,16 +75,16 @@ automatic adapter discovery are not part of API version 1. An adapter is
 responsible for honoring the supplied entry, file, and byte limits and must not
 execute target code by default.
 
-Supplying a custom adapter changes the programmatic module index only. It does
-not install that adapter into the stock CLI or GitHub Action, change the current
-path classifier, or automatically replace the orchestrator's
-TypeScript/JavaScript-specific public-surface and conventional-test logic.
-Embedding hosts must document which signals they compose and suppress any
-language-specific step that is not valid for their adapter. That may require
-lower-level composition instead of the stock `analyzeRepository` orchestration.
-A custom index alone must not be described as complete language support.
+Supplying a custom adapter changes the programmatic module index only; it does
+not install that adapter into the stock CLI or GitHub Action. The separate
+`language` option selects stock classification, conventional-test, and
+public-surface behavior and defaults to `typescript`, preserving callers that
+previously supplied only a custom adapter. Embedding hosts must set it when
+using Python stock behavior and document any different custom-adapter
+capabilities. A custom index alone must not be described as complete language
+support.
 
-The proposed built-in Python integration and the current capability matrix are
+The built-in Python integration and the current capability matrix are
 documented separately in [Python adapter plan](python-adapter.md) and
 [language support](language-support.md).
 

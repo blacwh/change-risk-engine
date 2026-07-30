@@ -79,6 +79,15 @@ try {
   if (installedVersion !== installedManifest.version) {
     throw new Error('Installed CLI version does not match package metadata');
   }
+  const { stdout: helpOutput } = await execFileAsync(executable, ['--help'], {
+    encoding: 'utf8',
+    maxBuffer: 1024 * 1024,
+  });
+  if (!helpOutput.includes('--language <typescript|python>')) {
+    throw new Error(
+      'Installed CLI does not expose the packaged language selection',
+    );
+  }
   const { stdout } = await execFileAsync(
     executable,
     [

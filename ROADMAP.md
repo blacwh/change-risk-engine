@@ -168,13 +168,15 @@ Bounded static Python import indexing, explicit single-language selection, stock
 CLI/Action integration, and Python-aware source/test evidence without target
 execution.
 
-Status: in progress. The private Python adapter foundation implements bounded
-`.py`/`.pyi` discovery, non-executing static import parsing, repository-only
-module identities, and explicit resolution issues through plugin API version 1.
-Stock selection, Python source/test evidence, and coverage eligibility remain
-for the integration packet. A Python public-surface decision remains separately
-reviewed. The phase preserves explicit limitations, deterministic bounds, and
-the existing single-adapter model.
+Status: complete. The private Python adapter implements bounded `.py`/`.pyi`
+discovery, non-executing static import parsing, repository-only module
+identities, and explicit resolution issues through plugin API version 1.
+Configuration, CLI, and Action interfaces explicitly select one stock language;
+Python selection adds conditional source classification, conventional test
+relationships, graph evidence, and supplied-LCOV eligibility. TypeScript remains
+the default, automatic detection and mixed-language graphs remain out of scope,
+and Python public-surface comparison is explicitly deferred to a separate
+decision.
 
 ## Later
 

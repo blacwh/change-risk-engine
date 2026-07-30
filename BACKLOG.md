@@ -343,10 +343,9 @@ version 2, or claiming that a classification proves safety or insecurity.
 
 ## Next planning cycle
 
-Python is the selected next language direction. P9a is implemented by this
-packet. After its merge checkpoint, P9b becomes the next ready implementation
-packet. P9c requires a separate decision after initial stock Python graph
-support is evaluated.
+P9a is merged and P9b is implemented by this packet. After its merge checkpoint,
+P9c is the only defined Python follow-up and requires a separate decision based
+on initial stock Python graph evidence.
 
 ## P9 — Python adapter
 
@@ -421,12 +420,12 @@ result schema version 2.
 
 ### P9b — Stock Python selection and evidence integration
 
-- [ ] Add validated explicit language selection to configuration, CLI, and Action
-- [ ] Select the built-in Python adapter without automatic detection
-- [ ] Add Python source classification and conventional test relationships
-- [ ] Suppress TypeScript-only public-surface evidence for Python analysis
-- [ ] Integrate reporting, fixtures, packaging, and the committed Action bundle
-- [ ] Promote ADR 0014 only after implementation evidence supports the decision
+- [x] Add validated explicit language selection to configuration, CLI, and Action
+- [x] Select the built-in Python adapter without automatic detection
+- [x] Add Python source classification and conventional test relationships
+- [x] Suppress TypeScript-only public-surface evidence for Python analysis
+- [x] Integrate reporting, fixtures, packaging, and the committed Action bundle
+- [x] Promote ADR 0014 only after implementation evidence supports the decision
 
 Acceptance criteria:
 

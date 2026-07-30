@@ -10,6 +10,7 @@ describe('change-risk configuration schema v1', () => {
   it('applies bounded deterministic defaults', () => {
     expect(parseChangeRiskConfig({ schemaVersion: 1 })).toEqual({
       schemaVersion: 1,
+      language: 'typescript',
       policyPacks: [],
       ignorePatterns: [],
       analysis: {
@@ -37,6 +38,10 @@ describe('change-risk configuration schema v1', () => {
   it('exports bounded policy-pack input metadata in the JSON Schema', () => {
     expect(changeRiskConfigJsonSchema).toMatchObject({
       properties: {
+        language: {
+          default: 'typescript',
+          enum: ['typescript', 'python'],
+        },
         policyPacks: {
           default: [],
           maxItems: 2,
@@ -155,6 +160,15 @@ describe('change-risk configuration schema v1', () => {
     expect(() => parseChangeRiskConfig({ schemaVersion: 2 })).toThrow();
     expect(() =>
       parseChangeRiskConfig({ schemaVersion: 1, surprise: true }),
+    ).toThrow();
+  });
+
+  it('accepts only explicit built-in language ids', () => {
+    expect(
+      parseChangeRiskConfig({ schemaVersion: 1, language: 'python' }).language,
+    ).toBe('python');
+    expect(() =>
+      parseChangeRiskConfig({ schemaVersion: 1, language: 'ruby' }),
     ).toThrow();
   });
 

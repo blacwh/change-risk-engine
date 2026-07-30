@@ -23,6 +23,9 @@ export default defineConfig({
       '@change-risk/git-adapter': fileURLToPath(
         new URL('./packages/git-adapter/src/index.ts', import.meta.url),
       ),
+      '@change-risk/language-python': fileURLToPath(
+        new URL('./packages/language-python/src/index.ts', import.meta.url),
+      ),
       '@change-risk/language-typescript': fileURLToPath(
         new URL('./packages/language-typescript/src/index.ts', import.meta.url),
       ),

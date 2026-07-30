@@ -1,8 +1,9 @@
 # TypeScript and JavaScript Indexing
 
-This is the only language-aware implementation used by the current stock CLI
-and GitHub Action. See [language support](language-support.md) for the
-difference between parser/graph support and language-neutral Git/path evidence.
+This is the default language-aware implementation used by the stock CLI and
+GitHub Action. Python is the other explicit stock selection. See
+[language support](language-support.md) for the difference between parser/graph
+support and language-neutral Git/path evidence.
 
 `@change-risk/language-typescript` discovers `.ts`, `.tsx`, `.mts`, `.cts`,
 `.js`, `.jsx`, `.mjs`, and `.cjs` files, including declaration files. Default

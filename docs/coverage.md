@@ -22,6 +22,11 @@ Each relationship contains the repository-relative path plus `linesFound` and
 counts. A source record with `LF:0` and `LH:0` remains distinct and represents
 no measurable lines.
 
+Eligibility follows the explicitly selected language. TypeScript selection
+uses the documented TS/JS source set; Python selection uses `.py` and `.pyi`
+while excluding Python test conventions. The LCOV format and trust boundary are
+otherwise identical.
+
 When a baseline is supplied and valid, each relationship also contains the
 base-side path and baseline `linesFound` and `linesHit`. Renames use the Git
 diff's `previousPath`; other sources use their current path. Missing baseline
