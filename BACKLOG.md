@@ -299,8 +299,50 @@ Non-goals: changing product behavior, schemas, scoring, security boundaries,
 package contents, the immutable `v0.1.0` tag, or selecting an unprioritized
 future product direction.
 
+## P8 — Built-in policy packs
+
+- [x] Bounded built-in pack registry and configuration schema
+- [x] Deterministic pack composition and explicit configuration precedence
+- [x] `strict-review` conservative review defaults
+- [x] `security-sensitive` common sensitive-path defaults
+- [x] Shared CLI and GitHub Action integration
+- [x] Positive, override, rejection, limit, and repeat-run determinism tests
+
+Acceptance criteria:
+
+- configuration schema version 1 accepts an ordered `policyPacks` array
+  containing only documented built-in IDs, rejects duplicates, unknown IDs, and
+  over-limit input, and preserves the existing no-pack defaults;
+- selected packs compose from left to right using only existing classification
+  thresholds, sensitive-area definitions, and built-in rule settings; explicit
+  repository thresholds and sensitive areas replace pack defaults, while
+  explicit rule fields and option keys override their packed counterparts;
+- `strict-review` documents and applies deliberately conservative, uncalibrated
+  classification thresholds plus bounded options for large-change, multi-area,
+  high-fan-in, and supplied-coverage review;
+- `security-sensitive` documents and applies bounded path patterns for common
+  authentication, authorization, cryptography, credential, and secret-bearing
+  areas without asserting that path matches prove a vulnerability;
+- CLI and GitHub Action analysis consume the same resolved configuration, retain
+  result schema version 1, expose every resulting finding and score
+  contribution, and remain deterministic across repeated runs;
+- schema, configuration loading, CLI, Action, invalid-ID, duplicate, override,
+  pattern-bound, ordering, and repeat-run tests pass with full quality,
+  distributable CLI verification, Action bundle verification, clean install,
+  and `git diff --check`.
+
+Affected contracts: configuration schema version 1 and generated JSON Schema,
+configuration loading, rule settings, classification thresholds, sensitive
+areas, CLI behavior, GitHub Action behavior and bundle, security guidance,
+architecture, roadmap, changelog, and examples.
+
+Non-goals: external or repository-discovered packs, executable configuration,
+plugins in stock CLI/CI, remote registries, automatic pack selection, historical
+calibration, changing default behavior when no pack is selected, result schema
+version 2, or claiming that a classification proves safety or insecurity.
+
 ## Next planning cycle
 
-No additional implementation packet is prioritized. The first release is
-complete; select and define one bounded direction from `ROADMAP.md`, with
-acceptance criteria and non-goals here, before starting more feature work.
+No additional implementation packet is prioritized. After the P8 merge
+checkpoint, select and define one bounded direction from `ROADMAP.md` before
+starting more feature work.

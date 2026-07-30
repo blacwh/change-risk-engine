@@ -51,6 +51,9 @@ separate, appropriately isolated step before the analyzer when coverage policy
 is desired, then add `coverage: coverage/lcov.info` to the Action's `with`
 mapping. An optional `baseline-coverage: coverage/base.lcov.info` compares
 caller-retained baseline evidence and requires `coverage`.
+The selected configuration may also use bounded
+[built-in policy packs](policy-packs.md); the Action applies the same pack
+composition and explicit-setting precedence as the CLI.
 
 ## Inputs and outputs
 

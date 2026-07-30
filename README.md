@@ -21,7 +21,7 @@ Licensed under the [Apache License 2.0](LICENSE).
 
 ## Project status
 
-Phases 0 through 11 are complete. The engine safely collects exact Git evidence,
+Phases 0 through 12 are complete. The engine safely collects exact Git evidence,
 indexes TypeScript/JavaScript imports, builds a bounded dependency graph, applies
 deterministic evidence-backed rules, and exposes every effective score
 contribution. The installable CLI and bundled GitHub Action use the same core.
@@ -44,6 +44,8 @@ Phase 11 adds the Apache-2.0 license, a `v0.1.0` changelog and compatibility
 baseline, deterministic release preflight, licensed standalone-package
 verification, and checksum gates. [`v0.1.0` is the first published
 release](https://github.com/blacwh/change-risk-engine/releases/tag/v0.1.0).
+Phase 12 adds composable built-in policy packs with deterministic
+configuration precedence and no external loading boundary.
 
 ## Usage
 
@@ -78,6 +80,18 @@ change-risk --version
 
 See [`examples/typescript-service`](examples/typescript-service) for a complete
 configuration and representative terminal output.
+
+Select bounded built-in policy defaults in `.change-risk.json`:
+
+```json
+{
+  "schemaVersion": 1,
+  "policyPacks": ["strict-review", "security-sensitive"]
+}
+```
+
+See [built-in policy packs](docs/policy-packs.md) for exact settings,
+composition precedence, and heuristic limitations.
 
 When a clean worktree matches the analyzed head, the analyzer can map changed
 paths through a bounded `.github/CODEOWNERS` file and report unowned changes.

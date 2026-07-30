@@ -1,7 +1,9 @@
 # TypeScript service example
 
-This configuration treats `src/auth/**` as sensitive, lowers the high-fan-in
-threshold, and tunes the large-change thresholds for a small service.
+This configuration selects the built-in `security-sensitive` path defaults,
+lowers the high-fan-in threshold, and tunes the large-change thresholds for a
+small service. Explicit rule option keys override any corresponding pack
+defaults.
 
 From a repository containing this `.change-risk.json`, run:
 

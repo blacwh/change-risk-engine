@@ -143,6 +143,55 @@ describe('GitHub Action composition', () => {
     );
   });
 
+  it('uses policy packs selected by repository configuration', async () => {
+    const fixture = await createFixtureRepository([
+      {
+        message: 'base',
+        files: {
+          '.change-risk.json': JSON.stringify({
+            schemaVersion: 1,
+            policyPacks: ['security-sensitive'],
+          }),
+          'src/auth.ts': 'export const authenticate = true;\n',
+        },
+      },
+      {
+        message: 'head',
+        files: {
+          'src/auth.ts': 'export const authenticate = false;\n',
+        },
+      },
+    ]);
+    cleanup.push(fixture.cleanup);
+    const runtimeRoot = await mkdtemp(join(tmpdir(), 'change-risk-action-'));
+    cleanup.push(() => rm(runtimeRoot, { recursive: true, force: true }));
+    const eventPath = join(runtimeRoot, 'event.json');
+    await writeFile(
+      eventPath,
+      JSON.stringify({
+        before: fixture.revisions[0],
+        after: fixture.revisions[1],
+      }),
+    );
+
+    const result = await runGitHubAction({
+      environment: {
+        GITHUB_WORKSPACE: fixture.path,
+        GITHUB_EVENT_PATH: eventPath,
+        GITHUB_REPOSITORY: 'owner/repository',
+      },
+    });
+    const report = JSON.parse(await readFile(result.outputPath, 'utf8')) as {
+      findings: { ruleId: string; affectedPaths: string[] }[];
+    };
+    expect(report.findings).toContainEqual(
+      expect.objectContaining({
+        ruleId: 'sensitive-path',
+        affectedPaths: ['src/auth.ts'],
+      }),
+    );
+  });
+
   it('never calls the comments API for fork pull requests', async () => {
     const fixture = await createFixtureRepository([
       { message: 'base', files: { 'src/index.ts': 'export {};\n' } },

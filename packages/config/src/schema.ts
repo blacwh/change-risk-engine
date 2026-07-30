@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { composePolicyPacks, POLICY_PACK_IDS } from './policy-packs.js';
+
 export const CONFIG_SCHEMA_VERSION = 1 as const;
 
 const thresholdsSchema = z
@@ -14,9 +16,13 @@ const thresholdsSchema = z
     { message: 'Thresholds must increase from moderate to high to critical' },
   );
 
-export const changeRiskConfigSchema = z
+const changeRiskConfigInputSchema = z
   .object({
     schemaVersion: z.literal(CONFIG_SCHEMA_VERSION),
+    policyPacks: z
+      .array(z.enum(POLICY_PACK_IDS))
+      .max(POLICY_PACK_IDS.length)
+      .default([]),
     ignorePatterns: z
       .array(z.string().min(1).max(1_000))
       .max(1_000)
@@ -47,10 +53,8 @@ export const changeRiskConfigSchema = z
         maxGraphEdges: 1_000_000,
         maxTraversalDepth: 20,
       }),
-    thresholds: thresholdsSchema.default({
-      moderate: 20,
-      high: 50,
-      critical: 80,
+    thresholds: thresholdsSchema.optional().meta({
+      default: { moderate: 20, high: 50, critical: 80 },
     }),
     sensitiveAreas: z
       .array(
@@ -61,23 +65,35 @@ export const changeRiskConfigSchema = z
           })
           .strict(),
       )
-      .default([]),
+      .optional()
+      .meta({ default: [] }),
     rules: z
       .record(
         z.string().min(1),
         z
           .object({
-            enabled: z.boolean().default(true),
-            options: z.record(z.string(), z.unknown()).default({}),
+            enabled: z.boolean().optional().meta({ default: true }),
+            options: z
+              .record(z.string(), z.unknown())
+              .optional()
+              .meta({ default: {} }),
             weight: z.number().finite().optional(),
           })
           .strict(),
       )
-      .default({}),
+      .optional()
+      .meta({ default: {} }),
   })
   .strict()
   .superRefine((config, context) => {
-    const ids = config.sensitiveAreas.map(({ id }) => id);
+    if (new Set(config.policyPacks).size !== config.policyPacks.length) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Policy pack ids must be unique',
+        path: ['policyPacks'],
+      });
+    }
+    const ids = (config.sensitiveAreas ?? []).map(({ id }) => id);
     if (new Set(ids).size !== ids.length) {
       context.addIssue({
         code: 'custom',
@@ -87,10 +103,76 @@ export const changeRiskConfigSchema = z
     }
   });
 
+type ChangeRiskConfigInput = z.infer<typeof changeRiskConfigInputSchema>;
+
+function resolveRules(
+  packedRules: ReturnType<typeof composePolicyPacks>['rules'],
+  configuredRules: NonNullable<ChangeRiskConfigInput['rules']>,
+): Record<
+  string,
+  {
+    enabled: boolean;
+    options: Record<string, unknown>;
+    weight?: number;
+  }
+> {
+  const resolved: Record<
+    string,
+    {
+      enabled: boolean;
+      options: Record<string, unknown>;
+      weight?: number;
+    }
+  > = {};
+  const ids = [
+    ...new Set([...Object.keys(packedRules), ...Object.keys(configuredRules)]),
+  ].sort();
+  for (const id of ids) {
+    const packed = packedRules[id];
+    const configured = configuredRules[id];
+    const weight = configured?.weight ?? packed?.weight;
+    resolved[id] = {
+      enabled: configured?.enabled ?? packed?.enabled ?? true,
+      options: {
+        ...(packed?.options ?? {}),
+        ...(configured?.options ?? {}),
+      },
+      ...(weight === undefined ? {} : { weight }),
+    };
+  }
+  return resolved;
+}
+
+function resolveConfig(input: ChangeRiskConfigInput) {
+  const packed = composePolicyPacks(input.policyPacks);
+  return {
+    schemaVersion: input.schemaVersion,
+    policyPacks: input.policyPacks,
+    ignorePatterns: input.ignorePatterns,
+    analysis: input.analysis,
+    thresholds: input.thresholds ??
+      packed.thresholds ?? {
+        moderate: 20,
+        high: 50,
+        critical: 80,
+      },
+    sensitiveAreas:
+      input.sensitiveAreas ??
+      packed.sensitiveAreas.map((area) => ({
+        id: area.id,
+        patterns: [...area.patterns],
+      })),
+    rules: resolveRules(packed.rules, input.rules ?? {}),
+  };
+}
+
+export const changeRiskConfigSchema =
+  changeRiskConfigInputSchema.transform(resolveConfig);
+
 export type ChangeRiskConfig = z.infer<typeof changeRiskConfigSchema>;
 
 export const changeRiskConfigJsonSchema = z.toJSONSchema(
-  changeRiskConfigSchema,
+  changeRiskConfigInputSchema,
 );
 
 export function parseChangeRiskConfig(input: unknown): ChangeRiskConfig {
