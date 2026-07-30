@@ -343,6 +343,125 @@ version 2, or claiming that a classification proves safety or insecurity.
 
 ## Next planning cycle
 
-No additional implementation packet is prioritized. After the P8 merge
-checkpoint, select and define one bounded direction from `ROADMAP.md` before
-starting more feature work.
+Python is the selected next language direction. Complete and merge this
+documentation packet before starting P9a. P9a is then the only ready
+implementation packet; P9b depends on its accepted adapter behavior, and P9c
+requires a separate decision after initial Python graph support is evaluated.
+
+## P9 — Python adapter
+
+### Documentation preparation
+
+- [x] Audit current language-specific and language-neutral capabilities
+- [x] Add a canonical language-support matrix
+- [x] Define the proposed Python adapter behavior and security boundary
+- [x] Record a proposed ADR and bounded implementation packets
+- [x] Correct roadmap, product, architecture, interface, and plugin claims
+
+Acceptance criteria:
+
+- current docs distinguish generic Git/path evidence, source classification,
+  LCOV eligibility, module indexing, test relationships, and public-surface
+  evidence instead of describing them all as one language-support claim;
+- Python is explicitly planned but not implemented, and no nonexistent
+  configuration value, CLI flag, or Action input is presented as available;
+- the proposed adapter contract defines supported static syntax, initial module
+  roots and ambiguity handling, deterministic bounds, source-free issues, and a
+  no-interpreter/no-target-execution boundary;
+- foundation, stock integration, and public-surface decision work are separate
+  packets with explicit dependencies and non-goals;
+- documentation links, formatting, claims, and `git diff --check` pass review.
+
+Affected contracts: public support claims, product scope, architecture,
+security guidance, trusted adapter documentation, roadmap, backlog, and ADR
+history.
+
+Non-goals: Python package or source changes, configuration/schema changes, a
+CLI flag, an Action input or bundle change, Python analysis claims, result
+schema changes, tags, and releases.
+
+### P9a — Python adapter foundation
+
+- [ ] Add a private `packages/language-python` workspace
+- [ ] Implement bounded no-follow `.py`/`.pyi` discovery
+- [ ] Parse static imports without invoking Python or target code
+- [ ] Resolve repository-root and conventional root-`src` module identities
+- [ ] Return deterministic modules, references, ambiguities, and source-free issues
+- [ ] Add focused unit and fixture determinism/security tests
+
+Acceptance criteria:
+
+- the adapter implements plugin API version 1's `LanguageAdapter` contract and
+  honors supplied entry, file, and byte limits;
+- discovery is deterministic, rejects or skips symlink traversal, canonicalizes
+  reads beneath the repository, and treats `.py` and `.pyi` identities with the
+  documented implementation-over-stub preference;
+- static `import` and `from` statements, aliases, and relative levels produce
+  normalized references, while dynamic/import-hook behavior remains a
+  documented unsupported case and is not guessed;
+- resolution consults only bounded discovered files under the repository root
+  and a root `src` directory, reports identity conflicts and misses explicitly,
+  and never probes installed packages;
+- parsing uses analyzer-bundled non-executing code and never invokes Python,
+  imports target modules, executes repository configuration, installs
+  dependencies, or accesses the network;
+- focused positive, malformed, limit, symlink, ambiguity, ordering, and
+  repeat-run tests pass with `npm run quality` and `git diff --check`.
+
+Affected contracts: workspace/package graph, plugin API version 1 adapter
+behavior, module index evidence, security boundary, fixtures, architecture, and
+dependency review.
+
+Non-goals: changing stock CLI/Action behavior, Python source classification,
+coverage eligibility, Python test relationships, public-surface comparison,
+configurable source roots, namespace-package composition, environment or
+installed-package resolution, dynamic imports, mixed-language graphs, and
+result schema version 2.
+
+### P9b — Stock Python selection and evidence integration
+
+- [ ] Add validated explicit language selection to configuration, CLI, and Action
+- [ ] Select the built-in Python adapter without automatic detection
+- [ ] Add Python source classification and conventional test relationships
+- [ ] Suppress TypeScript-only public-surface evidence for Python analysis
+- [ ] Integrate reporting, fixtures, packaging, and the committed Action bundle
+- [ ] Promote ADR 0014 only after implementation evidence supports the decision
+
+Acceptance criteria:
+
+- configuration accepts only `typescript` or `python`, defaults to
+  `typescript`, and is overridden by an explicit CLI `--language` or Action
+  `language` input with documented shared precedence;
+- exactly one built-in adapter is selected, with no automatic detection,
+  repository plugin loading, or mixed-language index merging;
+- `.py` and `.pyi` become source-classified only for Python analysis, Python
+  test conventions produce complete explicit relationships, and LCOV mapping
+  can consume matching caller-supplied paths without running tests;
+- Python analysis does not invoke TypeScript public-surface comparison and does
+  not turn missing Python public-surface evidence into a finding;
+- trusted programmatic explicit adapter selection remains documented and
+  compatible, or any required compatibility exception is approved before merge;
+- configuration, CLI, Action, classification, tests, coverage, clean/mismatched
+  worktree, packaging, and repeat-run tests pass with `npm run quality`,
+  distributable CLI verification, Action verification, clean install, and
+  `git diff --check`.
+
+Affected contracts: configuration schema and generated schema, CLI options,
+Action inputs and bundle, orchestration defaults, file classification, coverage
+eligibility, test evidence, programmatic adapter selection, public docs, and
+compatibility guidance.
+
+Non-goals: automatic language detection, simultaneous TypeScript/Python
+analysis, cross-language edges, Python public-surface findings, target
+interpreter or build execution, dependency installation, configurable Python
+environments, result schema version 2, tags, and releases.
+
+### P9c — Python public-surface decision
+
+- [ ] Evaluate whether bounded syntactic Python public-surface evidence is useful
+- [ ] Define semantics and limitations before implementation, if selected
+
+This packet is not ready. It requires evidence from merged P9a and P9b and a
+separate implementation decision. Any proposal must address `__all__`,
+re-exports, dynamic attributes, stubs, inferred public names, parse failures,
+and false-positive/false-negative risks without importing target modules.

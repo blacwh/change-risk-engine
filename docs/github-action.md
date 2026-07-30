@@ -5,6 +5,11 @@ uses the exact base and head object IDs in the GitHub event, writes the complete
 version 1 JSON result, adds a Markdown job summary, exposes classification and
 score outputs, and optionally maintains one pull-request comment.
 
+The current Action has no language input. Its language-aware graph, test, and
+public-surface evidence is TypeScript/JavaScript-only. Python paths can still
+participate in generic Git and path policies, but they are not Python-aware
+source or graph evidence. See [language support](language-support.md).
+
 ## Workflow
 
 ```yaml
@@ -57,14 +62,18 @@ composition and explicit-setting precedence as the CLI.
 
 ## Inputs and outputs
 
-| Input | Default | Meaning |
-| --- | --- | --- |
-| `config` | optional | Repository-relative JSON configuration path. |
-| `coverage` | optional | Repository-relative caller-supplied LCOV tracefile. |
-| `baseline-coverage` | optional | Repository-relative baseline LCOV tracefile; requires `coverage`. |
-| `fail-on` | `none` | `none`, `low`, `moderate`, `high`, or `critical`. |
-| `comment` | `true` | Maintain a comment when the pull request is from the same repository. |
-| `output` | `change-risk-report.json` | Repository-relative JSON artifact path. |
+| Input               | Default                   | Meaning                                                               |
+| ------------------- | ------------------------- | --------------------------------------------------------------------- |
+| `config`            | optional                  | Repository-relative JSON configuration path.                          |
+| `coverage`          | optional                  | Repository-relative caller-supplied LCOV tracefile.                   |
+| `baseline-coverage` | optional                  | Repository-relative baseline LCOV tracefile; requires `coverage`.     |
+| `fail-on`           | `none`                    | `none`, `low`, `moderate`, `high`, or `critical`.                     |
+| `comment`           | `true`                    | Maintain a comment when the pull request is from the same repository. |
+| `output`            | `change-risk-report.json` | Repository-relative JSON artifact path.                               |
+
+`language` is not a current input. It is proposed for the Python integration
+packet and must not be added to workflows before the Action implementation and
+committed bundle support it.
 
 Outputs are `classification`, `score`, and `json-path`. A configured gate exits
 2 when the classification reaches its threshold; input, analysis, reporting, or

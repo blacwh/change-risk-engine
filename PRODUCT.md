@@ -115,12 +115,19 @@ baseline was published as
 2026-07-30. Phase 12 adds explicit, composable built-in policy defaults without
 external loading or a result schema change.
 
+Phase 13 is planned, not implemented. It adds Python through a bounded,
+non-executing adapter and explicit single-language selection in separate
+foundation and stock-integration packets. Current capability-by-language
+details are the source of truth in
+[language support](docs/language-support.md).
+
 ## Boundaries
 
 The tool is an aid, not a safety guarantee, security-scanner replacement, AI reviewer, or production-incident predictor.
 
 ## Future
 
-Additional language implementations, history-informed calibration, interactive
-hosted visualization, isolated third-party plugin hosting, and optional local
-summaries constrained to deterministic findings.
+Python is the selected next adapter direction. Languages beyond Python,
+history-informed calibration, interactive hosted visualization, isolated
+third-party plugin hosting, and optional local summaries constrained to
+deterministic findings remain future candidates.

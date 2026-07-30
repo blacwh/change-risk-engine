@@ -13,6 +13,12 @@ The same configuration may select bounded
 [built-in policy packs](policy-packs.md). Packs resolve before explicit
 repository settings and require no additional command-line option.
 
+The current CLI has no language option. Its module graph, blast radius,
+conventional test mapping, and public-surface evidence use the built-in
+TypeScript/JavaScript implementation. Python paths still appear in generic Git
+and path-policy evidence but are not Python-aware source, graph, test,
+public-surface, or LCOV evidence. See [language support](language-support.md).
+
 ## Installation
 
 Each version-tagged GitHub release contains a standalone npm-compatible tarball
@@ -41,6 +47,10 @@ repository.
 - `--format terminal|json|html` selects concise text, versioned machine output,
   or a self-contained static report.
 - `--fail-on none|low|moderate|high|critical` sets the classification gate.
+
+`--language` is not an available option in the current release. It is part of
+the reviewed Python integration plan and will be documented here only when
+implemented.
 
 Exit code 0 means analysis completed and did not meet the configured gate. Exit
 code 2 means analysis completed and met or exceeded it. Exit code 1 indicates an

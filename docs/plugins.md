@@ -70,6 +70,19 @@ automatic adapter discovery are not part of API version 1. An adapter is
 responsible for honoring the supplied entry, file, and byte limits and must not
 execute target code by default.
 
+Supplying a custom adapter changes the programmatic module index only. It does
+not install that adapter into the stock CLI or GitHub Action, change the current
+path classifier, or automatically replace the orchestrator's
+TypeScript/JavaScript-specific public-surface and conventional-test logic.
+Embedding hosts must document which signals they compose and suppress any
+language-specific step that is not valid for their adapter. That may require
+lower-level composition instead of the stock `analyzeRepository` orchestration.
+A custom index alone must not be described as complete language support.
+
+The proposed built-in Python integration and the current capability matrix are
+documented separately in [Python adapter plan](python-adapter.md) and
+[language support](language-support.md).
+
 ## Trust boundary
 
 Plugin functions are executable host code. Registration itself does not invoke
