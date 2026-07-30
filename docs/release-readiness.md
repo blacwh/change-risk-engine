@@ -125,17 +125,22 @@ Status: **not ready**.
 Resolved decisions:
 
 - Apache-2.0 is the owner-selected source and standalone-package license;
-- the repository remains private through readiness review and is approved to
-  become public after this phase merges and before `v0.1.0` is tagged.
+- readiness implementation PR #25 is merged and its required checks passed;
+- the repository is public and the merged readiness candidate's default-branch
+  checks passed;
+- the `v0.1.0` changelog date is finalized as 2026-07-30 in this packet.
 
 Open gates:
 
-- merge the readiness implementation and confirm the public visibility change;
-- approve the final merged commit and completed release record.
+- merge this changelog-finalization packet;
+- rebuild and verify the artifact from that exact merged commit, then record its
+  checksum and default-branch check URLs;
+- approve the exact release commit and completed release record;
+- separately authorize creation and publication of the `v0.1.0` tag and release.
 
-The final changelog date, default-branch CI URLs, artifact checksum, and exact
-release commit remain pending until the readiness implementation is merged and
-the final candidate is evaluated.
+The final release commit, its default-branch CI URLs, and its artifact checksum
+remain pending until this packet is merged and that exact candidate is
+evaluated.
 
 Local readiness implementation evidence:
 
@@ -153,6 +158,7 @@ Local verification ran on Node 20.17 and therefore emitted the expected engine
 warning below the supported 20.19 floor. The required PR matrix on Node 20.19,
 22.13, and 24 is the authoritative supported-runtime evidence.
 
-This local checksum is evidence for the reviewed source state, not the final
-release checksum. Rebuild and record the checksum from the exact merged commit
-before approval.
+This local checksum is evidence for readiness merge commit
+`d593e8c7978573f429a098da5b7dbd8c26dd9c55`, not the final release checksum.
+Rebuild and record the checksum from the exact changelog-finalization merge
+commit before approval.

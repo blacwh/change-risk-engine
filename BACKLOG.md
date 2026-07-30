@@ -278,11 +278,13 @@ npm-registry publication boundary, or promising long-term stability before
 
 ## Release-candidate follow-up
 
-After this packet merges, verify default-branch checks, change repository
-visibility to public as approved, rebuild the candidate from the exact merged
-commit, finalize the changelog date and approval record, and request separate
-authorization before creating `v0.1.0`. Tagging and publication are operational
-release gates, not an unfinished implementation item.
+Readiness implementation PR #25 is merged, its required and default-branch
+checks passed, the repository is public, and the candidate was rebuilt from the
+readiness merge commit. This packet finalizes the changelog date. After it
+merges, verify the exact final commit, default-branch checks, rebuilt artifact,
+and checksum; complete the approval record; and request separate authorization
+before creating or publishing `v0.1.0`. Tagging and publication are operational
+release gates, not unfinished implementation items.
 
 ## Next planning cycle
 
