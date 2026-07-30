@@ -5,7 +5,7 @@ commit may be tagged and published. “Release-ready” means every mandatory ga
 below has current evidence for one exact commit and version. It does not mean
 the analyzer guarantees that a change is safe.
 
-The first candidate version is `v0.1.0`. Creating a tag, publishing a release,
+The first release is `v0.1.0`. Creating a tag, publishing a release,
 or changing repository visibility requires explicit owner authorization after
 the candidate commit has passed this standard.
 
@@ -120,45 +120,58 @@ issues follow the private-advisory process in `SECURITY.md`.
 
 ## Current `v0.1.0` audit
 
-Status: **not ready**.
+Status: **released** on 2026-07-30.
 
-Resolved decisions:
+Release identity:
 
-- Apache-2.0 is the owner-selected source and standalone-package license;
-- readiness implementation PR #25 is merged and its required checks passed;
-- the repository is public and the merged readiness candidate's default-branch
-  checks passed;
-- the `v0.1.0` changelog date is finalized as 2026-07-30 in this packet.
+- version and tag: [`v0.1.0`][release];
+- exact approved commit:
+  `8f653adb5691ae98598eab3fe4ce896e3855e5d2`;
+- changelog date: 2026-07-30;
+- source and standalone-package license: Apache-2.0;
+- repository visibility: public;
+- distribution boundary: standalone GitHub Release tarball, with no npm-registry
+  publication commitment.
 
-Open gates:
+Approval record:
 
-- merge this changelog-finalization packet;
-- rebuild and verify the artifact from that exact merged commit, then record its
-  checksum and default-branch check URLs;
-- approve the exact release commit and completed release record;
-- separately authorize creation and publication of the `v0.1.0` tag and release.
+- [changelog-finalization PR #26][pr] supplied the exact merged candidate;
+- the owner reviewed and approved the version, commit, release notes,
+  compatibility baseline, Apache-2.0 license, public visibility, and documented
+  limitations on 2026-07-30 before tag creation;
+- the owner separately authorized creation and publication of `v0.1.0`;
+- the immutable annotated tag points at the approved commit.
 
-The final release commit, its default-branch CI URLs, and its artifact checksum
-remain pending until this packet is merged and that exact candidate is
-evaluated.
+Verification evidence:
 
-Local readiness implementation evidence:
+- all [PR checks][pr] passed on Node 20.19, 22.13, and 24, including
+  self-analysis;
+- the exact merged commit's [default-branch CI][default-ci] and
+  [self-analysis][default-analysis] passed;
+- local clean-install verification passed formatting, lint, strict type
+  checking, 153 tests in 30 files, all builds, Action bundle verification,
+  standalone-package installation and JSON/HTML exercise, and the tagged
+  readiness preflight;
+- the production dependency audit reported zero known vulnerabilities;
+- the [release workflow][release-run] passed quality, tagged readiness,
+  packaging, fresh-install, and checksum verification before publication;
+- the published [`change-risk-engine-0.1.0.tgz`][artifact] contains exactly
+  `LICENSE`, `README.md`, `change-risk.js`, and `package.json`, reports version
+  `0.1.0`, and has SHA-256
+  `3593d9c885cd65eb392b337fc3f8042568d43f50efc5b6b61ff798d9d41ba118`;
+- the published [`SHA256SUMS`][checksums] was downloaded with the tarball and
+  independently verified.
 
-- clean install completed with npm 11;
-- 153 tests in 30 files, formatting, lint, strict type checking, builds, and
-  Action bundle verification passed;
-- full and production-only npm audits report zero known vulnerabilities;
-- the dry-run `change-risk-engine-0.1.0.tgz` installed and exercised JSON and
-  HTML analysis, contained exactly `LICENSE`, `README.md`, `change-risk.js`, and
-  `package.json`, and reported version `0.1.0`;
-- dry-run SHA-256:
-  `3593d9c885cd65eb392b337fc3f8042568d43f50efc5b6b61ff798d9d41ba118`.
+The local verification host used Node 20.17 and emitted the expected engine
+warning below the supported 20.19 floor. The successful PR and default-branch
+matrices on supported Node versions are the authoritative runtime evidence.
+All `v0.1.0` release gates are closed; corrections must use a new version and
+must not move the published tag.
 
-Local verification ran on Node 20.17 and therefore emitted the expected engine
-warning below the supported 20.19 floor. The required PR matrix on Node 20.19,
-22.13, and 24 is the authoritative supported-runtime evidence.
-
-This local checksum is evidence for readiness merge commit
-`d593e8c7978573f429a098da5b7dbd8c26dd9c55`, not the final release checksum.
-Rebuild and record the checksum from the exact changelog-finalization merge
-commit before approval.
+[artifact]: https://github.com/blacwh/change-risk-engine/releases/download/v0.1.0/change-risk-engine-0.1.0.tgz
+[checksums]: https://github.com/blacwh/change-risk-engine/releases/download/v0.1.0/SHA256SUMS
+[default-analysis]: https://github.com/blacwh/change-risk-engine/actions/runs/30504743937
+[default-ci]: https://github.com/blacwh/change-risk-engine/actions/runs/30504743916
+[pr]: https://github.com/blacwh/change-risk-engine/pull/26
+[release]: https://github.com/blacwh/change-risk-engine/releases/tag/v0.1.0
+[release-run]: https://github.com/blacwh/change-risk-engine/actions/runs/30505149649

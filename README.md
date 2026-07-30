@@ -42,7 +42,8 @@ artifact, maps renamed sources through their base-side paths, and reports
 whole-file regressions without adding a second coverage score.
 Phase 11 adds the Apache-2.0 license, a `v0.1.0` changelog and compatibility
 baseline, deterministic release preflight, licensed standalone-package
-verification, and checksum gates. No release has been published yet.
+verification, and checksum gates. [`v0.1.0` is the first published
+release](https://github.com/blacwh/change-risk-engine/releases/tag/v0.1.0).
 
 ## Usage
 

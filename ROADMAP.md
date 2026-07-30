@@ -145,9 +145,10 @@ Status: complete. The canonical standard and approval record, `v0.1.0`
 changelog, pre-tag/tagged preflight, Apache-2.0 source and package licensing,
 exact standalone-package verification, checksum verification, and clean
 dependency audit are implemented. The release workflow fails closed on missing
-readiness evidence. The candidate is not yet published: merge verification,
-public visibility, final owner approval, changelog date, tag creation, and
-release publication remain explicit post-merge gates.
+readiness evidence. After its exact merged commit passed required and
+default-branch checks, the owner approved the public Apache-2.0 release and
+[`v0.1.0`](https://github.com/blacwh/change-risk-engine/releases/tag/v0.1.0)
+was published on 2026-07-30 with a verified standalone artifact and checksum.
 
 ## Later
 

@@ -3,6 +3,8 @@
 All notable user-visible changes to Change Risk Engine are recorded here.
 Versions follow Semantic Versioning.
 
+## [Unreleased]
+
 ## [0.1.0] - 2026-07-30
 
 ### Added
@@ -45,4 +47,5 @@ Versions follow Semantic Versioning.
 
 - Apache License 2.0 for the source repository and standalone CLI package.
 
+[Unreleased]: https://github.com/blacwh/change-risk-engine/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/blacwh/change-risk-engine/releases/tag/v0.1.0

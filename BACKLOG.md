@@ -276,18 +276,31 @@ approval, changing schemas or scoring, adding product features, supporting an
 npm-registry publication boundary, or promising long-term stability before
 1.0.
 
-## Release-candidate follow-up
+## First-release closeout
 
-Readiness implementation PR #25 is merged, its required and default-branch
-checks passed, the repository is public, and the candidate was rebuilt from the
-readiness merge commit. This packet finalizes the changelog date. After it
-merges, verify the exact final commit, default-branch checks, rebuilt artifact,
-and checksum; complete the approval record; and request separate authorization
-before creating or publishing `v0.1.0`. Tagging and publication are operational
-release gates, not unfinished implementation items.
+- [x] Verify the exact final candidate and required/default-branch checks
+- [x] Record owner approval of the version, commit, notes, compatibility,
+      license, visibility, and known limitations
+- [x] Create immutable tag `v0.1.0` from the approved commit
+- [x] Publish and independently verify the GitHub Release artifact and checksum
+- [x] Reconcile release status across the source-of-truth documentation
+
+Outcome: [`v0.1.0`](https://github.com/blacwh/change-risk-engine/releases/tag/v0.1.0)
+was published on 2026-07-30 from commit
+`8f653adb5691ae98598eab3fe4ce896e3855e5d2`. The release workflow passed its
+tagged readiness, quality, packaging, fresh-install, and checksum gates. The
+published tarball has SHA-256
+`3593d9c885cd65eb392b337fc3f8042568d43f50efc5b6b61ff798d9d41ba118`.
+
+Affected contracts: release governance and evidence records, product and
+roadmap status, changelog continuity, and public project documentation.
+
+Non-goals: changing product behavior, schemas, scoring, security boundaries,
+package contents, the immutable `v0.1.0` tag, or selecting an unprioritized
+future product direction.
 
 ## Next planning cycle
 
-No additional implementation packet is prioritized. After the first release,
-select and define one bounded direction from `ROADMAP.md` before starting more
-feature work.
+No additional implementation packet is prioritized. The first release is
+complete; select and define one bounded direction from `ROADMAP.md`, with
+acceptance criteria and non-goals here, before starting more feature work.

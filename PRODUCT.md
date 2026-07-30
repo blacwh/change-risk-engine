@@ -109,8 +109,10 @@ evidence with bounded exact-revision changed-line ranges and one combined
 coverage contribution. Phase 10 adds an optional caller-supplied baseline LCOV
 comparison with rename-aware mapping and preserves the same combined coverage
 contribution. Phase 11 defines and automates first-release readiness, licensing,
-compatibility review, and standalone-artifact verification without creating a
-tag or publishing a release.
+compatibility review, and standalone-artifact verification. The accepted
+baseline was published as
+[`v0.1.0`](https://github.com/blacwh/change-risk-engine/releases/tag/v0.1.0) on
+2026-07-30.
 
 ## Boundaries
 
