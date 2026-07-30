@@ -178,13 +178,27 @@ the default, automatic detection and mixed-language graphs remain out of scope,
 and scored Python public-surface comparison is deliberately deferred by
 [ADR 0015](docs/adr/0015-defer-python-public-surface.md).
 
+## Phase 14 — Historical evaluation and transparent tuning
+
+Versioned offline evaluation contracts, blinded reviewer-attention labels,
+repository and temporal holdouts, deterministic aggregate metrics, and an
+explicit compatibility gate before any default change.
+
+Status: design complete; implementation planned. P10a will add private bounded
+evaluation schemas and deterministic metrics over caller-supplied canonical
+results and labels. It will not collect repositories, tune defaults, change
+analyzer behavior, or add telemetry. A blinded pilot and any qualified tuning
+decision remain separate authorization-gated packets. See
+[historical evaluation](docs/history-evaluation.md) and
+[ADR 0016](docs/adr/0016-history-evaluation-before-default-tuning.md).
+
 ## Later
 
-History-based calibration, languages beyond Python, constrained optional
-summaries, additional policy packs justified by concrete review needs, and a
-possible observational Python declared-name mode with explicit entry points.
+Languages beyond Python, constrained optional summaries, additional policy
+packs justified by concrete review needs, and a possible observational Python
+declared-name mode with explicit entry points.
 
-These are candidate directions, not a prioritized implementation queue. No
-further implementation packet is ready. Select and define a direction before
-implementation using the
+These are candidate directions, not a prioritized implementation queue. P10a is
+the only next ready implementation packet. Select and define any other direction
+before implementation using the
 [continuous agent work protocol](docs/agent-workflow.md).

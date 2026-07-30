@@ -148,7 +148,7 @@ ships the same behavior in the standalone CLI and committed Action bundle.
 
 Complete. The semantics review defers scored Python public-surface findings and
 defines the prerequisites for any future observational declared-name evidence.
-No implementation packet is ready.
+No Python public-surface implementation packet is ready.
 
 Each packet has its own acceptance criteria, tests, documentation update,
 commit, review checkpoint, and phase publishing boundary. The packets must not

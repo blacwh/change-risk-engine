@@ -343,9 +343,10 @@ version 2, or claiming that a classification proves safety or insecurity.
 
 ## Next planning cycle
 
-P9a and P9b are merged. P9c records the decision to defer scored Python
-public-surface evidence. No implementation packet is ready: select and define a
-new product direction before further implementation.
+P9 is complete. Historical evaluation is the selected next direction. After
+this design packet merges, P10a is the only ready implementation packet. P10b
+requires an authorized corpus and reviewers; P10c requires a successful pilot
+and qualified frozen holdouts.
 
 ## P9 — Python adapter
 
@@ -492,3 +493,103 @@ future configuration/scoring prerequisites.
 Non-goals: Python parser or analyzer changes, configuration changes, new
 evidence or findings, rule-weight changes, result schema changes, Action bundle
 changes, target execution, tags, and releases.
+
+## P10 — Historical evaluation and transparent default tuning
+
+### Documentation and decision contract
+
+- [x] Define the review-attention target and prohibit incident-probability claims
+- [x] Define versioned corpus, label, provenance, split, and aggregate contracts
+- [x] Define blinded review, sampling, duplicate, temporal, and repository controls
+- [x] Define qualification metrics and non-regression gates before tuning
+- [x] Define privacy, no-telemetry, and no-target-execution boundaries
+- [x] Record bounded foundation, pilot, tuning, and adoption packets
+
+Acceptance criteria:
+
+- evaluation uses exact base/head cases and blinded independent
+  reviewer-attention labels rather than analyzer findings or future outcomes;
+- manifest and label provenance, exclusions, duplicate grouping, sampling
+  frames, analyzer/configuration identities, and frozen splits are explicit;
+- representative, signal-enriched, development, temporal-holdout, and
+  unseen-repository results cannot be silently pooled;
+- raw counts, denominators, agreement, limitation prevalence, confusion,
+  ordinal error, macro, rank, language, and change-size-stratum metrics are
+  defined before implementation;
+- minimum corpus size, reviewer agreement, holdout, candidate-search, severe
+  under-triage, high-tier recall, improvement, and reproducibility gates fail
+  closed;
+- evaluation remains offline, caller-supplied, bounded, deterministic, and
+  source-free in committed aggregate records;
+- no current rule, weight, threshold, configuration, result, CLI, Action, or
+  package behavior changes;
+- documentation structure, links, formatting, claims, and `git diff --check`
+  pass.
+
+Affected contracts: product claims, scoring interpretation, roadmap and backlog
+readiness, architecture, security/privacy boundary, rule/configuration guidance,
+output-schema separation, release compatibility, ADR history, and evaluation
+documentation.
+
+Non-goals: implementing the evaluator, collecting repositories, recruiting
+reviewers, generating labels, changing defaults, probability calibration,
+incident prediction, target execution, telemetry, result schema changes, tags,
+and releases.
+
+### P10a — Evaluation schema and metric engine
+
+- [ ] Add a private offline evaluation workspace
+- [ ] Validate bounded versioned case, label, split, and provenance inputs
+- [ ] Compute deterministic aggregate agreement and classification metrics
+- [ ] Emit a stable source-free versioned evaluation summary
+- [ ] Add positive, invalid, limit, ordering, and repeat-run fixtures
+
+Acceptance criteria:
+
+- inputs are caller-supplied canonical analysis results and blinded labels,
+  keyed to exact full revisions and a recorded analyzer/configuration identity;
+- default-scoring, repository-policy, policy-pack, representative, and enriched
+  profiles are explicit and only representative default-scoring cases can enter
+  tuning;
+- runtime schemas reject unknown fields, duplicates, incomplete case/label
+  coverage, invalid tiers, malformed revisions, split leakage, non-finite
+  values, and configured bounds;
+- metrics implement the documented raw counts, agreement, confusion, ordinal
+  error, macro, rank, interval, limitation, and stratum contracts in stable
+  order;
+- output contains aggregate pseudonymous evidence only and never source, diffs,
+  paths, repository names, reviewer identities, environment roots, or secrets;
+- the package performs no repository discovery, Git/network access, target
+  execution, tuning, telemetry, or analyzer behavior change;
+- focused positive, negative, limit, split-leakage, ordering, and repeat-run
+  tests pass with `npm run quality` and `git diff --check`.
+
+Affected contracts: workspace graph, private evaluation schema version 1,
+aggregate metrics, fixtures, architecture, security, and documentation.
+
+Non-goals: real-world corpus collection, analyzer orchestration, GitHub API,
+automatic sampling, reviewer UI, default tuning, configuration or result schema
+changes, CLI/Action integration, publishing, and releases.
+
+### P10b — Blinded pilot
+
+- [ ] Approve repositories, sampling frame, reviewers, retention, and access
+- [ ] Label and evaluate the minimum pilot corpus without tuning defaults
+- [ ] Decide whether the rubric and evaluation contract qualify for expansion
+
+This packet is not ready. It requires merged P10a, at least 100 representative
+cases from 5 repositories, language minimums, two blinded reviewers per case,
+an adjudicator for material disagreements, and explicit corpus/privacy
+authorization. Pilot evidence cannot change defaults.
+
+### P10c — Qualified tuning decision
+
+- [ ] Freeze a qualified corpus and both holdouts before candidate selection
+- [ ] Evaluate at most one bounded transparent candidate on each holdout once
+- [ ] Decide whether to keep defaults or propose a separate compatibility change
+
+This packet is not ready. It requires a successful pilot, at least 500
+representative cases from 10 repositories, language and tier minimums, reviewer
+agreement gates, populated temporal and unseen-repository holdouts, and separate
+authorization. Passing numeric gates permits review but never changes defaults
+automatically.

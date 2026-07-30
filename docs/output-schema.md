@@ -57,6 +57,12 @@ and whether public-surface comparison is applicable. Python omission of that
 comparison appears in `limitations`; this is an accepted capability boundary,
 not partial public evidence. Result schema version 1 remains unchanged.
 
+The planned historical evaluator will use a separate private versioned summary
+contract over canonical results and blinded labels. Corpus splits, reviewer
+agreement, and aggregate evaluation metrics are not analysis evidence and are
+not added to result schema version 1. See
+[historical evaluation](history-evaluation.md).
+
 `@change-risk/reporters` provides validated JSON, plain-text terminal, and
 bounded GitHub Markdown renderers. JSON and terminal output end with a newline
 for predictable CLI and file output. Terminal and GitHub output show configured

@@ -53,6 +53,9 @@ evidence, weights, and effective score contributions remain visible.
 These are explicit heuristics, not statistically calibrated risk estimates.
 The coverage settings apply only when the caller supplies valid coverage
 evidence; the pack does not discover artifacts or run tests.
+Policy-pack values do not change during the evaluation foundation or pilot.
+Any future proposal must report pack behavior separately under the
+[historical evaluation contract](history-evaluation.md).
 
 ## `security-sensitive`
 

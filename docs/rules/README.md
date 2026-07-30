@@ -32,3 +32,10 @@ and classifies the visible total with the configured moderate, high, and critica
 thresholds. Positive contributions are applied before mitigations. A negative
 contribution is capped when necessary so the aggregate cannot fall below zero;
 the effective (possibly capped) value remains visible in `scoreContributions`.
+
+Default weights and thresholds are transparent heuristics, not incident
+probabilities or statistically qualified estimates. Any future default tuning
+must follow the blinded, holdout-based
+[historical evaluation contract](../history-evaluation.md) and ship as a
+separate compatibility-reviewed change. Repository configuration remains the
+appropriate way to express local policy.
