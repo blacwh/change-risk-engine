@@ -42,5 +42,6 @@ actions. Automation may prove that gates pass but cannot grant approval.
 - released tags are immutable; corrections use a new version;
 - GitHub Release tarballs remain the only supported publication boundary for
   `v0.1.0`; npm-registry publishing remains out of scope;
-- the first release remains blocked until the owner selects a license, confirms
-  visibility, and approves the exact merged candidate.
+- the first release remained blocked until the owner selected Apache-2.0,
+  confirmed public visibility, and approved the exact merged candidate; those
+  gates were satisfied before `v0.1.0` was published.
