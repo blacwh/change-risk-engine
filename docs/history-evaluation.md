@@ -1,6 +1,7 @@
 # Historical Evaluation and Default Tuning
 
-Status: design accepted; evaluation tooling and corpus work are not implemented.
+Status: P10a evaluation schemas and deterministic metrics are implemented; real
+corpus and reviewer work are not authorized or implemented.
 
 ## Purpose
 
@@ -37,7 +38,8 @@ Inputs are caller-supplied and versioned:
 
 - a corpus manifest with a stable case ID, pseudonymous repository ID, selected
   language, and full base/head object IDs;
-- one canonical analyzer result for the exact pair and analyzer commit;
+- one canonical analyzer result for the exact pair and analyzer commit, or a
+  closed source-free unavailable-analysis reason;
 - blinded reviewer labels stored separately from analysis results;
 - an optional outcome-proxy record, separate from the review label.
 
@@ -55,6 +57,10 @@ Analyzer commit, configuration digest, sampling provenance, reviewer
 independence, and repository authorization are caller attestations. The offline
 metric engine validates internal consistency but cannot prove those external
 facts. Published summaries state that limitation.
+
+The implemented field-level input, label, summary, bounds, and execution
+contracts are documented in the
+[evaluation schema](evaluation-schema.md).
 
 ## Evaluation profiles
 
@@ -183,9 +189,10 @@ Every report includes raw counts and denominators, not only percentages:
 - the same metrics by language, change-size band, and declared sampling
   stratum when denominators are sufficient.
 
-Proportions include deterministic 95% Wilson intervals. Small strata are shown
-as counts and marked insufficient rather than silently pooled. Metrics describe
-association with the rubric, not causal impact or incident probability.
+Proportions include deterministic 95% Wilson intervals. Segments with fewer
+than 40 evaluated cases are shown as counts and marked insufficient rather than
+silently pooled. Metrics describe association with the rubric, not causal
+impact or incident probability.
 
 Metric mechanics are fixed:
 
@@ -292,11 +299,13 @@ rather than hashed into a public record.
 
 ### P10a — Evaluation schema and metric engine
 
-Ready after the design packet merges. Add a private, offline evaluation package
-with versioned bounded schemas, deterministic metrics, stable JSON output, and
-positive, invalid-input, limit, ordering, and repeat-run fixtures. It consumes
-caller-supplied canonical analysis results and blinded labels. It does not
-collect a real corpus, tune defaults, change analyzer output, or add telemetry.
+Complete. The private offline evaluation package provides versioned bounded
+input and aggregate-summary schemas, deterministic agreement and classification
+metrics, stable source-free JSON, split and leakage validation, and positive,
+invalid-input, limit, ordering, and repeat-run tests. It accepts
+caller-supplied canonical results or closed unavailable states plus blinded
+labels. It does not collect a real corpus, tune defaults, change analyzer
+output, or add telemetry.
 
 ### P10b — Blinded pilot
 

@@ -20,6 +20,9 @@ export default defineConfig({
       '@change-risk/dependency-graph': fileURLToPath(
         new URL('./packages/dependency-graph/src/index.ts', import.meta.url),
       ),
+      '@change-risk/evaluation': fileURLToPath(
+        new URL('./packages/evaluation/src/index.ts', import.meta.url),
+      ),
       '@change-risk/git-adapter': fileURLToPath(
         new URL('./packages/git-adapter/src/index.ts', import.meta.url),
       ),

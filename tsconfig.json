@@ -10,6 +10,7 @@
       "@change-risk/dependency-graph": [
         "./packages/dependency-graph/src/index.ts"
       ],
+      "@change-risk/evaluation": ["./packages/evaluation/src/index.ts"],
       "@change-risk/git-adapter": ["./packages/git-adapter/src/index.ts"],
       "@change-risk/language-python": [
         "./packages/language-python/src/index.ts"
