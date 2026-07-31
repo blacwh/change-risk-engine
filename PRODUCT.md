@@ -124,11 +124,13 @@ public-surface evidence rather than inferring a compatibility claim from runtime
 names or syntax. Current capability-by-language details are the source of truth
 in [language support](docs/language-support.md).
 
-Phase 14 is selected and design-complete. It defines offline historical
-evaluation of the existing heuristic score against blinded reviewer-attention
-labels, with repository and temporal holdouts before any default tuning. The
-score remains an ordinal prioritization aid, not an incident probability. No
-default weight or threshold changes as part of the design or pilot packets. See
+Phase 14's evaluation foundation is complete. It implements private bounded
+schemas and deterministic aggregate metrics for offline historical evaluation
+of the existing heuristic score against blinded reviewer-attention labels, with
+repository and temporal leakage controls before any default tuning. The score
+remains an ordinal prioritization aid, not an incident probability. No real
+corpus exists and no default weight or threshold changes as part of the
+foundation or pilot packets. See
 [historical evaluation](docs/history-evaluation.md).
 
 ## Boundaries

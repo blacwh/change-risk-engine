@@ -184,11 +184,12 @@ Versioned offline evaluation contracts, blinded reviewer-attention labels,
 repository and temporal holdouts, deterministic aggregate metrics, and an
 explicit compatibility gate before any default change.
 
-Status: design complete; implementation planned. P10a will add private bounded
-evaluation schemas and deterministic metrics over caller-supplied canonical
-results and labels. It will not collect repositories, tune defaults, change
-analyzer behavior, or add telemetry. A blinded pilot and any qualified tuning
-decision remain separate authorization-gated packets. See
+Status: foundation complete. P10a provides private bounded evaluation input and
+summary schemas, deterministic aggregate metrics, stable source-free JSON, and
+split/leakage validation over caller-supplied canonical results and blinded
+labels. It does not collect repositories, tune defaults, change analyzer
+behavior, or add telemetry. The next packet is the authorization-gated blinded
+pilot; any qualified tuning decision remains separate. See
 [historical evaluation](docs/history-evaluation.md) and
 [ADR 0016](docs/adr/0016-history-evaluation-before-default-tuning.md).
 
@@ -198,7 +199,7 @@ Languages beyond Python, constrained optional summaries, additional policy
 packs justified by concrete review needs, and a possible observational Python
 declared-name mode with explicit entry points.
 
-These are candidate directions, not a prioritized implementation queue. P10a is
-the only next ready implementation packet. Select and define any other direction
-before implementation using the
-[continuous agent work protocol](docs/agent-workflow.md).
+These are candidate directions, not a prioritized implementation queue. P10b is
+not ready until corpus, sampling, reviewer, retention, and access decisions are
+authorized. Select and define any other direction before implementation using
+the [continuous agent work protocol](docs/agent-workflow.md).

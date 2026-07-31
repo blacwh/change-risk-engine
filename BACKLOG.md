@@ -343,10 +343,10 @@ version 2, or claiming that a classification proves safety or insecurity.
 
 ## Next planning cycle
 
-P9 is complete. Historical evaluation is the selected next direction. After
-this design packet merges, P10a is the only ready implementation packet. P10b
-requires an authorized corpus and reviewers; P10c requires a successful pilot
-and qualified frozen holdouts.
+P9 and P10a are complete. Historical evaluation remains the selected direction.
+P10b is blocked on an authorized corpus, sampling frame, reviewers, retention,
+and access decisions; P10c requires a successful pilot and qualified frozen
+holdouts. There is no ready implementation packet after P10a.
 
 ## P9 — Python adapter
 
@@ -538,11 +538,11 @@ and releases.
 
 ### P10a — Evaluation schema and metric engine
 
-- [ ] Add a private offline evaluation workspace
-- [ ] Validate bounded versioned case, label, split, and provenance inputs
-- [ ] Compute deterministic aggregate agreement and classification metrics
-- [ ] Emit a stable source-free versioned evaluation summary
-- [ ] Add positive, invalid, limit, ordering, and repeat-run fixtures
+- [x] Add a private offline evaluation workspace
+- [x] Validate bounded versioned case, label, split, and provenance inputs
+- [x] Compute deterministic aggregate agreement and classification metrics
+- [x] Emit a stable source-free versioned evaluation summary
+- [x] Add positive, invalid, limit, ordering, and repeat-run fixtures
 
 Acceptance criteria:
 

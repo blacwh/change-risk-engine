@@ -20,6 +20,7 @@ packages/git-adapter
 packages/language-typescript
 packages/language-python
 packages/dependency-graph
+packages/evaluation
 packages/coverage
 packages/ownership
 packages/plugin-sdk
@@ -44,6 +45,8 @@ before publishing decisions are made:
 - `packages/language-python` implements bounded Python static-import indexing
   for trusted programmatic hosts and explicit stock selection;
 - `packages/dependency-graph` owns bounded graph operations;
+- `packages/evaluation` privately validates caller-supplied historical cases
+  and blinded labels and emits deterministic source-free aggregate metrics;
 - `packages/coverage` reads and maps bounded caller-supplied LCOV line evidence;
 - `packages/ownership` reads and maps bounded root CODEOWNERS policy;
 - `packages/plugin-sdk` owns trusted-host extension contracts and registries;
@@ -266,13 +269,16 @@ mitigation is capped at zero and its effective contribution remains visible.
 The result schema requires every finding to appear in exactly one uniquely
 identified rule contribution.
 
-Historical evaluation remains outside the analyzer result pipeline. A private
-offline evaluator will consume caller-supplied canonical results and blinded
-review-attention labels through its own versioned schema. It computes
-deterministic aggregate metrics without hiding findings, changing contributions,
-fetching repositories, or executing target code. Corpus manifests freeze exact
-revisions, analyzer/configuration identities, duplicate groups, and temporal and
-repository holdouts before results are examined. See
+Historical evaluation remains outside the analyzer result pipeline. The private
+offline evaluator consumes caller-supplied canonical results or closed
+unavailable states and blinded review-attention labels through separate
+versioned input and summary schemas. It computes deterministic aggregate metrics
+without hiding findings, changing contributions, fetching repositories, or
+executing target code. Corpus manifests freeze exact revisions,
+analyzer/configuration identities, duplicate groups, and temporal and repository
+holdouts before results are examined. Effective configurations, policy packs,
+sampling strata, and splits remain separate summary dimensions. See the
+[evaluation schema](docs/evaluation-schema.md),
 [historical evaluation](docs/history-evaluation.md) and
 [ADR 0016](docs/adr/0016-history-evaluation-before-default-tuning.md).
 

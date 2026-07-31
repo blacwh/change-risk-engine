@@ -22,7 +22,11 @@ Versions follow Semantic Versioning.
   separately selected;
 - an accepted offline historical-evaluation contract with blinded labels,
   frozen temporal and repository holdouts, deterministic qualification gates,
-  and no default scoring change.
+  and no default scoring change;
+- a private version 1 historical-evaluation input and source-free summary
+  contract with bounded split validation, deterministic agreement,
+  classification, interval, limitation, rule-prevalence, co-occurrence, rank,
+  language, and change-size metrics.
 
 ## [0.1.0] - 2026-07-30
 
